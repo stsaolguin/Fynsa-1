@@ -1,0 +1,21 @@
+como arreglar las migraciones
+
+1.- Respalde la base de datos, este es un tema aparte pero aca vamos:
+
+1.1- utilice pg_dump fynsa_db > fynsa_db-dd-mm-aaaa (sin ningun tipo de extension)
+1.2.- el respaldo de la base de datos es directo, crea una nueva y se hace psql fynsa_db < fynsa_db-dd-mm-aaaa
+1.3.- si hay que respaldas solo los datos, use -a como argumento en la restauracion de datos.
+
+
+2.- luego, respalde los datos de cada tabla comprometida con el comando COPY en un archivo externo csv (hay que hacer otro tuto de como se usa)
+3.- borre todas las tablas de la base de datos mala.
+4.- borre todos los archivos  con las migraciones de todas las apps. Esto puede ser porque algunas migraciones están "amarradas entre apps" y 
+si vamos a resetear, reseteamos todo mejor.
+5.- corra python3 manage.py makemigrations y si pasa, bien. Si no, lea el error. El error que me frenaba las migraciones, en mi caso, era que en un archivo llamado funciones_externas.py que tenía una llamada a la base de datos. Comenté todo lo que tenía que ver con las llamadas.
+6.- corremos el make migrations : python3 manage.py makemigrations y luego migrate.
+7.- dumpeamos solo la data dentro de la base de datos. Desde la shell: psql -h localhost -U postgres -d fynsa_db -a < fynsa_db_respaldo_01-06-2020
+8.- levante el servidor. Debería funcionar.
+
+
+
+

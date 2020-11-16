@@ -1,0 +1,334 @@
+{% extends 'index.html' %}
+
+{% block contenido %}
+
+
+<div class="row">
+  <div class="diplay-4">Comportamiento</div>
+  <div id='Serie_comportamiento_div'></div>
+</div>
+
+<div class="row">
+  <h4>Cliente Facturas.</h4>
+</div>
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th class="small" scope="col">fecha</th>
+      <th class="small" scope="col">folio</th>
+      <th class="small" scope="col">cliente</th>
+      <th class="small" scope="col">monto neto</th>
+    
+    </tr>
+  </thead>
+  <tbody>
+      {% for b in cliente_facturas %}
+    <tr>
+      <td class="small">{{b.fecha_emision}}</td>
+      <td class="small">{{b.folio_factura}}</td>
+      <td class="small">{{b.cliente}}</td>
+      <td class="small">{{b.monto_neto}}</td>
+
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<!-- ================ -->
+
+    <div class="row">
+        <h4>Cliente provisiones lado buy.</h4>
+    </div>
+    <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th class="small" scope="col">fecha</th>
+            <th class="small" scope="col">nemo</th>
+            <th class="small" scope="col">monto</th>
+            <th class="small" scope="col">otc/tr</th>
+            <th class="small" scope="col">tipo de pago</th>
+            <th class="small" scope="col">buy</th>
+            <th class="small" scope="col">seller</th>
+            <th class="small" scope="col">trader_buy</th>
+            <th class="small" scope="col">trader_seller</th>
+            <th class="small" scope="col">fee_buy</th>
+            <th class="small" scope="col">fee_seller</th>
+            <th class="small" scope="col">fee_buy_clp</th>
+            <th class="small" scope="col">fee_seller_clp</th>
+          </tr>
+        </thead>
+        <tbody>
+            {% for b in cliente_provisiones_buy %}
+          <tr>
+            <td class="small">{{b.fecha}}</td>
+            <td class="small">{{b.nemo}}</td>
+            <td class="small">{{b.monto}}</td>
+            <td class="small">{{b.otc_tr}}</td>
+            <td class="small">{{b.tipo_de_pago}}</td>
+            <td class="small">{{b.buy}}</td>
+            <td class="small">{{b.seller}}</td>
+            <td class="small">{{b.trader_buy}}</td>
+            <td class="small">{{b.trader_seller}}</td>
+            <td class="small">{{b.fee_buyer}}</td>
+            <td class="small">{{b.fee_seller}}</td>
+            <td class="small">{{b.fee_buyer_clp}}</td>
+            <td class="small">{{b.fee_seller_clp}}</td>
+
+     
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <!-- =================== -->
+
+
+
+
+   
+    <div class="row">
+        <h4>Cliente provisiones lado seller.</h4>
+    </div>
+    <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th class="small" scope="col">fecha</th>
+            <th class="small" scope="col">nemo</th>
+            <th class="small" scope="col">monto</th>
+            <th class="small" scope="col">otc/tr</th>
+            <th class="small" scope="col">tipo de pago</th>
+            <th class="small" scope="col">buy</th>
+            <th class="small" scope="col">seller</th>
+            <th class="small" scope="col">trader_buy</th>
+            <th class="small" scope="col">trader_seller</th>
+            <th class="small" scope="col">fee_buy</th>
+            <th class="small" scope="col">fee_seller</th>
+            <th class="small" scope="col">fee_buy_clp</th>
+            <th class="small" scope="col">fee_seller_clp</th>
+          </tr>
+        </thead>
+        <tbody>
+            {% for b in cliente_provisiones_seller %}
+          <tr>
+            <td class="small">{{b.fecha}}</td>
+            <td class="small">{{b.nemo}}</td>
+            <td class="small">{{b.monto}}</td>
+            <td class="small">{{b.otc_tr}}</td>
+            <td class="small">{{b.tipo_de_pago}}</td>
+            <td class="small">{{b.buy}}</td>
+            <td class="small">{{b.seller}}</td>
+            <td class="small">{{b.trader_buy}}</td>
+            <td class="small">{{b.trader_seller}}</td>
+            <td class="small">{{b.fee_buyer}}</td>
+            <td class="small">{{b.fee_seller}}</td>
+            <td class="small">{{b.fee_buyer_clp}}</td>
+            <td class="small">{{b.fee_seller_clp}}</td>
+
+     
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <!-- ======================= -->
+
+      <div class="row">
+        <h4>Cliente Ida y Vuelta lado buyer.</h4>
+    </div>
+    <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th class="small" scope="col">fecha</th>
+            <th class="small" scope="col">nemo</th>
+            <th class="small" scope="col">monto</th>
+            <th class="small" scope="col">otc/tr</th>
+            <th class="small" scope="col">tipo de pago</th>
+            <th class="small" scope="col">buy</th>
+            <th class="small" scope="col">seller</th>
+            <th class="small" scope="col">trader_buy</th>
+            <th class="small" scope="col">trader_seller</th>
+            <th class="small" scope="col">fee_buy</th>
+            <th class="small" scope="col">fee_seller</th>
+            <th class="small" scope="col">fee_buy_clp</th>
+            <th class="small" scope="col">fee_seller_clp</th>
+          </tr>
+        </thead>
+        <tbody>
+            {% for b in cliente_idayvuelta_buyer %}
+          <tr>
+            <td class="small">{{b.fecha}}</td>
+            <td class="small">{{b.nemo}}</td>
+            <td class="small">{{b.monto}}</td>
+            <td class="small">{{b.otc_tr}}</td>
+            <td class="small">{{b.tipo_de_pago}}</td>
+            <td class="small">{{b.buy}}</td>
+            <td class="small">{{b.seller}}</td>
+            <td class="small">{{b.trader_buy}}</td>
+            <td class="small">{{b.trader_seller}}</td>
+            <td class="small">{{b.fee_buyer}}</td>
+            <td class="small">{{b.fee_seller}}</td>
+            <td class="small">{{b.fee_buyer_clp}}</td>
+            <td class="small">{{b.fee_seller_clp}}</td>
+
+     
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+     <!-- ======================= -->
+
+     <div class="row">
+      <h4>Cliente Ida y Vuelta lado seller.</h4>
+  </div>
+  <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th class="small" scope="col">fecha</th>
+          <th class="small" scope="col">nemo</th>
+          <th class="small" scope="col">monto</th>
+          <th class="small" scope="col">otc/tr</th>
+          <th class="small" scope="col">tipo de pago</th>
+          <th class="small" scope="col">buy</th>
+          <th class="small" scope="col">seller</th>
+          <th class="small" scope="col">trader_buy</th>
+          <th class="small" scope="col">trader_seller</th>
+          <th class="small" scope="col">fee_buy</th>
+          <th class="small" scope="col">fee_seller</th>
+          <th class="small" scope="col">fee_buy_clp</th>
+          <th class="small" scope="col">fee_seller_clp</th>
+        </tr>
+      </thead>
+      <tbody>
+          {% for b in cliente_idayvuelta_seller %}
+        <tr>
+          <td class="small">{{b.fecha}}</td>
+          <td class="small">{{b.nemo}}</td>
+          <td class="small">{{b.monto}}</td>
+          <td class="small">{{b.otc_tr}}</td>
+          <td class="small">{{b.tipo_de_pago}}</td>
+          <td class="small">{{b.buy}}</td>
+          <td class="small">{{b.seller}}</td>
+          <td class="small">{{b.trader_buy}}</td>
+          <td class="small">{{b.trader_seller}}</td>
+          <td class="small">{{b.fee_buyer}}</td>
+          <td class="small">{{b.fee_seller}}</td>
+          <td class="small">{{b.fee_buyer_clp}}</td>
+          <td class="small">{{b.fee_seller_clp}}</td>
+
+   
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+
+
+      <!-- ============= -->
+
+      <div class="row">
+        <h4>Cliente provisiones base, ambos lados.</h4>
+    </div>
+    <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th class="small" scope="col">fecha</th>
+            <th class="small" scope="col">nemo</th>
+            <th class="small" scope="col">monto</th>
+            <th class="small" scope="col">otc/tr</th>
+            <th class="small" scope="col">tipo de pago</th>
+            <th class="small" scope="col">buy</th>
+            <th class="small" scope="col">seller</th>
+            <th class="small" scope="col">trader_buy</th>
+            <th class="small" scope="col">trader_seller</th>
+            <th class="small" scope="col">fee_buy</th>
+            <th class="small" scope="col">fee_seller</th>
+            <th class="small" scope="col">fee_buy_clp</th>
+            <th class="small" scope="col">fee_seller_clp</th>
+          </tr>
+        </thead>
+        <tbody>
+            {% for b in cliente_provisiones_depos %}
+          <tr>
+            <td class="small">{{b.fecha}}</td>
+            <td class="small">{{b.nemo}}</td>
+            <td class="small">{{b.monto}}</td>
+            <td class="small">{{b.otc_tr}}</td>
+            <td class="small">{{b.tipo_de_pago}}</td>
+            <td class="small">{{b.buy}}</td>
+            <td class="small">{{b.seller}}</td>
+            <td class="small">{{b.trader_buy}}</td>
+            <td class="small">{{b.trader_seller}}</td>
+            <td class="small">{{b.fee_buyer}}</td>
+            <td class="small">{{b.fee_seller}}</td>
+            <td class="small">{{b.fee_buyer_clp}}</td>
+            <td class="small">{{b.fee_seller_clp}}</td>
+
+     
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      
+<!-- ========================== -->
+      <div class="row">
+        <h4>Cliente Facturas.</h4>
+    </div>
+    <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th class="small" scope="col">fecha</th>
+            <th class="small" scope="col">folio</th>
+            <th class="small" scope="col">cliente</th>
+            <th class="small" scope="col">monto neto</th>
+          
+          </tr>
+        </thead>
+        <tbody>
+            {% for b in cliente_facturas %}
+          <tr>
+            <td class="small">{{b.fecha_emision}}</td>
+            <td class="small">{{b.folio_factura}}</td>
+            <td class="small">{{b.cliente}}</td>
+            <td class="small">{{b.monto_neto}}</td>
+   
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+<script type="text/javascript">
+      google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(SerieComportamiento);
+      
+      function SerieComportamiento() {
+        var data = google.visualization.arrayToDataTable([
+        ['Fecha', 'Provision'],
+        {% for b in serie_comportamiento %}
+        [new Date('{{b.fecha | safe }}'),{{b.provision | safe}}],
+        {% endfor %}
+    ]);
+    var options = {
+                    title: 'Provisiones por cliente',
+                    legend: { position: 'bottom' },
+                    width: 1800,
+                    height: 800,
+                    pointSize: 4,
+                    hAxis:{
+                        format:'dd/MM/YY',
+                        slantedText:true,
+                                                   
+                    },
+                    };
+        
+                          
+
+
+var chart = new google.visualization.LineChart(document.getElementById('Serie_comportamiento_div'));
+chart.draw(data, options);
+}
+
+</script>
+
+{% endblock %}

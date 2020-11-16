@@ -1,0 +1,408 @@
+
+
+.username{
+    font-size: 17px;
+    
+}
+.jumbotron{
+    margin-top: 20px;
+    background-image: url("http://127.0.0.1:8000/static/BASES/img/Zoom_Fondos_1.jpg");
+    background-size: cover;
+    }
+
+#container_login{
+    background-image: url("http://127.0.0.1:8000/static/BASES/img/trabajo_03.jpg");
+    background-size: 100% 100%;
+    display: flex;
+    height:600px;
+    width:100%;
+}
+
+
+.contenedor{
+    position:absolute;
+    width: 90%;
+    height: 100%;
+    margin:20px;
+    padding-left:30px ;
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    grid-template-rows: auto auto 400px auto auto auto auto auto auto auto auto auto auto;
+
+    
+}
+.contenedor > #Titulo_principal{
+    text-align: center;
+    margin-bottom: 50px;
+    /* border-style: solid; */
+    font-size: 25px;
+    grid-column: 1/-1;
+    grid-row: 1;
+}
+.contenedor >#Titulo_secundario{
+    text-align: right;
+    font-weight: bold;
+    margin-bottom: 50px;
+    /* border-style: solid;  */
+    font-size: 25px;
+    grid-column: 1/-1;
+    grid-row: 2;
+}
+
+.contenedor >.rfi_generacion_torta{
+    justify-content: center;
+     /* border-style: solid; */
+    grid-column: 1 / 3 ;
+    grid-row:3;
+}
+
+.contenedor >.rfi_generacion_torta_tabla{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* border-style: solid; */
+    grid-column:3;
+    grid-row: 3;
+}
+.contenedor >.rfi_generacion{
+    margin-top: 40px;
+    padding-top: 40px;
+    grid-column:1/-1;
+    grid-row: 4;
+}
+.contenedor >.rfi_generacion_tabla{
+    padding-top: 40px;
+    grid-column:1/-1;
+    grid-row: 5;
+}
+.contenedor >.rfi_generacion_categoria_donut{
+    margin: 20px;
+    
+    padding-top: 40px;
+    grid-column:1/3;
+    grid-row: 6;
+}
+.contenedor >.rfi_generacion_categoria_tabla_donut{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 20px;
+    padding-top: 40px;
+    grid-column:3;
+    grid-row: 6;
+}
+
+.contenedor > .rfi_generacion_pais_donut{
+    margin: 20px;
+    padding-top: 40px;
+    grid-column:1 / 3;
+    grid-row: 7;
+}
+.contenedor > .rfi_generacion_pais_tabla_donut{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 20px;
+    padding-top: 40px;
+    grid-column:3;
+    grid-row: 7;
+}
+
+.contenedor >.rfi_country_torta{
+    margin: 20px;
+    padding-top: 40px;
+    grid-column:1/3;
+    grid-row: 8;
+}
+.contenedor >.rfi_country_torta_tabla{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 20px;
+    padding-top: 1%;
+    grid-column:3;
+    grid-row: 8;
+}
+.contenedor >.rfi_country_geo_torta{
+    display: flex;
+    justify-content: center;
+    margin: 20px;
+    grid-column:1/-1;
+    grid-row: 9;
+}
+.contenedor > .rfi_tabla_papeles{
+    display: flex;
+    justify-content: center;
+    margin: 20px;
+    grid-column:1/-1;
+    grid-row: 10;
+
+
+}
+.contenedor >.series{
+    grid-column:1/-1;
+    grid-row: 11;
+
+}
+.contenedor > .rfi_tabla_brk{
+    display: flex;
+    justify-content: center;
+    margin: 20px;
+    grid-column:1/-1;
+    grid-row: 12;
+    
+
+}
+
+.contenedor > .cat_pais_div{
+    grid-column:1/-1;
+    grid-row: 13;
+}
+
+
+/* ==========================================================
+==========================================================
+==========================================================
+==========================================================
+========================================================== */
+
+.contenedor_bases{
+    
+    position:absolute;
+    width: 90%;
+    height: 100%;
+    margin:20px;
+    padding-left:30px ;
+    display: grid;
+    grid-gap: 10px;
+    grid-template-columns: repeat(2,1fr);
+    grid-template-rows: repeat(21,auto);
+
+}
+.contenedor_bases>h1{
+    font-size: 30px;
+}
+.contenedor_bases>.titulo_principal{
+    text-align: center;
+    font-size: 35px;
+    grid-column: 1/-1;
+    grid-row: 1;
+}
+.contenedor_bases>.GenTorta_class{
+   
+    grid-column: 1;
+    grid-row: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+}
+.contenedor_bases>.GenTorta_tabla_class{
+  
+    grid-column: 2;
+    grid-row: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+        
+}
+      
+.contenedor_bases>.gen_bases_class{
+   
+    grid-column: 1/-1;
+    grid-row: 4;
+    display: flex;
+    justify-content: center;
+}
+.contenedor_bases>.gen_depos_class{
+   
+    grid-column: 1/-1;
+    grid-row: 5;
+    display: flex;
+    justify-content: center;
+}
+.contenedor_bases>.serie_generacion_class{
+   
+    grid-column: 1/-1;
+    grid-row: 6;
+    margin-top: 40px;
+   
+}
+.contenedor_bases>.serie_generacion_apilada_class{
+  
+    grid-column: 1/-1;
+    grid-row: 7;
+    margin-top: 40px;
+   
+}
+.contenedor_bases>.TransTorta_class{
+    margin-top: 50px;
+    grid-column: 1/-1;
+    grid-row: 8;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+   
+}
+.contenedor_bases>.TransTorta_class>#TransTorta_div{
+    justify-items: center;
+   
+}
+
+.contenedor_bases>.montos_otc_class{
+    
+    grid-column: 1/-1;
+    grid-row: 9;
+    display: flex;
+    justify-content: center;
+}
+.contenedor_bases>.montos_tr_class{
+  
+    grid-column: 1/-1;
+    grid-row: 10;
+    display: flex;
+    justify-content: center;
+}
+
+.contenedor_bases>.serie_montos_class{
+    margin-top: 30px;
+   
+    grid-column: 1/-1;
+    grid-row: 11;
+  
+}
+.contenedor_bases>.serie_conteo_class{
+    
+    grid-column: 1/-1;
+    grid-row: 12;
+    margin-top: 40px;
+   
+}
+.contenedor_bases>.serie_cobranzas_class{
+   
+    grid-column: 1/-1;
+    grid-row: 13;
+    margin-top: 40px;
+  
+}
+.contenedor_bases>.idayvuelta_class{
+    margin-top: 50px;
+    grid-column: 1/-1;
+    grid-row: 14;
+    display: flex;
+    flex-direction: column;
+    align-items:center ;
+   
+}
+
+.contenedor_bases>.cobranzas_class{
+    margin-top: 50px;
+   
+    grid-column: 1/-1;
+    grid-row: 15;
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+    grid-template-rows: repeat(2,auto);
+  }
+
+  .contenedor_bases>.cobranzas_class>.titulo{
+    font-size: 30px;
+    grid-row: 1;  
+    grid-column: 1/-1;
+  }
+  .contenedor_bases>.cobranzas_class>#cobranzastabla_div{
+    grid-row: 2;  
+    grid-column: 1;
+  }
+  .contenedor_bases>.cobranzas_class>#cobranzastabla_div{
+    grid-row: 2;  
+    grid-column: 2;
+  }
+
+
+.contenedor_bases>.genconsol_class{
+    margin-top: 50px;
+    grid-column: 1/-1;
+    grid-row: 16;
+}
+
+.contenedor_bases>.instrumentos_bases_class{
+    margin-top: 50px;
+    grid-column: 1/-1;
+    grid-row: 17;
+    display: flex;
+    flex-direction: column;
+    align-items:center ;
+ 
+}
+.contenedor_bases>.instrumentos_dap_class{
+    margin-top: 50px;
+   
+    grid-column: 1/-1;
+    grid-row: 18;
+    display: flex;
+    flex-direction: column;
+    align-items:center ;
+  
+}
+
+.contenedor_bases>.vencimientos_class{
+    margin-top: 50px;
+   
+    grid-column: 1/-1;
+    grid-row: 19;
+    margin-bottom: 40px;
+  
+ 
+}
+
+.contenedor_bases>.generacion_apilada_class{
+    margin-top: 50px;
+    margin-bottom: 50px;
+    grid-column: 1/-1;
+    grid-row: 20;
+   
+}
+.contenedor_bases>.facturacion_class{
+    margin-top: 50px;
+    margin-bottom: 50px;
+    grid-column: 1/-1;
+    grid-row: 21;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+   
+}
+
+.contenedor_bases>.no_operaron_class{
+    margin-top: 50px;
+    margin-bottom: 50px;
+    grid-column: 1/-1;
+    grid-row: 22;
+      
+}
+
+.contenedor_bases>.no_operaron_class > .lista_no_operaron_class{
+    margin-top: 50px;
+    margin-bottom: 50px;
+    display: grid;
+    grid-gap: 5px;
+    grid-template-columns: repeat(5,1fr);
+    
+   
+   
+}
+
+
+.letragrande{
+    font-size: 16px;
+}
+
+
+.titulo{
+    margin-bottom: 30px;
+    text-align: center;
+    font-size: 30px;
+    
+}

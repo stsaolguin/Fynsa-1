@@ -1,0 +1,32 @@
+nombre;serie;color
+PROVISION BASES TR,0,#137AFD
+PROVISION BASES OTC,1,#4495FD
+PROVISION DEPOS TR,2,#FF9900
+PROVISION DEPOS OTC,3,#FBAD38
+GENERACION BASES TR,4,#80B7FD
+GENERACION BASES OTC,5,#C5DDFC
+GENERACION DEPOS TR,6,#FEC774
+GENERACION DEPOS OTC,7,#FAD59C
+ 
+
+0:{color:'#137AFD'},
+1:{color:'#4495FD'}, 
+2:{color:'#FF9900'}, 
+3:{color:'#FBAD38'}, 
+4:{color:'#80B7FD'}, 
+5:{color:'#C5DDFC'},
+6:{color:'#FEC774'},   
+7:{color:'#FAD59C'}, 
+
+
+montos transados:
+
+OTC BASES:
+OTC DEPOS:
+TR BASES:
+TR DEPOS:
+0:{color:'#E59866'},
+1:{color:'#D35400'}, 
+2:{color:'#76D7C4'}, 
+3:{color:'#1ABC9C'},
+colors:['#E59866','#D35400','#76D7C4','#1ABC9C'],

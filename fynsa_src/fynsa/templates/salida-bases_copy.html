@@ -1,0 +1,1364 @@
+{% extends "index.html" %}
+
+
+{% block contenido %}
+<div class="contenedor_bases">
+    <div class="titulo_principal">Generaciones entre {{ fecha_inicial }} y {{ fecha_final }}.  </div>
+    <div class="GenTorta_class">
+        <div id="GenTorta_div"></div>
+    </div>   
+    <div class="GenTorta_tabla_class">
+        <div id="GenTorta_tabla_div"></div>
+    </div>
+   
+    
+        
+          <h1 class="titulo">¿Cuál ha sido la generación por cliente y categoría?</h1>
+            
+                <div class="gen_bases_class">
+                        <div id="ProBases_div"></div>   
+                        <div id="GenBases_div"></div>
+                </div>
+                <div class="gen_depos_class">      
+                        <div id="ProDepos_div"></div>
+                        <div id="GenDepos_div"></div>
+                </div>
+           
+        
+       
+        <div class="serie_generacion_class">
+            <h1 class="titulo">¿Cómo ha sido la generación diaria total en pesos ($)?.</h1>
+            <h5>No incluye días en $0 porque no se ingresan</h5>
+            <div id='Serie_Generacion_div'></div>
+        </div>
+        
+        <div class="serie_generacion_apilada_class">
+          <h1 class="titulo">¿Cómo ha sido la generación diaria total en pesos ($) por categoria?</h1>
+          <div id='Serie_Generacion_apilada_div'></div>
+        </div>
+
+    <!-- ============================ aca termina un modulo  -->
+    <div class="TransTorta_class">
+        <div class="titulo">¿Cómo ha sido la actividad de montos transados en el período {{ fecha_inicial }} y {{ fecha_final }} ?</div>
+        <div id='TransTorta_div'></div>
+    </div>
+    
+        <div class="montos_otc_class">
+               <div id='Monto_OTC_Bases_div'></div>
+               <div id='Monto_OTC_Depos_div'></div>
+        </div>
+        <div class="montos_tr_class">
+                <div id='Monto_TR_Bases_div'></div>
+                <div id='Monto_TR_Depos_div'></div>
+        </div>
+        <div class="serie_montos_class">
+          <div id="Serie_Montos_div"></div>            
+        </div>
+        <div class="serie_conteo_class">
+              <div id="Serie_conteo_div"></div>
+        </div>
+            <!-- ============================ aca empieza un modulo  -->
+         <div class="serie_cobranzas_class">
+            <div id="Serie_cobranzas_div"></div>
+        </div>
+         <div class="idayvuelta_class">
+              <div class="titulo">Idas y Vuelta en el período {{ fecha_inicial }} y {{ fecha_final }}  : {{ idayvueltas_total.total_idavuelta }}</div>
+              <div id="idayvueltatabla_div"></div>
+        </div>
+        <div class="cobranzas_class">
+            <div class="titulo">Por Cobrar desde el Big Bang! : $ {{ saldo_calle.calle }}</div>
+            <div id="cobranzastabla_div"></div>
+            <div id="torta_deuda_div"></div>
+            
+        </div>
+            <!-- ============================ aca termina un modulo  -->
+        <div class="genconsol_class">
+                <div class="titulo">Generación consolidada en el período de estudio {{ fecha_inicial }} y {{ fecha_final }} .</div>
+                <div id="generacionconsolidadatabla_div"></div>
+                
+        </div>   
+
+<!-- ===================================== COMIENZO INSTRUMENTOS CON MAS GENERACION ===== -->
+          
+        
+            <div class="instrumentos_bases_class">
+              <div class="titulo">Instrumentos con más generación en el período de estudio {{ fecha_inicial }} y {{ fecha_final }} . Bases.</div>
+              <div id="basesmasgeneraciontabla_div"></div>
+           </div>
+
+            <div class="instrumentos_dap_class">
+                <div class="titulo">Instrumentos con más generación en el período de estudio {{ fecha_inicial }} y {{ fecha_final }} . Depos.</div>
+                <div id="dapmasgeneraciontabla_div"></div>
+           </div>
+
+            <!-- ======================= FIN DE INSTRUMENTOS MAS GENERACION ======= -->
+
+            <!-- ============================ aca empieza un modulo  -->
+ 
+            <div class="vencimientos_class">
+            <div class="titulo">Vencimientos</div>
+            <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">fecha Inicial</th>
+                    <th scope="col">nemo</th>
+                    <th scope="col">días</th>
+                    <th scope="col">monto</th>
+                    <th scope="col">buy</th>
+                    <th scope="col">seller</th>
+                    <th scope="col">tasa</th>
+                    <th scope="col">fecha Final</th>
+                  </tr>
+                </thead>
+                <tbody>
+                    {% for d in vencimientos %}
+                  <tr>
+                    <td>{{ d.fecha }}</td>
+                    <td>{{ d.nemo }}</td>
+                    <td>{{ d.dias }}</td>
+                    <td>{{ d.monto }}</td>
+                    <td>{{ d.buy }}</td>
+                    <td>{{ d.seller }}</td>
+                    <td>{{ d.tasa }}</td>
+                    <td>{{ d.fecha_final }}</td>
+                   </tr>
+                  {% endfor %}
+                  </tbody>
+              </table>
+
+            </div>
+            <div class="generacion_apilada_class">
+                <div class="titulo">Generación Mensual.</div>
+                   <div id="Serie_Mensual_Generacion_apilada_div"></div>
+            </div>
+            <div class="facturacion_class">
+                <div class="titulo">Facturación.</div>
+                   <div id="facturastabla_div"></div>
+            </div>
+            <div class="no_operaron_class">
+                <div class="titulo">Clientes que no han generado.</div>
+                     
+                <ul class="lista_no_operaron_class">
+                        {% for d in no_operaron %}
+                        <li>{{ d.nombre }}</li>
+                        {% endfor %}
+                </ul>
+                </div>
+
+
+           <!-- ============================ aca termina un modulo  -->
+</div>
+
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript">
+            google.charts.load('current', {packages: ['corechart','bar','Table'], 'languaje':'es-cl'});
+            google.charts.setOnLoadCallback(ProvidPorBases);
+            google.charts.setOnLoadCallback(GenPorDepos);
+            google.charts.setOnLoadCallback(GenPorBases);
+            google.charts.setOnLoadCallback(GenTorta);
+            google.charts.setOnLoadCallback(TransTorta);
+            google.charts.setOnLoadCallback(Monto_OTC_Bases);
+            google.charts.setOnLoadCallback(Monto_OTC_Depos);
+            google.charts.setOnLoadCallback(Monto_TR_Depos);
+            google.charts.setOnLoadCallback(Monto_TR_Bases);
+            google.charts.setOnLoadCallback(SerieGeneraciones);
+            google.charts.setOnLoadCallback(SerieGeneracionesApiladas);
+            google.charts.setOnLoadCallback(ProvidPorDepos);
+            google.charts.setOnLoadCallback(SerieMontos);
+            google.charts.setOnLoadCallback(SerieCobranzas);
+            google.charts.setOnLoadCallback(SerieGeneracionesMensualApiladas);
+            google.charts.setOnLoadCallback(SerieConteo);
+            google.charts.setOnLoadCallback(GeneracionConsolidadaTabla);
+            google.charts.setOnLoadCallback(IdayvueltaTabla);
+            google.charts.setOnLoadCallback(CobranzasTabla);
+            google.charts.setOnLoadCallback(DAPMasGeneracionTabla);
+            google.charts.setOnLoadCallback(BasesMasGeneracionTabla);
+            google.charts.setOnLoadCallback(FacturasTabla);
+            function ProvidPorBases() {
+                                            var data = google.visualization.arrayToDataTable([
+                                            ['Cliente', 'Generación',{role:'annotation'}],
+                                            {% for b in lista_provisiones_por_bases %}
+                                            ['{{b.cliente | safe }}' , {{b.pro | safe}},{{b.pro | safe}}],
+                                            {% endfor %}
+                                        ]);
+                                        var altoDelGrafico = data.getNumberOfRows()*40;
+                                        var altoDelLienzo = altoDelGrafico + 100;
+                                        var valorMaximo = data.getColumnRange(1);
+                                                                               
+                                        var options = {         
+                                            colors :['#137AFD'],
+                                            // backgroundColor:'red',
+                                            title: 'PROVISIONES POR BASES',
+                                            titleTextStyle:{
+                                                fontSize: 20,
+                                            },
+                                            width: '650',
+                                            height: altoDelLienzo,
+                                            chartArea: {
+                                                width: '50%',
+                                                left : '33%',
+                                                height:altoDelGrafico,
+                                                // backgroundColor:'green',
+                                                
+                                                },
+                                            hAxis: {
+                                                    title: 'Generación',
+                                                    minValue: 0,
+                                                    maxValue : valorMaximo.max*1.5,
+                                                    
+                                                },
+                                            
+                                            legend: { position: "none" },
+                                            bar : {groupWidth:'20'},
+                                            fontSize : '17',
+                                            annotations : {
+                                                  textStyle:{
+                                                  fontSize:17,
+                                                  color:'black',
+                                                  alwaysOutside:false,
+                                                  },
+                                                },        
+                                            
+                                                                };
+            // acá empieza va lo incluido en stack OverflowEvent
+            
+                var groupData = google.visualization.data.group(
+                    data,
+                    [{column: 0, modifier: function () {return 'total'}, type:'string'}],
+                    [{column: 1, aggregation: google.visualization.data.sum, type: 'number'}]
+                );
+
+                var formatPercent = new google.visualization.NumberFormat({
+                    pattern: '#,##0.0%'
+                });
+
+                var formatShort = new google.visualization.NumberFormat({
+                    pattern: '$#,##0'
+                });
+
+       
+                var view = new google.visualization.DataView(data);
+                view.setColumns([0, 1, {
+                    calc: function (dt, row) {
+                    var amount =  formatShort.formatValue(dt.getValue(row, 1));
+                    var percent = formatPercent.formatValue(dt.getValue(row, 1) / groupData.getValue(0, 1));
+                    return amount + ' (' + percent + ')';
+                    },
+                    type: 'string',
+                    role: 'annotation'
+                }]);
+
+            // acá termina va lo incluido en stack OverflowEvent
+
+            var chart = new google.visualization.BarChart(document.getElementById('ProBases_div'));
+            chart.draw(view, options);
+            }
+
+            // =======================================
+            // =======================================
+
+            function GenPorDepos() {
+                                            var data = google.visualization.arrayToDataTable([
+                                            ['Cliente', 'Generación',{role:'annotation'}],
+                                            {% for b in lista_depositos_via_tasa %}
+                                            ['{{b.cliente | safe }}' , {{b.util_tasa | safe}}, {{b.util_tasa | safe}}],
+                                            {% endfor %}
+                                        ]);
+                                        var altoDelGrafico = data.getNumberOfRows()*40;
+                                        var altoDelLienzo = altoDelGrafico + 100;
+                                        var options = {
+                                            title: 'GENERACIONES POR DEPÓSITOS',
+                                            colors :['#FEC774'],
+                                            titleTextStyle:{
+                                                fontSize: 20,
+                                            },
+                                            width: '650',
+                                            height: altoDelLienzo,
+                                            chartArea: {
+                                                width: '50%',
+                                                height:altoDelGrafico,
+                                                left : '33%',
+                                                },
+                                            hAxis: {
+                                            title: 'Generacion',
+                                            minValue: 0,
+                                            maxValue : data.getColumnRange(1).max*1.5,
+                                            },
+                                            legend: { position: "none" },
+                                            bar : {groupWidth:'20'},
+                                            fontSize : '17',
+                                            annotations : {
+                                                  textStyle:{
+                                                  fontSize:17,
+                                                  color:'black'
+                                                  },
+                                                }, 
+                                            
+                                                                };
+            // acá empieza va lo incluido en stack OverflowEvent
+            
+                var groupData = google.visualization.data.group(
+                    data,
+                    [{column: 0, modifier: function () {return 'total'}, type:'string'}],
+                    [{column: 1, aggregation: google.visualization.data.sum, type: 'number'}]
+                );
+
+                var formatPercent = new google.visualization.NumberFormat({
+                    pattern: '#,##0.0%'
+                });
+
+                var formatShort = new google.visualization.NumberFormat({
+                    pattern: '$#,##0'
+                });
+
+                var view = new google.visualization.DataView(data);
+                view.setColumns([0, 1, {
+                    calc: function (dt, row) {
+                    var amount =  formatShort.formatValue(dt.getValue(row, 1));
+                    var percent = formatPercent.formatValue(dt.getValue(row, 1) / groupData.getValue(0, 1));
+                    return amount + ' (' + percent + ')';
+                    },
+                    type: 'string',
+                    role: 'annotation'
+                }]);
+
+            // acá termina va lo incluido en stack OverflowEvent
+
+            var chart = new google.visualization.BarChart(document.getElementById('GenDepos_div'));
+            chart.draw(view, options);
+            }
+            // ========================================
+            // ========================================
+
+
+
+            function GenPorBases() {
+                                            var data = google.visualization.arrayToDataTable([
+                                            ['Cliente', 'Generación',{role:'annotation'}],
+                                            {% for b in lista_bases_via_tasa %}
+                                            ['{{b.cliente | safe }}' , {{b.util_tasa | safe}}, {{b.util_tasa | safe}}],
+                                            {% endfor %}
+                                        ]);
+                                        var altoDelGrafico = data.getNumberOfRows()*40;
+                                        var altoDelLienzo = altoDelGrafico + 100;
+                                        var options = {
+                                            colors:['#C5DDFC'],
+                                            title: 'GENERACIONES POR BASES',
+                                            titleTextStyle:{
+                                                fontSize: 20,
+                                            },
+                                            width: '650',
+                                            height:altoDelLienzo,
+                                            chartArea: {
+                                                width: '50%',
+                                                height:altoDelGrafico,
+                                                left : '33%',
+                                                },
+                                            hAxis: {
+                                            title: 'Generacion',
+                                            minValue: 0,
+                                            maxValue : data.getColumnRange(1).max*1.5,
+                                            },
+                                            legend: { position: "none" },
+                                            bar : {groupWidth:'20'},
+                                            fontSize : '17',
+                                            annotations : {
+                                                  textStyle:{
+                                                  fontSize:17,
+                                                  color:'black'
+                                                  },
+                                                }, 
+                                            
+                                                                };
+            // acá empieza va lo incluido 
+            
+                var groupData = google.visualization.data.group(
+                    data,
+                    [{column: 0, modifier: function () {return 'total'}, type:'string'}],
+                    [{column: 1, aggregation: google.visualization.data.sum, type: 'number'}]
+                );
+
+                var formatPercent = new google.visualization.NumberFormat({
+                    pattern: '#,##0.0%'
+                });
+
+                var formatShort = new google.visualization.NumberFormat({
+                    pattern: '$#,##0'
+                });
+
+                var view = new google.visualization.DataView(data);
+                view.setColumns([0, 1, {
+                    calc: function (dt, row) {
+                    var amount =  formatShort.formatValue(dt.getValue(row, 1));
+                    var percent = formatPercent.formatValue(dt.getValue(row, 1) / groupData.getValue(0, 1));
+                    return amount + ' (' + percent + ')';
+                    },
+                    type: 'string',
+                    role: 'annotation'
+                }]);
+
+       
+            var chart = new google.visualization.BarChart(document.getElementById('GenBases_div'));
+            chart.draw(view, options);
+            
+            }
+
+
+             // ========================================
+            // ========================================
+
+            function GenTorta() {
+                                            var data = google.visualization.arrayToDataTable([
+                                            ['Cliente', 'Generación',{role:'annotation'}],
+                                            {% for b in torta_generaciones %}
+                                            ['{{b.categoria | safe }}' , {{b.total | safe}}, {{b.total | safe}}],
+                                            {% endfor %}
+                                        ]);
+                                        var datos_tabla = new google.visualization.DataTable();
+                                        datos_tabla.addColumn('string','Procedencia');
+                                        datos_tabla.addColumn('number','Generación');
+                                        
+                                        datos_tabla.addRows([
+                                            ['DAP',{{ total_generaciones_depos.monto_depos | safe }}],
+                                            ['BASES',{{ total_generaciones_bases.monto_bases | safe }}],
+                                            ['TOTAL',{{ total_generaciones.monto | safe }}]
+
+                                        ]);
+                                        var options = {
+                                            title: 'GENERACIÓN TOTAL',
+                                            titleTextStyle:{fontSize:20},
+                                            // is3D:'true',
+                                            width:700,
+                                            height:700,
+                                            chartArea: {width: '100%',height:'50%'},
+                                            // hAxis: {
+                                            // title: 'Generacion',
+                                            // minValue: 0,
+                                            // },
+                                            legend:{position:'labeled'},
+                                            pieSliceText:'value-and-percentage',
+                                            slices:{
+                                                0:{color:'#137AFD'},
+                                                1:{color:'#4495FD'}, 
+                                                2:{color:'#FF9900'}, 
+                                                3:{color:'#FBAD38'}, 
+                                                4:{color:'#80B7FD'}, 
+                                                5:{color:'#C5DDFC'},
+                                                6:{color:'#FEC774'},   
+                                                7:{color:'#FAD59C'}, 
+                                            },
+                                            pieSliceTextStyle:{
+                                                color:'black',
+                                                fontSize:15,
+
+                                            },
+                                            
+                                                                };
+            var datos_tabla_opciones = {
+                alternatingRowStyle:false,
+                cssClassNames:{
+                            headerRow:'letragrande',
+                            tableRow:'letragrande',
+                      },
+            };
+           
+            var chart = new google.visualization.PieChart(document.getElementById('GenTorta_div'));
+            var tabla = new google.visualization.Table(document.getElementById('GenTorta_tabla_div'));
+            chart.draw(data, options);
+            tabla.draw(datos_tabla,datos_tabla_opciones);
+            };
+
+
+            // ==================
+            // ================= 
+            function TransTorta() {
+                                            var data = google.visualization.arrayToDataTable([
+                                            ['Cliente', 'Generación',{role:'annotation'}],
+                                            {% for b in torta_montos_transados %}
+                                            ['{{b.categoria | safe }}' , {{b.total | safe}}, {{b.total | safe}}],
+                                            {% endfor %}
+                                        ]);
+                                        var options = {
+                                            title: 'MONTOS TRANSADOS TOTAL',
+                                            is3D : 'true', 
+                                            width: '80%',
+                                            height:700,
+                                            chartArea: {width: '100%',height:'50%'},
+                                            hAxis: {
+                                            title: 'Montos transados',
+                                            minValue: 0,
+                                            maxValue : data.getColumnRange(1).max*1.5,
+                                            },
+                                            lengend:{position:'left'},
+                                            pieSliceText:'value-and-percentage',
+                                            slices:{
+                                                0:{color:'#E59866'},
+                                                1:{color:'#D35400'}, 
+                                                2:{color:'#76D7C4'}, 
+                                                3:{color:'#1ABC9C'}, 
+                                            },
+                                            pieSliceTextStyle:{
+                                                color:'black',
+                                                fontSize:15,
+
+                                            },
+                                                                };
+           
+            var chart = new google.visualization.PieChart(document.getElementById('TransTorta_div'));
+            chart.draw(data, options);
+            }
+
+
+            // ===============
+            // ===============MONTOS TRANSADOS
+            
+
+
+
+            function Monto_OTC_Bases() {
+                                            var data = google.visualization.arrayToDataTable([
+                                            ['Cliente', 'Generación',{role:'annotation'}],
+                                            {% for b in mt_otc_bases %}
+                                            ['{{b.cliente | safe }}' , {{b.monto_transado | safe}}, {{b.monto_transado | safe}}],
+                                            {% endfor %}
+                                        ]);
+                                        var altoDelGrafico = data.getNumberOfRows()*40;
+                                        var altoDelLienzo = altoDelGrafico + 100;
+                                        var options = {
+                                            title: 'MONTOS TRANSADOS OTC BASES',
+                                            titleTextStyle:{
+                                                fontSize: 20,
+                                            },
+                                            width: '650',
+                                            height:altoDelLienzo,
+                                            chartArea: {
+                                                width: '50%',
+                                                height:altoDelGrafico,
+                                                left : '33%',
+                                                },
+                                            hAxis: {
+                                            title: 'Monto',
+                                            minValue: 0,
+                                            maxValue : data.getColumnRange(1).max*1.5,
+                                            },
+                                            legend: { position: "none" },
+                                            bar : {groupWidth:'20'},
+                                            fontSize : '17',
+                                            annotations : {
+                                                  textStyle:{
+                                                  fontSize:17,
+                                                  color:'black'
+                                                  },
+                                                }, 
+                                            
+                                                                };
+            // acá empieza va lo incluido 
+            
+                var groupData = google.visualization.data.group(
+                    data,
+                    [{column: 0, modifier: function () {return 'total'}, type:'string'}],
+                    [{column: 1, aggregation: google.visualization.data.sum, type: 'number'}]
+                );
+
+                var formatPercent = new google.visualization.NumberFormat({
+                    pattern: '#,##0.0%'
+                });
+
+                var formatShort = new google.visualization.NumberFormat({
+                    pattern: '$#,##0'
+                });
+
+                var view = new google.visualization.DataView(data);
+                view.setColumns([0, 1, {
+                    calc: function (dt, row) {
+                    var amount =  formatShort.formatValue(dt.getValue(row, 1));
+                    var percent = formatPercent.formatValue(dt.getValue(row, 1) / groupData.getValue(0, 1));
+                    return amount + ' (' + percent + ')';
+                    },
+                    type: 'string',
+                    role: 'annotation'
+                }]);
+
+            // acá termina va lo incluido en stack OverflowEvent
+
+            var chart = new google.visualization.BarChart(document.getElementById('Monto_OTC_Bases_div'));
+            chart.draw(view, options);
+            }
+
+
+            // ========OverflowEvent======OverflowEvent
+
+
+            function Monto_TR_Bases() {
+                                            var data = google.visualization.arrayToDataTable([
+                                            ['Cliente', 'Generación',{role:'annotation'}],
+                                            {% for b in mt_tr_bases %}
+                                            ['{{b.cliente | safe }}' , {{b.monto_transado | safe}}, {{b.monto_transado | safe}}],
+                                            {% endfor %}
+                                        ]);
+                                        var altoDelGrafico = data.getNumberOfRows()*40;
+                                        var altoDelLienzo = altoDelGrafico + 100;
+                                        var options = {
+                                            title: 'MONTOS TRANSADOS TR BASES',
+                                            titleTextStyle:{
+                                                fontSize: 20,
+                                            },
+                                            width: '650',
+                                            height:altoDelLienzo,
+                                            chartArea: {
+                                                width: '50%',
+                                                height:altoDelGrafico,
+                                                left : '33%',
+                                                },
+                                            hAxis: {
+                                            title: 'Monto',
+                                            minValue: 0,
+                                            maxValue : data.getColumnRange(1).max*1.5,
+                                            },
+                                            legend: { position: "none" },
+                                            bar : {groupWidth:'20'},
+                                            fontSize : '17',
+                                            annotations : {
+                                                  textStyle:{
+                                                  fontSize:17,
+                                                  color:'black'
+                                                  },
+                                                }, 
+                                            
+                                                                };
+            // acá empieza va lo incluido 
+            
+                var groupData = google.visualization.data.group(
+                    data,
+                    [{column: 0, modifier: function () {return 'total'}, type:'string'}],
+                    [{column: 1, aggregation: google.visualization.data.sum, type: 'number'}]
+                );
+
+                var formatPercent = new google.visualization.NumberFormat({
+                    pattern: '#,##0.0%'
+                });
+
+                var formatShort = new google.visualization.NumberFormat({
+                    pattern: '$#,##0'
+                });
+
+                var view = new google.visualization.DataView(data);
+                view.setColumns([0, 1, {
+                    calc: function (dt, row) {
+                    var amount =  formatShort.formatValue(dt.getValue(row, 1));
+                    var percent = formatPercent.formatValue(dt.getValue(row, 1) / groupData.getValue(0, 1));
+                    return amount + ' (' + percent + ')';
+                    },
+                    type: 'string',
+                    role: 'annotation'
+                }]);
+                var chart = new google.visualization.BarChart(document.getElementById('Monto_TR_Bases_div'));
+            chart.draw(view, options);
+            }
+
+             // ========OverflowEvent======OverflowEvent
+
+
+                function Monto_TR_Depos() {
+                                            var data = google.visualization.arrayToDataTable([
+                                            ['Cliente', 'Generación',{role:'annotation'}],
+                                            {% for b in mt_tr_depos %}
+                                            ['{{b.cliente | safe }}' , {{b.monto_transado | safe}}, {{b.monto_transado | safe}}],
+                                            {% endfor %}
+                                        ]);
+                                        var altoDelGrafico = data.getNumberOfRows()*40;
+                                        var altoDelLienzo = altoDelGrafico + 100;
+                                        var options = {
+                                            title: 'MONTOS TRANSADOS TR DEPÓSITOS',
+                                            titleTextStyle:{
+                                                fontSize: 20,
+                                            },
+                                            width: '650',
+                                            height:altoDelLienzo,
+                                            chartArea: {
+                                                width: '50%',
+                                                height:altoDelGrafico,
+                                                left : '33%',
+                                                },
+                                            hAxis: {
+                                            title: 'Monto',
+                                            minValue: 0,
+                                            maxValue : data.getColumnRange(1).max*1.5,
+                                            },
+                                            legend: { position: "none" },
+                                            bar : {groupWidth:'20'},
+                                            fontSize : '17',
+                                            annotations : {
+                                                  textStyle:{
+                                                  fontSize:17,
+                                                  color:'black'
+                                                  },
+                                                }, 
+                                            
+                                                                };
+            // acá empieza va lo incluido 
+            
+                var groupData = google.visualization.data.group(
+                    data,
+                    [{column: 0, modifier: function () {return 'total'}, type:'string'}],
+                    [{column: 1, aggregation: google.visualization.data.sum, type: 'number'}]
+                );
+
+                var formatPercent = new google.visualization.NumberFormat({
+                    pattern: '#,##0.0%'
+                });
+
+                var formatShort = new google.visualization.NumberFormat({
+                    pattern: '$#,##0'
+                });
+
+                var view = new google.visualization.DataView(data);
+                view.setColumns([0, 1, {
+                    calc: function (dt, row) {
+                    var amount =  formatShort.formatValue(dt.getValue(row, 1));
+                    var percent = formatPercent.formatValue(dt.getValue(row, 1) / groupData.getValue(0, 1));
+                    return amount + ' (' + percent + ')';
+                    },
+                    type: 'string',
+                    role: 'annotation'
+                }]);
+
+            // acá termina va lo incluido en stack OverflowEvent
+
+            var chart = new google.visualization.BarChart(document.getElementById('Monto_TR_Depos_div'));
+            chart.draw(view, options);
+            }
+            // ============================
+            // ============================
+            // ============================
+
+            function Monto_OTC_Depos() {
+                                            var data = google.visualization.arrayToDataTable([
+                                            ['Cliente', 'Generación',{role:'annotation'}],
+                                            {% for b in mt_otc_depos %}
+                                            ['{{b.cliente | safe }}' , {{b.monto_transado | safe}}, {{b.monto_transado | safe}}],
+                                            {% endfor %}
+                                        ]);
+                                        var altoDelGrafico = data.getNumberOfRows()*40;
+                                        var altoDelLienzo = altoDelGrafico + 100;
+                                        var options = {
+                                            title: 'MONTOS TRANSADOS OTC DEPÓSITOS',
+                                            titleTextStyle:{
+                                                fontSize: 20,
+                                            },
+                                            width: '650',
+                                            height:altoDelLienzo,
+                                            chartArea: {
+                                                width: '50%',
+                                                height:altoDelGrafico,
+                                                left : '33%',
+                                                },
+                                            hAxis: {
+                                            title: 'Monto',
+                                            minValue: 0,
+                                            maxValue : data.getColumnRange(1).max*1.5,
+                                            },
+                                            legend: { position: "none" },
+                                            bar : {groupWidth:'20'},
+                                            fontSize : '17',
+                                            annotations : {
+                                                  textStyle:{
+                                                  fontSize:17,
+                                                  color:'black'
+                                                  },
+                                                }, 
+                                            
+                                                                };
+            // acá empieza va lo incluido 
+            
+                var groupData = google.visualization.data.group(
+                    data,
+                    [{column: 0, modifier: function () {return 'total'}, type:'string'}],
+                    [{column: 1, aggregation: google.visualization.data.sum, type: 'number'}]
+                );
+
+                var formatPercent = new google.visualization.NumberFormat({
+                    pattern: '#,##0.0%'
+                });
+
+                var formatShort = new google.visualization.NumberFormat({
+                     pattern: '$#,##0'
+
+                     
+                });
+
+                var view = new google.visualization.DataView(data);
+                view.setColumns([0, 1, {
+                    calc: function (dt, row) {
+                    var amount =  formatShort.formatValue(dt.getValue(row, 1));
+                    var percent = formatPercent.formatValue(dt.getValue(row, 1) / groupData.getValue(0, 1));
+                    return amount + ' (' + percent + ')';
+                    },
+                    type: 'string',
+                    role: 'annotation'
+                }]);
+
+            // acá termina va lo incluido en stack OverflowEvent
+
+            var chart = new google.visualization.BarChart(document.getElementById('Monto_OTC_Depos_div'));
+            chart.draw(view, options);
+            }
+
+            // =======================
+            // =======================
+            // ======================= Aća se generan las seires de tiempo
+
+            function SerieGeneraciones() {
+                                            var data = new google.visualization.arrayToDataTable([
+                                            ['Fecha', 'Generación'],
+                                            {% for b in serie_generaciones %}
+                                            [new Date('{{b.fecha | safe }}') , {{b.monto | safe}}],
+                                            {% endfor %}
+                                        ]);
+                                        var options = {
+                                                        title: 'GENERACIÓN DIARIA',
+                                                        titleTextStyle:{
+                                                            fontSize: 20,
+                                                                  },
+                                                        legend: { position: 'bottom' },
+                                                        width: '100%',
+                                                        height: 600,
+                                                        pointSize: 1,
+                                                        hAxis:{
+                                                            format:'dd/MM/YY',
+                                                            slantedText:'true',
+                                                                                       
+                                                        },
+                                                        trendlines:{
+                                                            0:{
+                                                            type:'linear',
+                                                            color:'green',
+                                                            linewith:1,
+                                                            }
+                                                            },
+                                                        chartArea:{
+                                                            left:'10%',top:'10%',width:'100%',height:'70%',
+                                                        },
+                                                        };
+                                            
+                                                              
+              
+
+            var chart = new google.visualization.LineChart(document.getElementById('Serie_Generacion_div'));
+            chart.draw(data, options);
+            }
+
+            // =======================
+            // ======================= 
+
+            function SerieGeneracionesApiladas() {
+                                            var data = google.visualization.arrayToDataTable([
+                                            ['Fecha','Generación bases', 'Generación depos','Provisión bases','Provisión depósitos'],
+                                            {% for b in serie_generaciones_apiladas %}
+                                            [new Date('{{b.fecha_salida | safe }}'),{{b.generacion_base | safe}},{{b.generacion_depo | safe}},{{b.provision_base | safe}},{{b.provision_depo | safe}}],
+                                            {% endfor %}
+                                        ]);
+                                        var options = {
+                                                        title: 'GENERACIÓN DIARIA POR CATEGORÍA',
+                                                        titleTextStyle:{
+                                                                           fontSize: 20,
+                                                                        },
+                                                        legend: { position: 'bottom' },
+                                                        width: '100%',
+                                                        height: 600,
+                                                        isStacked: 'true',
+                                                        hAxis:{
+                                                            format:'dd/MM/YY',
+                                                            slantedText:'true',
+                                                           },
+                                                        colors:['#D6EAF8','#E64A19','#3498DB','#FF8A65'],
+                                                        chartArea:{
+                                                            left:'10%',top:'10%',width:'100%',height:'70%',
+                                                        },
+                                                        };
+                                            
+                                                              
+              
+
+            var chart = new google.visualization.ColumnChart(document.getElementById('Serie_Generacion_apilada_div'));
+            chart.draw(data, options);
+            }
+            // =========================================0
+            // ==========================================
+            function ProvidPorDepos() {
+                                            var data = google.visualization.arrayToDataTable([
+                                            ['Cliente', 'Generación',{role:'annotation'}],
+                                            {% for b in lista_provisiones_por_depos %}
+                                            ['{{b.cliente | safe }}' , {{b.provision | safe}}, {{b.provision | safe}}],
+                                            {% endfor %}
+                                        ]);
+                                        var altoDelGrafico = data.getNumberOfRows()*40;
+                                        var altoDelLienzo = altoDelGrafico + 100;
+                                        var options = {
+                                            colors:['#FF9900'],
+                                            title: 'PROVISIONES POR DEPÓSITOS',
+                                            titleTextStyle:{
+                                                fontSize: 20,
+                                            },
+                                            width: '650',
+                                            height:altoDelLienzo,
+                                            chartArea: {
+                                                width: '50%',
+                                                height:altoDelGrafico,
+                                                left : '33%',
+                                                },
+                                            hAxis: {
+                                            title: 'Generación',
+                                            minValue: 0,
+                                            },
+                                            legend: { position: "none" },
+                                            bar : {groupWidth:'20'},
+                                            fontSize : '17',
+                                            annotations : {
+                                                  textStyle:{
+                                                  fontSize:17,
+                                                  color:'black'
+                                                  },
+                                                }, 
+                                            
+                                                                };
+            // acá empieza va lo incluido en stack OverflowEvent
+            
+                var groupData = google.visualization.data.group(
+                    data,
+                    [{column: 0, modifier: function () {return 'total'}, type:'string'}],
+                    [{column: 1, aggregation: google.visualization.data.sum, type: 'number'}]
+                );
+
+                var formatPercent = new google.visualization.NumberFormat({
+                    pattern: '#,##0.0%'
+                });
+
+                var formatShort = new google.visualization.NumberFormat({
+                    pattern: '$#,##0'
+                });
+
+                var view = new google.visualization.DataView(data);
+                view.setColumns([0, 1, {
+                    calc: function (dt, row) {
+                    var amount =  formatShort.formatValue(dt.getValue(row, 1));
+                    var percent = formatPercent.formatValue(dt.getValue(row, 1) / groupData.getValue(0, 1));
+                    return amount + ' (' + percent + ')';
+                    },
+                    type: 'string',
+                    role: 'annotation'
+                }]);
+                var chart = new google.visualization.BarChart(document.getElementById('ProDepos_div'));
+            chart.draw(view, options);
+            }
+
+// =================================
+// ===================================
+
+
+function SerieMontos() {
+                                            var data = google.visualization.arrayToDataTable([
+                                            ['Fecha', 'TR BASE', 'TR DEPO', 'OTC BASE', 'OTC DEPO'],
+                                            {% for b in serie_montos_transados %}
+                                            [new Date('{{b.fecha | safe }}') , {{b.monto_tr_base | safe}},{{b.monto_tr_depo | safe}},{{b.monto_otc_base | safe}},{{b.monto_otc_depo | safe}}],
+                                            {% endfor %}
+                                        ]);
+                                        var options = {
+                                                        title: 'MONTOS TRANSADOS POR CATEGORÍA',
+                                                        titleTextStyle:{
+                                                               fontSize: 20,
+                                                                  },
+                                                        legend: { position: 'bottom' },
+                                                        width: '100%',
+                                                        height: 600,
+                                                        isStacked: 'true',
+                                                        hAxis:{
+                                                            format:'dd/MM/YY',
+                                                            slantedText:'true',
+                                                                                       
+                                                        },
+                                                        colors:['#76D7C4','#1ABC9C','#E59866','#D35400'],
+                                                        chartArea:{
+                                                            left:'10%',top:'10%',width:'80%',height:'70%',
+                                                        },
+                                
+                                                        };
+                                            
+                                                              
+              
+
+            var chart = new google.visualization.ColumnChart(document.getElementById('Serie_Montos_div'));
+            chart.draw(data, options);
+            }
+
+            // =======================
+            // ======================= 
+
+            
+             // ======================= Serie Cobranzas
+
+             function SerieCobranzas() {
+                                            var data = google.visualization.arrayToDataTable([
+                                            ['Fecha', 'ida y vuelta','Facturación','Provision','Por Cobrar'],
+                                            {% for b in serie_cobranzas %}
+                                            [new Date('{{b.fecha | safe }}'),{{b.idayvuelta_agregada | safe}},{{b.facturacion_agregada | safe}},{{b.provisiones_agregada | safe}},{{b.saldo | safe}}],
+                                            {% endfor %}
+                                        ]);
+                                        var options = {
+                                                        title: 'COBRANZAS ACUMULADAS DIARIA',
+                                                        titleTextStyle:{
+                                                                fontSize: 20,
+                                                                 },
+                                                        legend: { position: 'bottom' },
+                                                        width: '100%',
+                                                        height: 600,
+                                                        pointSize: 2,                                                                                       
+                                                        hAxis:{
+                                                            format:'dd/MM/YY',
+                                                            slantedText:'true',
+                                                            gridlines:{
+                                                                color: '#333', 
+                                                                },
+                                                                                                                                                   
+                                                        },
+                                                        series: {
+                                                                2: {
+                                                                    color:'#FD8113',
+                                                                    targetAxisIndex:0,
+                                                                },
+                                                                1: {targetAxisIndex:1},
+                                                                3: {targetAxisIndex:1},
+                                                                0: {targetAxisIndex:1},
+                                                                
+                                                                },
+                                                        vAxes: {
+                                                                0: {
+                                                                title:'Provision total (nos deben)',
+                                                                textStyle: {color: '#FD8113'}
+                                                                },
+                                                                1: {
+                                                                title:'Plata',
+                                                                textStyle: {color: 'green'}
+                                                                },
+                                                                
+                                                                
+                                                              },
+                                                        hAxes:{
+                                                            ticks: [new Date(2019,10,17)],
+                                                        },
+                                                        explorer: { actions: ['dragToZoom', 'rightClickToReset'] },
+                                                        chartArea:{
+                                                            left:'10%',top:'10%',width:'80%',height:'70%',
+                                                        },
+                                                                
+                                                        };
+                                            
+                                                              
+              
+
+            var chart = new google.visualization.LineChart(document.getElementById('Serie_cobranzas_div'));
+            chart.draw(data, options);
+            }
+
+
+// ==============================================
+
+
+
+            function SerieGeneracionesMensualApiladas() {
+                                            var data = new google.visualization.DataTable();
+                                            data.addColumn('date','Mes');
+                                            data.addColumn('number','Generacion Bases');
+                                            data.addColumn('number','Generacion Depósitos');
+                                            data.addColumn({type:'number',role:'annotation'});
+                                            data.addColumn('number','80% de la generación');
+                                            data.addColumn('number','clientes activos');
+                                            
+                                            data.addRows([
+                                            {% for b in generacion_mensual %}
+                                            [new Date('{{b.fecha | safe }}'),{{b.monto_bases | safe}},{{b.monto_depositos | safe}},{{b.monto_total | safe}},{{b.clientes_80 | safe}},{{b.clientes_activos | safe}} ],
+                                            {% endfor %}
+                                        ]);
+                                        var options = {
+                                                        title: 'GENERACIÓN MENSUAL',
+                                                        titleTextStyle:{
+                                                                           fontSize: 20,
+                                                                        },
+                                                        legend: { position: 'bottom' },
+                                                        width: '100%',
+                                                        height: 650,
+                                                        pointSize: 2,
+                                                        isStacked: 'true',
+                                                        hAxis:{
+                                                            format:'dd/MM/YY',
+                                                            slantedText:'true',
+                                                           },
+                                                        
+
+                                                        colors:['#3498DB','#E64A19'],
+                                                        annotations :{
+                                                            alwaysOutside : true,
+                                                            textStyle:{
+                                                                color:'black',
+                                                                fontSize : 17,
+                                                            }
+
+                                                        },
+                                                        series:{
+                                                            0:{type:'bars',targetAxisIndex:0},
+                                                            1:{type:'bars',targetAxisIndex:0},
+                                                            2:{type:'line',targetAxisIndex:1,color:'#77dd77'},
+                                                            3:{type:'line',targetAxisIndex:1,color:'#E0BBE4'},
+                                                            
+
+                                                        },
+                                                        vAxes:{
+                                                            0:{title:'monto'}, 
+                                                            1:{title:'clientes', maxValue:30}
+                                                        },
+                                                        chartArea:{
+                                                            left:'10%',top:'10%',width:'80%',height:'80%',
+                                                        },
+
+
+                                                        };
+                                            
+                                                              
+              
+
+            var chart = new google.visualization.ColumnChart(document.getElementById('Serie_Mensual_Generacion_apilada_div'));
+            chart.draw(data, options);
+            };
+
+
+            function SerieConteo(){
+                var data = new google.visualization.DataTable();
+                data.addColumn('date','dia');
+                data.addColumn('number','operaciones con generación');
+                data.addColumn('number','operaciones total');
+                data.addRows([
+                    {% for b in conteo %}
+                    [new Date('{{b.fecha | safe }}'),{{b.op_gen | safe}},{{b.op_total | safe}}],
+                    {% endfor %}
+                      ]);
+                      var options = {
+                                                        title: 'CONTEO DE OPERACIONES CON Y SIN GENERACIÓN',
+                                                        titleTextStyle:{
+                                                                fontSize: 20,
+                                                                 },
+                                                        legend: { position: 'bottom' },
+                                                        width: '100%',
+                                                        height: 600,
+                                                        hAxis:{
+                                                            format:'dd/MM/YY',
+                                                            slantedText:'true',
+                                                            // gridlines:{
+                                                            //     color: 'blue',
+                                                                 
+                                                            //     },
+                                                            // minorGridlines:{
+                                                            //     color: '#F4F6F6',
+                                                            // },
+                                                                                                                       
+                                                            },
+                                                        explorer: { actions: ['dragToZoom', 'rightClickToReset'] },
+                                                         vAxis:{viewWindow :{max:'auto'}},                                                                                             
+                                                         trendlines: {
+                                                                    0: {
+                                                                    type: 'linear',
+                                                                    color: 'blue',
+                                                                    lineWidth: 3,
+                                                                    opacity: 0.3,
+                                                                    
+                                                                    },
+                                                                    1: {
+                                                                    type: 'linear',
+                                                                    color: 'red',
+                                                                    lineWidth: 3,
+                                                                    opacity: 0.3,
+                                                                    
+                                                                    }
+                                                                },
+                                                                chartArea:{
+                                                            left:'10%',top:'10%',width:'80%',height:'70%',
+                                                        },    
+                                                        };
+
+                var chart = new google.visualization.LineChart(document.getElementById('Serie_conteo_div'));
+                chart.draw(data, options);
+
+            }
+            function GeneracionConsolidadaTabla(){
+              var data = new google.visualization.DataTable();
+              data.addColumn('number','Ranking');
+              data.addColumn('string','Nombre');
+              data.addColumn('number','Generación por DAP');
+              data.addColumn('number','Generación por Bases');
+              data.addColumn('number','Provisión por DAP');
+              data.addColumn('number','Provisión por Bases');
+              data.addColumn('number','TOTAL');
+              data.addColumn('number','Porcentaje');
+              data.addColumn('number','Porcentaje Acumulado');
+              data.addRows([
+              {% for r in generaciones_consolidadas %}
+              [{{ r.ranking | safe }},'{{ r.nombre | safe}}',{{ r.gen_depo|safe }},{{ r.gen_bases|safe }},{{ r.prov_depos|safe }},{{ r.prov_bases|safe }},{{ r.total | safe }},{{ r.porcentaje | safe }},{{ r.porcentaje_acumulado | safe }}],
+              {% endfor %}
+              ]);
+            var tabla = new google.visualization.Table(document.getElementById('generacionconsolidadatabla_div'));
+              var datos_tabla_opciones = {
+                  width:'100%',
+                alternatingRowStyle:false,
+                cssClassNames:{
+                            headerRow:'letragrande',
+                            tableRow:'letragrande',
+                      },
+            };
+              tabla.draw(data,datos_tabla_opciones);
+
+            }
+
+            function BasesMasGeneracionTabla(){
+              var data = new google.visualization.DataTable();
+              data.addColumn('string','Base');
+              data.addColumn('number','Generación');
+              data.addColumn('number','Porcentaje');
+              data.addColumn('number','Porcentaje Acumulado');
+              data.addRows([
+              {% for d in instrumentos_bases %}
+                ['{{ d.nemotecnico | safe }}',{{ d.gen | safe }},{{ d.pje | safe }},{{ d.pje_acum|safe }}],
+                {% endfor %}
+              ]);
+                             
+                
+              var datos_tabla_opciones = {
+                alternatingRowStyle:false,
+                cssClassNames:{
+                            headerRow:'letragrande',
+                            tableRow:'letragrande',
+                      },
+            };
+             var tabla = new google.visualization.Table(document.getElementById('basesmasgeneraciontabla_div'))
+             tabla.draw(data,datos_tabla_opciones);            
+            }
+
+
+            function DAPMasGeneracionTabla(){
+                var data = new google.visualization.DataTable();
+                data.addColumn('string','DAP');
+                data.addColumn('number','Generación');
+                data.addColumn('number','Porcentaje');
+                data.addColumn('number','Porcentaje Acumulado');
+                data.addRows([
+              {% for d in instrumentos_depos %}
+                ['{{ d.nemotecnico | safe }}',{{ d.gen | safe }},{{ d.pje | safe }},{{ d.pje_acum|safe }}],
+                {% endfor %}
+              ]);
+              var datos_tabla_opciones = {
+                alternatingRowStyle:false,
+                cssClassNames:{
+                            headerRow:'letragrande',
+                            tableRow:'letragrande',
+                      },
+            };
+            var tabla = new google.visualization.Table(document.getElementById('dapmasgeneraciontabla_div'));
+              tabla.draw(data,datos_tabla_opciones);
+
+
+            }
+
+            function CobranzasTabla(){
+                var data = new google.visualization.DataTable();
+                data.addColumn('string','cliente');
+                data.addColumn('number','Provisión');
+                data.addColumn('number','Ida y vuelta');
+                data.addColumn('number','Facturas');
+                data.addColumn('number','Saldo');
+                data.addColumn('string','Factura');
+                data.addRows([
+                    {% for d in cobros %}
+                    ['{{d.cliente | safe}}',{{d.provisiones | safe}},{{ d.idayvuelta|safe }},{{d.facturas | safe }},{{d.saldo | safe }},'{{d.facturabool | safe }}'],
+                    {% endfor %}
+                ]);
+                var datos_tabla_opciones = {
+                alternatingRowStyle:false,
+                cssClassNames:{
+                            headerRow:'letragrande',
+                            tableRow:'letragrande',
+                      },
+                      };
+                
+                      var options_grafico = {
+                                            title: 'Deuda por cliente',
+                                            is3D : 'true', 
+                                            width: '80%',
+                                            height:800,
+                                            chartArea: {width: '100%',height:'50%'},
+                                            legend:{position:'labeled',textStyle: {color: 'blue', fontSize: 16}},
+                                            pieSliceText:'value-and-percentage',                                            
+                                            pieSliceTextStyle:{
+                                                color:'black',
+                                                fontSize:14,
+
+                                            },
+                                                                };
+                var tabla_cobranzas_view = google.visualization.data.group(data,[0],[{'column':4,'aggregation':google.visualization.data.sum, 'type':'number'}]);
+                var torta_deuda = new google.visualization.PieChart(document.getElementById('torta_deuda_div'));
+                var tabla = new google.visualization.Table(document.getElementById('cobranzastabla_div'));
+                tabla.draw(data,datos_tabla_opciones);
+                torta_deuda.draw(tabla_cobranzas_view,options_grafico);
+
+            }
+            function IdayvueltaTabla(){
+                var data = new google.visualization.DataTable();
+                data.addColumn('date','Fecha');
+                data.addColumn('string','Buy');
+                data.addColumn('string','Seller');
+                data.addColumn('number','Buyer Clp');
+                data.addColumn('number','Seller Clp');
+                
+                data.addRows([
+                {% for d in idayvueltas %}
+                [new Date('{{ d.fecha | safe }}'),'{{ d.buy|safe }}','{{d.seller | safe }}',{{d.fee_buyer_clp | safe }},{{d.fee_seller_clp | safe }}],
+                {% endfor %}
+                ]);
+                var tabla = new google.visualization.Table(document.getElementById('idayvueltatabla_div'));
+                var datos_tabla_opciones = {
+                alternatingRowStyle:false,
+                cssClassNames:{
+                            headerRow:'letragrande',
+                            tableRow:'letragrande',
+                      },
+            };
+                tabla.draw(data,datos_tabla_opciones);
+            };
+            function FacturasTabla(){
+                var data = new google.visualization.DataTable();
+                data.addColumn('date','Fecha Emisión');
+                data.addColumn('number','Folio Factura');
+                data.addColumn('string','Cliente');
+                data.addColumn('number','Monto Total');
+                data.addRows([
+                {% for d in facturas %}
+                [new Date('{{ d.fecha_emision | safe }}'),{{ d.folio_factura | safe }},'{{ d.cliente | safe }}',{{ d.monto_total | safe }}],
+                {% endfor %}
+                ]);
+                var tabla = new google.visualization.Table(document.getElementById('facturastabla_div'));
+                var datos_tabla_opciones = {
+                                    alternatingRowStyle:false,
+                                    cssClassNames:{
+                                                headerRow:'letragrande',
+                                                tableRow:'letragrande',
+                                        },
+                            };
+                tabla.draw(data,datos_tabla_opciones);
+            };
+
+           
+</script>
+
+
+
+
+
+
+{% endblock %}

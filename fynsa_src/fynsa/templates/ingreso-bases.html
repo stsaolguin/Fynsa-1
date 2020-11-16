@@ -1,0 +1,11 @@
+{% extends 'index.html' %}
+
+{% block contenido %}
+<form action="{% url 'procesa_ingreso_bases' %}" method="POST">
+    {% csrf_token %}
+    {{formulario_ingreso_bases}}
+    <button type="submit" class="btn btn-info">Agregar</button>
+
+</form>
+
+{% endblock %}

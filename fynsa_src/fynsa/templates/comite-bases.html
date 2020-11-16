@@ -1,0 +1,69 @@
+{% extends "index.html" %}
+
+{% block contenido %}
+<div class="container">
+    <div class="row mb-3">
+    <h3>Comité Equipo Tasa Derivados</h3>
+    </div>
+        <div class="row">
+            <div class="d-flex justify-content-center">
+            
+                    <form action="{% url 'salida_bases' %}" method="POST" target="_blank">
+
+                        <div class="form-inline">
+                            {% csrf_token %}
+                            {{fechas_ingreso}}
+                       
+                            <input type="submit" class="btn btn-primary" value="Generar"> 
+                        </div>
+                    </form>
+        
+            
+            </div>
+        </div>
+        <div class="row my-3">
+            <div class="h3">Conciliaciones</div>
+        </div>
+        
+
+        <div class="row">
+            <div class="d-flex justify-content-center">
+                
+                    <form action="{% url 'conciliaciones_csv' %}" method="GET">
+
+                        <div class="form-inline">
+                            {% csrf_token %}
+                            {{formulario_conciliaciones}}
+                            
+                            <input type="submit" class="btn btn-warning" value="Descargar">
+                            
+                        </div>
+                    </form>
+        
+                
+            </div>
+        </div>
+        <div class="row my-3">
+            <div class="h3">Consulta rápida: Generaciones consolidadas</div>
+        </div>
+        <div class="row">
+            <div class="d-flex justify-content-center">
+            
+                    <form action="{% url 'consolidado_csv' %}" method="GET">
+
+                        <div class="form-inline">
+                            {% csrf_token %}
+                            {{fechas_ingreso}}
+                       
+                            <input type="submit" class="btn btn-info" value="Generar"> 
+                        </div>
+                    </form>
+        
+            
+            </div>
+        </div>
+ 
+    </div>         
+
+
+{% endblock %}

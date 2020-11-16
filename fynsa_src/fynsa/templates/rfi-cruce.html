@@ -1,0 +1,213 @@
+{% extends "index.html" %}
+{% load humanize %}
+
+{% block contenido %}
+
+    {% if fondo %}
+  
+    
+<p class='display-4'>Estamos viendo a : </p>
+<table class="table">
+    <thead>
+      <tr>
+        <th scope="col">fondo</th>
+        <th scope="col">papel</th>
+        <th scope="col">duración</th>
+        <th scope="col">pais</th>
+        <th scope="col">rating</th>
+        <th scope="col">sector</th>
+        <th scope="col">monto anterior</th>
+        <th scope="col">monto actual</th>
+        <th scope="col">variación</th>
+      </tr>
+    </thead>
+    <tbody>
+        {% for f in fondo %}
+    <tr>
+        <td>{{f.fondo}}</td>
+        <td>{{f.papel}}</td>
+        <td>{{f.dur}}</td>
+        <td>{{f.pais}}</td>
+        <td>{{f.rtg}}</td>
+        <td>{{f.sector_}}</td>
+        <td>{{f.monto_anterior}}</td>
+        <td>{{f.monto_actual}}</td>
+        <td>{{f.dif}}</td>
+
+    </tr>
+    
+    {% endfor %}
+    </tbody>
+</table>
+<div class="row alert alert-danger">
+<h3>Ventas : {{ventas.v|intcomma}} USD</h3>
+</div>
+<div class="row alert alert-success">
+<h3>Compras : {{compras.s|intcomma}} USD </h3>
+</div>
+
+
+<div class="row">
+
+  <h2>Duración:</h2>
+</div>
+<div class="row my-3">
+    
+          <div class="col-lg-6">
+                  <div class="">ANTES:</div>
+                  <div id="myPieChart_ayer"></div>
+          </div>
+          <div class="col-lg-6">
+                  <div class="">HOY:</div>
+                  <div id="myPieChart_hoy"></div>
+          </div>
+</div>
+
+
+<div class="row">
+  <h2>Países que lo componen:</h2>
+</div>
+
+<div class="row my-3">
+
+        <div class="col-lg-6">
+                <div class="">ANTES:</div>
+                <div id="myPieChart_paises_antes"></div>
+        </div>
+        <div class="col-lg-6">
+            <div class="">HOY:</div>
+            <div id="myPieChart_paises_hoy"></div>
+        </div>
+
+      </div>
+<div class="row">
+  <h2>Sectores que lo componen:</h2>
+</div>
+
+<div class="row my-3">
+
+        <div class="col-lg-6">
+                <div class="">ANTES:</div>
+                <div id="myPieChart_sectores_antes"></div>
+        </div>
+        <div class="col-lg-6">
+            <div class="">HOY:</div>
+            <div id="myPieChart_sectores_hoy"></div>
+        </div>
+
+      </div>
+
+
+  {% else %}
+    <p class="display-4"> No hay variaciones </p>
+   
+  {% endif %}
+
+ 
+
+
+
+
+
+
+<script>
+google.charts.load('current', {packages: ['corechart']});
+    google.charts.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+      // Define the chart to be drawn.
+      var data = new google.visualization.DataTable();
+      data.addColumn('string', 'Element');
+      data.addColumn('number', 'Percentage');
+      data.addRows([
+          {% for d in duracion %}
+        ['Corto', {{ d.c_t_0 | safe }}],
+        ['Mediano', {{ d.m_t_0 | safe }}],
+        ['Largo', {{ d.l_t_0 | safe }}],
+        {% endfor %}
+      ]);
+
+      var data2 = new google.visualization.DataTable();
+      data2.addColumn('string', 'Element');
+      data2.addColumn('number', 'Percentage');
+      data2.addRows([
+          {% for d in duracion %}
+        ['Corto', {{ d.c_t_1 | safe }}],
+        ['Mediano', {{ d.m_t_1 | safe }}],
+        ['Largo', {{ d.l_t_1 | safe }}],
+        {% endfor %}
+      ]);
+      var options2 = {chartArea:{width:'900',height:'1000'}}
+      var options1 = {chartArea:{width:'900',height:'1000'}}
+
+
+      
+      var chart = new google.visualization.PieChart(document.getElementById('myPieChart_hoy'));
+      var chart2 = new google.visualization.PieChart(document.getElementById('myPieChart_ayer'));
+
+      chart.draw(data, options1);
+      chart2.draw(data2, options2);
+      //FIN de duraciones
+      // COMIENZO PAISES
+      var data_pais_0=new google.visualization.DataTable();
+      data_pais_0.addColumn('string','pais');
+      data_pais_0.addColumn('number','porcentaje');
+      data_pais_0.addRows([
+          {% for p in paises_hoy %}
+        ['{{ p.cntry_of_risk | safe }}', {{ p.vn | safe }}],
+       {% endfor %}
+      ]);
+      var options_paises = {chartArea:{width:'900',height:'1000'}}
+
+      var chart_paises = new google.visualization.PieChart(document.getElementById('myPieChart_paises_hoy'));
+      chart_paises.draw(data_pais_0,options_paises);
+
+      var data_pais_1=new google.visualization.DataTable();
+      data_pais_1.addColumn('string','pais');
+      data_pais_1.addColumn('number','porcentaje');
+      data_pais_1.addRows([
+          {% for p in paises_antes %}
+        ['{{ p.cntry_of_risk | safe }}', {{ p.vn | safe }}],
+       {% endfor %}
+      ]);
+      var options_paises = {chartArea:{width:'900',height:'1000'}}
+
+      var chart_paises = new google.visualization.PieChart(document.getElementById('myPieChart_paises_antes'));
+      chart_paises.draw(data_pais_1,options_paises);
+      //FIN de duraciones
+      //COMIENZO SECTORES
+
+      var data_sec_0=new google.visualization.DataTable();
+      data_sec_0.addColumn('string','sectores');
+      data_sec_0.addColumn('number','porcentaje');
+      data_sec_0.addRows([
+          {% for p in sectores_hoy %}
+        ['{{ p.sector | safe }}', {{ p.vn | safe }}],
+       {% endfor %}
+      ]);
+      var options_sec = {chartArea:{width:'900',height:'1000'}}
+
+      var chart_sec_0 = new google.visualization.PieChart(document.getElementById('myPieChart_sectores_hoy'));
+      chart_sec_0.draw(data_sec_0,options_sec);
+
+      var data_sec_1=new google.visualization.DataTable();
+      data_sec_1.addColumn('string','sectores');
+      data_sec_1.addColumn('number','porcentaje');
+      data_sec_1.addRows([
+          {% for p in sectores_antes %}
+        ['{{ p.sector | safe }}', {{ p.vn | safe }}],
+       {% endfor %}
+      ]);
+      var options_sec = {chartArea:{width:'900',height:'1000'}}
+
+      var chart_sec_1 = new google.visualization.PieChart(document.getElementById('myPieChart_sectores_antes'));
+      chart_sec_1.draw(data_sec_1,options_sec);
+
+
+
+    }
+
+
+
+</script>
+{% endblock %}  

@@ -1,0 +1,75 @@
+
+LOGICAS DE FUNCIONES POSGRESQL
+MONTOS TRANSADOS MENSUAL POR CLIENTES
+
+RESULTADO : TABLA DE DOBLE ENTRADA, EN LOS ENCABEZADOS VAN LOS MESES Y EN LA COLUMNA IZQUIERDA VAN LOS CLIENTES.
+
+
+
+RECONOCER EL PRIMER DIA DEL MES Y EL ULTIMO.
+
+CORRER LAS FUNCIONES DE MONTOS TRANSADOS PARA CADA PRODUCTO E INSERTARLAS EN UNA TABLA QUE CONTENGA TODAS LAS COLUMNAS(HAY QUE CREAR LA TABLA).
+ESTO ES SOLO UNA VEZ, LUEGO TIENE QUE ENTENDER EN QUÉ MES ESTAMOS Y SOBREESCRIBIR EL MES Y NO SOBREESCRIBIR LAS OTRAS A MENOS QUE SE LE DIGA.
+(PONER UNA FLAG).
+
+1.- GENERAR LA TABLA TIPO CROSSTAB : LAS COLUMNAS SERIAN (FECHA(MENSUAL),CLIENTE(LOS QUE SEAN),MONTO BASES, MONTO DEPOS, TOTAL)
+
+2.- CREAR EL CROSSTAB ANUAL MES A MES
+
+
+CREATE OR REPLACE FUNCTION eq_bases_montos_transados_mensual_cliente(sobrescribir=true,año=2020,depos o bases)
+
+
+if sobrescribir = true:
+	#esto es para detectar si hay cosas que cambiaron antes
+	borrar el contenido de la tabla
+	Hacer un for del 1 al 12:
+		loop
+			primer_dia = año || '-'|| mes || '-01';
+			ultimo_dia = last_day(mes);
+			insert into blabla eqder_montos_transados(primer_dia,ultimo_dia)
+			insert into blabla eqder_montos_transados(primer_dia,ultimo_dia)
+			insert into blabla eqder_montos_transados(primer_dia,ultimo_dia)
+			insert into blabla eqder_montos_transados(primer_dia,ultimo_dia)
+			#Uninsert para cada producto
+		endloop
+end if
+
+	if sobrescribir=false:
+		1.-detectar el mes en el que estamos.
+		2.- Sacar el primer dia y el ultimo dia del mes
+		2.-borramos todo el mes
+		3.-insertamos la data nueva acumulada.
+
+	end if
+
+acá empezamos a crear la tabla pivot
+
+	if bases:
+	for cliente en BASES_tabla clientes:
+		cliente=cliente #asignamos cliente
+		for loop 1 a 12 (simulando meses)
+			#basicamente vamos llenando horizontal
+			Select sum(bases_otc + bases_tr) into enero where extract mes=mes_en_cuestion and extract(agno)=año and cliente=cliente;
+			Select sum(bases_otc + bases_tr) into febrero where extract mes=mes_en_cuestion and extract(agno)=año and cliente=cliente;
+			Select sum(bases_otc + bases_tr) into marzo where extract mes=mes_en_cuestion and extract(agno)=año and cliente=cliente;
+			Select sum(bases_otc + bases_tr) into abril where extract mes=mes_en_cuestion and extract(agno)=año and cliente=cliente;
+			Select sum(bases_otc + bases_tr) into mayo where extract mes=mes_en_cuestion and extract(agno)=año and cliente=cliente;
+			Select sum(bases_otc + bases_tr) into junio where extract mes=mes_en_cuestion and extract(agno)=año and cliente=cliente;
+			Select sum(bases_otc + bases_tr) into julio where extract mes=mes_en_cuestion and extract(agno)=año and cliente=cliente;
+			Select sum(bases_otc + bases_tr) into agosto where extract mes=mes_en_cuestion and extract(agno)=año and cliente=cliente;
+			Select sum(bases_otc + bases_tr) into septiembre where extract mes=mes_en_cuestion and extract(agno)=año and cliente=cliente;
+			Select sum(bases_otc + bases_tr) into octubre where extract mes=mes_en_cuestion and extract(agno)=año and cliente=cliente;
+			Select sum(bases_otc + bases_tr) into noviembre where extract mes=mes_en_cuestion and extract(agno)=año and cliente=cliente;
+			Select sum(bases_otc + bases_tr) into diciembre where extract mes=mes_en_cuestion and extract(agno)=año and cliente=cliente;
+		
+		end for 
+
+	end for
+		
+	end if
+	if depos:
+		idem anterior pero con depos
+	end if
+
+

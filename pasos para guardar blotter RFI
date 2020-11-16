@@ -1,0 +1,13 @@
+1.-borrar de los datos la columna clientes
+fecha,ejecutivo,papel,cusip,operacion,nominales,mesa,ejecutivo_precio,cliente_precio,ingreso_ejecutivo,ingreso_mesa,contraparte,spread_mesa,comprador,vendedor,country_of_risk,crncy
+2.- borrar las tres ultimas, dejarlo hasta crncy
+3.- cambiar los '; ' por ';' tanto para el espacio a la derecha como a la izquierda 
+4.- cambiar los puntos por nada
+5.- cambiar las ',' por '.' en especial por los decimales. El algoritmo en python también hace el cambio de ',' por '.'.
+6.- Correr el scrip en python que la formatea y la deja lista para subir : cd /home/gvera/Fynsa/fynsa_src/fynsa/BASES/para_prepara_rfi.py
+7.- subir la RFI que sale de ese script
+
+COPY "RFI_rfi_beta"(fecha, ejecutivo, papel, cusip, operacion, nominales, mesa, ejecutivo_precio, cliente_precio, ingreso_ejecutivo, ingreso_mesa, contraparte, spread_mesa, comprador, vendedor, country_of_risk, crncy) 
+FROM '/home/gvera/rfi_desde el 13_07.csv' CSV HEADER DELIMITER ';';
+
+ 

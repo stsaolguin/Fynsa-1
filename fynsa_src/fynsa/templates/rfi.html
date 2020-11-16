@@ -1,0 +1,16 @@
+{% include 'index.html' %}
+
+{% block 'contenido' %}
+<div class="container">
+<p class='display-4'>Estos son sólo Fondos mutuos en dólares. </p>
+
+ <ul class="list-group">
+
+ {% for f in fondos %}
+ <a class="list-group-item" href="{% url 'rfi_cruce_detalles' f.institucion %}">{{ f.institucion }} </a>
+ {% endfor %}
+
+</ul>
+
+</div>
+{% endblock %}

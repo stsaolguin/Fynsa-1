@@ -1,0 +1,64 @@
+id;nombre;nacionalidad_cliente;categoria;operador_contraparte;esta_activo;operador_fynsa_id;email;email_cco;factura;cliente_principal;anidado
+108;B HSBC;;;;;;;;f;;f
+111;AFP CUPRUM;;;;;;;;f;;f
+44;VISION;CL;FM;null;t;;null;null;f;VISION;f
+45;FM SURA;CL;FM;null;t;;null;null;f;FM SURA;f
+46;FM SECURITY;CL;FM;null;t;;null;null;f;FM SECURITY;f
+47;FM SCOTIABANK;CL;FM;null;t;;null;null;f;FM SCOTIABANK;f
+48;FM ITAU;CL;FM;null;t;;null;null;f;FM ITAU;f
+49;FM FYNSA;CL;FM;null;t;;null;null;f;FM FYNSA;f
+50;FM BCI;CL;FM;null;t;;null;null;f;FM BCI;f
+51;CDS PRINCIPAL;CL;CDS;null;t;;null;null;f;CDS PRINCIPAL;f
+52;CDS EUROAMERICA;CL;CDS;null;t;;null;null;f;CDS EUROAMERICA;f
+53;CDS BICE;CL;CDS;null;t;;null;null;f;CDS BICE;f
+54;CB CREDICORP;CL;CB;null;t;;null;null;f;CB CREDICORP;f
+56;CB BTG;CL;CB;null;t;;null;null;f;CB BTG;f
+57;CB BCI;CL;CB;null;t;;null;null;f;CB BCI;f
+58;B SECURITY;CL;B;null;t;;null;null;f;B SECURITY;f
+61;B JPM;CL;B;null;t;;null;null;f;B JPM;f
+68;B BICE;CL;B;null;t;;null;null;f;B BICE;f
+70;AFP PLANVITAL;CL;AFP;null;t;;null;null;f;AFP PLANVITAL;f
+71;AFP MODELO;CL;AFP;null;t;;null;null;f;AFP MODELO;f
+72;AFP HABITAT;CL;AFP;null;t;;null;null;f;AFP HABITAT;f
+73;AFP CAPITAL;CL;AFP;null;t;;null;null;f;AFP CAPITAL;f
+74;AFP AFC;CL;AFP;null;t;;null;null;f;AFP AFC;f
+75;B ITAU;CL;B;null;t;;null;null;f;B ITAU;f
+76;B INTERNACIONAL;CL;B;null;t;;null;null;f;B INTERNACIONAL;f
+77;B MERRIL LYNCH;CL;B;null;t;;null;null;f;B MERRIL LYNCH;f
+78;FM BANCHILE;CL;FM;null;t;;null;null;f;FM BANCHILE;f
+79;CB EUROAMERICA;CL;CB;null;t;;null;null;f;CB EUROAMERICA;f
+80;FM CREDICORP;CL;FM;null;t;;null;null;f;FM CREDICORP;f
+81;FM BTG;CL;FM;null;t;;null;null;f;FM BTG;f
+82;FM SCOTIA;CL;FM;null;t;;null;null;f;FM SCOTIA;f
+83;FM SANTANDER;CL;FM;null;t;;null;null;f;FM SANTANDER;f
+84;FM MONEDA;CL;FM;null;t;;null;null;f;FM MONEDA;f
+55;CB CONSORCIO;CL;CB;null;t;;null;null;t;CB CONSORCIO;f
+99;FYNSA;;;;;;;;f;FYNSA;f
+67;B BTG;CL;B;null;t;;null;null;t;B BTG;f
+85;FM LARRAINVIAL;CL;FM;null;t;;null;null;f;FM LARRAINVIAL;f
+105;ADC VISION;;;;;;;;f;ADC VISION;f
+106;ADC SANTANDER;;;;;;;;f;ADC SANTANDER;f
+96;B CONSORCIO BCE;;;;;;;;f;B CONSORCIO;t
+97;B CONSORCIO TRAD;;;;;;;;f;B CONSORCIO;t
+65;B CONSORCIO;CL;B;null;t;;null;null;t;B CONSORCIO;t
+90;B SCOTIABANK TRAD;;;;;;;;f;B SCOTIABANK;t
+59;B SCOTIABANK;CL;B;null;t;;null;null;f;B SCOTIABANK;t
+95;B SANTANDER TRAD;;;;;;;;f;B SANTANDER;t
+100;B SANTANDER BCE;;;;;;;;f;B SANTANDER;t
+60;B SANTANDER;CL;B;null;t;;null;null;f;B SANTANDER;t
+91;B FALABELLA TRAD;;;;;;;;f;B FALABELLA;t
+92;B FALABELLA BCE;;;;;;;;f;B FALABELLA;t
+63;B FALABELLA;CL;B;null;t;;null;null;f;B FALABELLA;t
+87;B ESTADO TRAD;;;;;;;;f;B ESTADO;t
+88;B ESTADO BCE;;;;;;;;f;B ESTADO;t
+64;B ESTADO;CL;B;null;t;;null;null;f;B ESTADO;t
+101;B CHILE BCE;;;;;;;;f;B CHILE;t
+102;B CHILE TRAD;;;;;;;;f;B CHILE;t
+66;B CHILE;CL;B;null;t;;null;null;t;B CHILE;t
+89;B BCI TRAD;;;;;;;;f;B BCI;t
+103;B BCI INV;;;;;;;;f;B BCI;t
+104;B BCI BCE;;;;;;;;f;B BCI;t
+69;B BCI;CL;B;null;t;;null;null;f;B BCI;t
+112;CB LARRAINVIAL;;;;;;;;f;;f
+113;CB BANCHILE;;;;;;;;f;;f
+114;CB MERRIL LYNCH;;;;;;;;f;;f

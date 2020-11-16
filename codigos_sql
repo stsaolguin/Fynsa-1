@@ -1,0 +1,2749 @@
+select * from "RFI_sw" where crncy='USD' and bb_composite ilike '#%';
+select distinct(institucion) from "RFI_sw" where crncy='USD' order by institucion asc;
+select * from dinamico('BANCHILE DOLLAR INVESTMENT GRADE') where dif<>0 order by dif desc;
+select distinct(risk) from "RFI_sw";
+select * from "RFI_sw" where bb_composite='AA';
+update "RFI_sw" set risk='JB' where bb_composite='CCC+';
+--select distinct(bb_composite) from "RFI_sw" where risk='-' and crncy='USD';
+
+hacer una función sql pura que haga lo siguiente:
+1.- rellene la columna risk. Primero rellena to		do con JB menos los N/A y los INVALID, luego sobreescribe los IG y HY.
+	
+======================
+select distinct(institucion) from "RFI_sw" where crncy='USD' order by institucion asc;
+select sum(valor_nominal) from "RFI_sw" 
+where crncy='USD' and institucion='BANCHILE DOLLAR INVESTMENT GRADE'
+and risk='HY' and fecha_subida='2020-01-01';
+
+
+HAY QUE ASEGURARSE QUE TODOS LOS BONOS TENGAN SU MONEDA Y TODOS LOS QUE TIENEN USD TENGAN NOMINAL Y SECURITY.
+
+--DROP FUNCTION dinamico_risk(text);
+CREATE OR REPLACE FUNCTION dinamico_risk(fondo_in text) RETURNS TABLE(fondo text,ig_t_1 numeric,ig_t_0 numeric,ig_dif numeric,hy_t_1 numeric,hy_t_0 numeric,hy_dif numeric,jb_t_1 numeric,jb_t_0 numeric,jb_dif numeric)
+AS $$
+DECLARE
+
+total_t_1_aux NUMERIC;
+total_t_0_aux NUMERIC;
+
+ig_t_1_aux NUMERIC;
+ig_t_0_aux NUMERIC;
+
+hy_t_1_aux NUMERIC;
+hy_t_0_aux NUMERIC;
+
+jb_t_1_aux NUMERIC;
+jb_t_0_aux NUMERIC;
+
+BEGIN
+	fondo:=fondo_in;
+	Select sum(valor_nominal) into ig_t_1_aux from "RFI_sw" 
+	where crncy='USD' and institucion=$1 and risk='IG' and fecha_subida='2019-12-01';
+	select sum(valor_nominal) into ig_t_0_aux from "RFI_sw" 
+	where crncy='USD' and institucion=$1 and risk='IG' and fecha_subida='2020-01-01';
+	select sum(valor_nominal) into hy_t_1_aux from "RFI_sw" 
+	where crncy='USD' and institucion=$1 and risk='HY' and fecha_subida='2019-12-01';
+	select sum(valor_nominal) into hy_t_0_aux from "RFI_sw" 
+	where crncy='USD' and institucion=$1 and risk='HY' and fecha_subida='2020-01-01';
+	select sum(valor_nominal) into jb_t_1_aux from "RFI_sw" 
+	where crncy='USD' and institucion=$1 and risk='JB' and fecha_subida='2019-12-01';
+	select sum(valor_nominal) into jb_t_0_aux from "RFI_sw" 
+	where crncy='USD' and institucion=$1 and risk='JB' and fecha_subida='2020-01-01';
+	IF ig_t_0_aux IS NULL 
+	THEN 
+	ig_t_0_aux:=0;
+	END IF;
+	IF ig_t_1_aux IS NULL 
+	THEN 
+	ig_t_1_aux:=0;
+	END IF;
+	total_t_0_aux=ig_t_0_aux+hy_t_0_aux+jb_t_0_aux;
+	total_t_1_aux=ig_t_1_aux+hy_t_1_aux+jb_t_1_aux;
+	ig_t_0:=round((ig_t_0_aux/total_t_0_aux)*100,2);
+	hy_t_0:=round((hy_t_0_aux/total_t_0_aux)*100,2);
+	jb_t_0:=round((jb_t_0_aux/total_t_0_aux)*100,2);
+	ig_t_1:=round((ig_t_1_aux/total_t_1_aux)*100,2);
+	hy_t_1:=round((hy_t_1_aux/total_t_1_aux)*100,2);
+	jb_t_1:=round((jb_t_1_aux/total_t_1_aux)*100,2);
+	ig_dif:=round(ig_t_0-ig_t_1,2);
+	hy_dif:=round(hy_t_0-hy_t_1,2);
+	jb_dif:=round(jb_t_0-jb_t_1,2);
+	
+RETURN NEXT;	
+END;
+$$ LANGUAGE 'plpgsql';
+
+
+
+==============
+
+CREATE OR REPLACE FUNCTION dinamico_risk_st(fondo_in text) RETURNS TABLE(fecha date,ig_t_0 numeric,hy_t_0 numeric,jb_t_0 numeric)
+AS $$
+DECLARE
+r date;
+total_t_0_aux NUMERIC;
+ig_t_0_aux NUMERIC;
+hy_t_0_aux NUMERIC;
+jb_t_0_aux NUMERIC;
+
+BEGIN
+	FOR r IN SELECT DISTINCT(fecha_subida) FROM "RFI_sw"
+	
+	
+	LOOP
+		raise notice 'fecha subida %',r;
+		select sum(valor_nominal) into ig_t_0_aux from "RFI_sw" 
+		where crncy='USD' and institucion=$1 and risk='IG' and fecha_subida=r::date;
+		select sum(valor_nominal) into hy_t_0_aux from "RFI_sw" 
+		where crncy='USD' and institucion=$1 and risk='HY' and fecha_subida=r::date;
+		select sum(valor_nominal) into jb_t_0_aux from "RFI_sw" 
+		where crncy='USD' and institucion=$1 and risk='JB' and fecha_subida=r::date;
+		IF ig_t_0_aux IS NULL 
+		THEN 
+		ig_t_0_aux:=0;
+		END IF;
+		IF hy_t_0_aux IS NULL 
+		THEN 
+		hy_t_0_aux:=0;
+		END IF;
+		IF jb_t_0_aux IS NULL 
+		THEN 
+		jb_t_0_aux:=0;
+		END IF;
+		total_t_0_aux=ig_t_0_aux+hy_t_0_aux+jb_t_0_aux;
+		ig_t_0:=round((ig_t_0_aux/total_t_0_aux)*100,2);
+		hy_t_0:=round((hy_t_0_aux/total_t_0_aux)*100,2);
+		jb_t_0:=round((jb_t_0_aux/total_t_0_aux)*100,2);
+		fecha:=r;
+	RETURN NEXT;
+	END LOOP;
+
+	
+END;
+$$ LANGUAGE 'plpgsql';
+
+
+select * from dinamico_risk_st('BANCHILE DOLLAR INVESTMENT GRADE')
+
+========================
+--DROP FUNCTION dinamico_dur(text);
+CREATE OR REPLACE FUNCTION dinamico_dur(fondo_in text) RETURNS TABLE(fondo text,c_t_1 numeric,c_t_0 numeric,c_dif numeric,m_t_1 numeric,m_t_0 numeric,m_dif numeric,l_t_1 numeric,l_t_0 numeric,l_dif numeric)
+AS $$
+DECLARE
+
+total_t_1_aux NUMERIC;
+total_t_0_aux NUMERIC;
+
+c_t_1_aux NUMERIC;
+c_t_0_aux NUMERIC;
+
+m_t_1_aux NUMERIC;
+m_t_0_aux NUMERIC;
+
+l_t_1_aux NUMERIC;
+l_t_0_aux NUMERIC;
+
+BEGIN
+	fondo:=fondo_in;
+	Select sum(valor_nominal) into c_t_1_aux from "RFI_sw" 
+	where crncy='USD' and institucion=$1 and duracion='Corto' and fecha_subida='2019-12-01';
+	select sum(valor_nominal) into c_t_0_aux from "RFI_sw" 
+	where crncy='USD' and institucion=$1 and duracion='Corto' and fecha_subida='2020-01-01';
+	select sum(valor_nominal) into m_t_1_aux from "RFI_sw" 
+	where crncy='USD' and institucion=$1 and duracion='Medio' and fecha_subida='2019-12-01';
+	select sum(valor_nominal) into m_t_0_aux from "RFI_sw" 
+	where crncy='USD' and institucion=$1 and duracion='Medio' and fecha_subida='2020-01-01';
+	select sum(valor_nominal) into l_t_1_aux from "RFI_sw" 
+	where crncy='USD' and institucion=$1 and duracion='Largo' and fecha_subida='2019-12-01';
+	select sum(valor_nominal) into l_t_0_aux from "RFI_sw" 
+	where crncy='USD' and institucion=$1 and duracion='Largo' and fecha_subida='2020-01-01';
+	IF c_t_0_aux IS NULL 
+	THEN 
+	c_t_0_aux:=0;
+	END IF;
+	IF m_t_1_aux IS NULL 
+	THEN 
+	m_t_1_aux:=0;
+	END IF;
+	total_t_0_aux=c_t_0_aux+m_t_0_aux+l_t_0_aux;
+	total_t_1_aux=c_t_1_aux+m_t_1_aux+l_t_1_aux;
+	c_t_0:=round((c_t_0_aux/total_t_0_aux)*100,2);
+	m_t_0:=round((m_t_0_aux/total_t_0_aux)*100,2);
+	l_t_0:=round((l_t_0_aux/total_t_0_aux)*100,2);
+	c_t_1:=round((c_t_1_aux/total_t_1_aux)*100,2);
+	m_t_1:=round((m_t_1_aux/total_t_1_aux)*100,2);
+	l_t_1:=round((l_t_1_aux/total_t_1_aux)*100,2);
+	c_dif:=round(c_t_0-c_t_1,2);
+	m_dif:=round(m_t_0-m_t_1,2);
+	l_dif:=round(l_t_0-l_t_1,2);
+	
+RETURN NEXT;	
+END;
+$$ LANGUAGE 'plpgsql';
+
+select * from dinamico_dur('BANCHILE DOLLAR INVESTMENT GRADE')
+
+=================
+
+Rutina para incluir el sector dentro de la sw:
+
+update "RFI_bonos_rfi" set industria=industry_group || ' ' || industry_sector WHERE industria is null;
+
+
+update "RFI_sw" r set sector=s.industria from "RFI_bonos_rfi" s
+where s.papel=r.security_name;
+
+select sector,sum(valor_nominal) from "RFI_sw" where crncy='USD' and institucion='BANCHILE DOLLAR INVESTMENT GRADE'
+and fecha_subida='2020-01-01' and sector<>'-' group by sector order by sum(valor_nominal) desc;
+
+update "RFI_sw" r set sector=s.industria from "RFI_bonos_rfi" s
+where s.papel=r.security_name and r.sector='-';
+
+
+Buscamos que estén todos los sectores llenos:
+
+no debería haber ningún null
+select * from "RFI_sw" where sector is null or sector='-';
+
+
+
+
+
+==================
+Genera el % de monto nominal por sector 
+
+SELECT * FROM crosstab('SELECT institucion,sector,sum(valor_nominal) FROM "RFI_sw" WHERE sector<>''-'' and fuente_del_instrumento=''FFMM''GROUP BY institucion,sector ORDER BY 1,2') 
+AS resu("institucion" text,"Basic Materials Chemicals" numeric,"Utilities Electric" numeric);
+--SELECT institucion,sector,sum(valor_nominal) FROM "RFI_sw" WHERE sector<>'-' GROUP BY institucion,sector;
+
+
+
+===================
+
+SELECT * FROM crosstab('SELECT institucion,sector,sum(valor_nominal) FROM "RFI_sw" WHERE sector<>''-'' and fuente_del_instrumento=''FFMM'' and fecha_subida=''2020-01-01'' GROUP BY institucion,sector ORDER BY 1,2','SELECT DISTINCT sector from "RFI_sw" where sector<>''-'' ORDER BY 1 ') 
+AS resu("institucion" text,
+		"Basic Materials Chemicals" numeric,
+"Basic Materials Forest Products&Paper" numeric,
+"Basic Materials Iron/Steel" numeric,
+"Basic Materials Mining" numeric,
+"Communications Media" numeric,
+"Communications Telecommunications" numeric,
+"Computers Technology" numeric,
+"Consumer. Cyclical Airlines" numeric,
+"Consumer. Cyclical Apparel" numeric,
+"Consumer. Cyclical Auto Manufacturers" numeric,
+"Consumer. Cyclical Auto Parts&Equipment" numeric,
+"Consumer. Cyclical Distribution/Wholesale" numeric,
+"Consumer. Cyclical Entertainment" numeric,
+"Consumer. Cyclical Home Builders" numeric,
+"Consumer. Cyclical Home Furnishings" numeric,
+"Consumer. Cyclical Housewares" numeric,
+"Consumer. Cyclical Lodging" numeric,
+"Consumer. Cyclical Retail" numeric,
+"Consumer. Non-cyclical Agriculture" numeric,
+"Consumer. Non-cyclical Beverages" numeric,
+"Consumer. Non-cyclical Commercial Services" numeric,
+"Consumer. Non-cyclical Cosmetics/Personal Care" numeric,
+"Consumer. Non-cyclical Food" numeric,
+"Consumer. Non-cyclical Healthcare-Products" numeric,
+"Consumer. Non-cyclical Healthcare-Services" numeric,
+"Consumer. Non-cyclical Pharmaceuticals" numeric,
+"Divers Diversified Holding Companies" numeric,
+"Energy Energy-Alternate Sources" numeric,
+"Energy Oil&Gas" numeric,
+"Energy Oil&Gas Services" numeric,
+"Energy Pipelines" numeric,
+ "Financial Closed-end Funds" numeric,
+"Financial Diversified Finan Serv" numeric,
+"Financial Insurance" numeric,
+"Financial Investment Companies" numeric,
+"Financial Private Equity" numeric,
+"Financial Real Estate" numeric,
+"Financial REITS" numeric,
+"Government Multi-National" numeric,
+"Government Municipal" numeric,
+"Government Regional(state/provnc)" numeric,
+"Government Sovereign" numeric,
+"Industrial Aerospace/Defense" numeric,
+"Industrial Building Materials" numeric,
+"Industrial Electronics" numeric,
+"Industrial Engineering&Construction" numeric,
+"Industrial Machinery-Diversified" numeric,
+"Industrial Metal Fabricate/Hardware" numeric,
+"Industrial Miscellaneous Manufactur" numeric,
+"Industrial Packaging&Containers" numeric,
+"Industrial Transportation" numeric,
+"Internet Communications" numeric,
+"Media Communications" numeric,
+"Office/Business Equip Technology" numeric,
+"Real Estate Fund Funds" numeric,
+"Software Technology" numeric,
+"Telecommunications Communications" numeric,
+"Utilities Electric" numeric,
+"Utilities Gas" numeric,
+"Utilities Water" numeric,
+"Financial Banks" numeric
+	   );
+	   
+/home/gvera/Descargas/nuevos_bonos_2.csv
+
+===================
+esta funcion es para llenar las duraciones vacías a partir de la tabla RFI_bonos_rfi
+
+update "RFI_sw" r set dur_mid_semi_ann=(select duration from "RFI_bonos_rfi" s where r.security_name=s.papel and s.duration is not null and s.duration<>0 LIMIT 1) where r.dur_mid_semi_ann is null;
+
+========================
+
+CREATE OR REPLACE FUNCTION dinamico_risk(fondo_in text) RETURNS TABLE(fondo text,ig_t_1 numeric,ig_t_0 numeric,ig_dif numeric,hy_t_1 numeric,hy_t_0 numeric,hy_dif numeric,jb_t_1 numeric,jb_t_0 numeric,jb_dif numeric)
+AS $$
+DECLARE
+total_t_1_aux NUMERIC;
+total_t_0_aux NUMERIC;
+
+ig_t_1_aux NUMERIC;
+ig_t_0_aux NUMERIC;
+
+hy_t_1_aux NUMERIC;
+hy_t_0_aux NUMERIC;
+
+jb_t_1_aux NUMERIC;
+jb_t_0_aux NUMERIC;
+
+BEGIN
+	fondo:=fondo_in;
+	Select sum(valor_nominal) into ig_t_1_aux from "RFI_sw" 
+	where crncy='USD' and institucion=$1 and risk='IG' and fecha_subida='2019-12-01';
+	select sum(valor_nominal) into ig_t_0_aux from "RFI_sw" 
+	where crncy='USD' and institucion=$1 and risk='IG' and fecha_subida='2020-01-01';
+	select sum(valor_nominal) into hy_t_1_aux from "RFI_sw" 
+	where crncy='USD' and institucion=$1 and risk='HY' and fecha_subida='2019-12-01';
+	select sum(valor_nominal) into hy_t_0_aux from "RFI_sw" 
+	where crncy='USD' and institucion=$1 and risk='HY' and fecha_subida='2020-01-01';
+	select sum(valor_nominal) into jb_t_1_aux from "RFI_sw" 
+	where crncy='USD' and institucion=$1 and risk='JB' and fecha_subida='2019-12-01';
+	select sum(valor_nominal) into jb_t_0_aux from "RFI_sw" 
+	where crncy='USD' and institucion=$1 and risk='JB' and fecha_subida='2020-01-01';
+	IF ig_t_0_aux IS NULL 
+	THEN 
+	ig_t_0_aux:=0;
+	END IF;
+	IF ig_t_1_aux IS NULL 
+	THEN 
+	ig_t_1_aux:=0;
+	END IF;
+	IF hy_t_0_aux IS NULL 
+	THEN 
+	hy_t_0_aux:=0;
+	END IF;	
+	IF hy_t_1_aux IS NULL 
+	THEN 
+	hy_t_1_aux:=0;
+	END IF;
+	IF jb_t_1_aux IS NULL 
+	THEN 
+	jb_t_1_aux:=0;
+	END IF;
+	IF jb_t_0_aux IS NULL 
+	THEN 
+	jb_t_0_aux:=0;
+	END IF;
+	
+	total_t_0_aux=ig_t_0_aux+hy_t_0_aux+jb_t_0_aux;
+	total_t_1_aux=ig_t_1_aux+hy_t_1_aux+jb_t_1_aux;
+	ig_t_0:=round((ig_t_0_aux/total_t_0_aux)*100,2);
+	hy_t_0:=round((hy_t_0_aux/total_t_0_aux)*100,2);
+	jb_t_0:=round((jb_t_0_aux/total_t_0_aux)*100,2);
+	ig_t_1:=round((ig_t_1_aux/total_t_1_aux)*100,2);
+	hy_t_1:=round((hy_t_1_aux/total_t_1_aux)*100,2);
+	jb_t_1:=round((jb_t_1_aux/total_t_1_aux)*100,2);
+	ig_dif:=round(ig_t_0-ig_t_1,2);
+	hy_dif:=round(hy_t_0-hy_t_1,2);
+	jb_dif:=round(jb_t_0-jb_t_1,2);
+	RAISE NOTICE 'total_t_0_aux %',total_t_0_aux;
+	RAISE NOTICE 'total_t_1_aux %',total_t_1_aux;
+	RAISE NOTICE 'ig_t_0_aux %',ig_t_0_aux;
+	RAISE NOTICE 'hy_t_0_aux %',hy_t_0_aux;
+	RAISE NOTICE 'jb_t_0_aux %',jb_t_0_aux;
+	
+	
+RETURN NEXT;	
+END;
+$$ LANGUAGE 'plpgsql';
+
+======================================================0
+
+-- la siguiente funcion es para obtener una fotos de los paises
+
+CREATE OR REPLACE FUNCTION dinamico_pais(fondo_in text) RETURNS TABLE(
+	fondo text,
+	pe_t_1 numeric,
+	pe_t_0 numeric,
+	pe_dif numeric,
+	ar_t_1 numeric,
+	ar_t_0 numeric,
+	ar_dif numeric,
+	co_t_1 numeric,
+	co_t_0 numeric,
+	co_dif numeric,
+	pa_t_1 numeric,
+	pa_t_0 numeric,
+	pa_dif numeric,
+	br_t_1 numeric,
+	br_t_0 numeric,
+	br_dif numeric,
+	mx_t_1 numeric,
+	mx_t_0 numeric,
+	mx_dif numeric,
+	cl_t_1 numeric,
+	cl_t_0 numeric,
+	cl_dif numeric,
+	otro_t_1 numeric,
+	otro_t_0 numeric,
+	otro_dif numeric)
+
+AS $$
+DECLARE
+total_t_1_aux NUMERIC;
+total_t_0_aux NUMERIC;
+
+pe_t_1_aux NUMERIC;
+pe_t_0_aux NUMERIC;
+
+ar_t_1_aux NUMERIC;
+ar_t_0_aux NUMERIC;
+
+co_t_1_aux NUMERIC;
+co_t_0_aux NUMERIC;
+
+pa_t_1_aux NUMERIC;
+pa_t_0_aux NUMERIC;
+
+br_t_1_aux NUMERIC;
+br_t_0_aux NUMERIC;
+
+mx_t_1_aux NUMERIC;
+mx_t_0_aux NUMERIC;
+
+cl_t_1_aux NUMERIC;
+cl_t_0_aux NUMERIC;
+
+otro_t_1_aux NUMERIC;
+otro_t_0_aux NUMERIC;
+
+
+BEGIN
+	fondo:=fondo_in;
+	Select sum(valor_nominal) into pe_t_1_aux from "RFI_sw" 
+	where crncy='USD' and institucion=$1 and cntry_of_risk='PE' and fecha_subida='2019-12-01';
+	select sum(valor_nominal) into pe_t_0_aux from "RFI_sw" 
+	where crncy='USD' and institucion=$1 and cntry_of_risk='PE' and fecha_subida='2020-01-01';
+	Select sum(valor_nominal) into ar_t_1_aux from "RFI_sw" 
+	where crncy='USD' and institucion=$1 and cntry_of_risk='AR' and fecha_subida='2019-12-01';
+	select sum(valor_nominal) into ar_t_0_aux from "RFI_sw" 
+	where crncy='USD' and institucion=$1 and cntry_of_risk='AR' and fecha_subida='2020-01-01';
+	Select sum(valor_nominal) into co_t_1_aux from "RFI_sw" 
+	where crncy='USD' and institucion=$1 and cntry_of_risk='CO' and fecha_subida='2019-12-01';
+	select sum(valor_nominal) into co_t_0_aux from "RFI_sw" 
+	where crncy='USD' and institucion=$1 and cntry_of_risk='CO' and fecha_subida='2020-01-01';
+	Select sum(valor_nominal) into pa_t_1_aux from "RFI_sw" 
+	where crncy='USD' and institucion=$1 and cntry_of_risk='PA' and fecha_subida='2019-12-01';
+	select sum(valor_nominal) into pa_t_0_aux from "RFI_sw" 
+	where crncy='USD' and institucion=$1 and cntry_of_risk='PA' and fecha_subida='2020-01-01';
+	Select sum(valor_nominal) into br_t_1_aux from "RFI_sw" 
+	where crncy='USD' and institucion=$1 and cntry_of_risk='BR' and fecha_subida='2019-12-01';
+	select sum(valor_nominal) into br_t_0_aux from "RFI_sw" 
+	where crncy='USD' and institucion=$1 and cntry_of_risk='BR' and fecha_subida='2020-01-01';
+	Select sum(valor_nominal) into mx_t_1_aux from "RFI_sw" 
+	where crncy='USD' and institucion=$1 and cntry_of_risk='MX' and fecha_subida='2019-12-01';
+	select sum(valor_nominal) into mx_t_0_aux from "RFI_sw" 
+	where crncy='USD' and institucion=$1 and cntry_of_risk='MX' and fecha_subida='2020-01-01';
+	Select sum(valor_nominal) into cl_t_1_aux from "RFI_sw" 
+	where crncy='USD' and institucion=$1 and cntry_of_risk='CL' and fecha_subida='2019-12-01';
+	select sum(valor_nominal) into cl_t_0_aux from "RFI_sw" 
+	where crncy='USD' and institucion=$1 and cntry_of_risk='CL' and fecha_subida='2020-01-01';
+	--Aca abajo va para sumar los otros:
+	select sum(valor_nominal) into otro_t_1_aux from "RFI_sw" 
+	where crncy='USD' and institucion=$1 and cntry_of_risk not in ('PE','AR','CO','PA','BR','MX','CL') and fecha_subida='2019-12-01';
+	select sum(valor_nominal) into otro_t_0_aux from "RFI_sw" 
+	where crncy='USD' and institucion=$1 and cntry_of_risk not in ('PE','AR','CO','PA','BR','MX','CL') and fecha_subida='2020-01-01';
+	
+	RAISE NOTICE 'otro_t_1_aux %',otro_t_1_aux;
+	RAISE NOTICE 'otro_t_0_aux %',otro_t_0_aux;
+	IF pe_t_0_aux IS NULL 
+	THEN 
+	pe_t_0_aux:=0;
+	END IF;
+	IF pe_t_1_aux IS NULL 
+	THEN 
+	pe_t_1_aux:=0;
+	END IF;
+	
+	IF ar_t_0_aux IS NULL 
+	THEN 
+	ar_t_0_aux:=0;
+	END IF;
+	IF ar_t_1_aux IS NULL 
+	THEN 
+	ar_t_1_aux:=0;
+	END IF;
+	
+	IF co_t_0_aux IS NULL 
+	THEN 
+	co_t_0_aux:=0;
+	END IF;
+	IF co_t_1_aux IS NULL 
+	THEN 
+	co_t_1_aux:=0;
+	END IF;
+	
+	IF pa_t_0_aux IS NULL 
+	THEN 
+	pa_t_0_aux:=0;
+	END IF;
+	IF pa_t_1_aux IS NULL 
+	THEN 
+	pa_t_1_aux:=0;
+	END IF;
+	
+	IF br_t_0_aux IS NULL 
+	THEN 
+	br_t_0_aux:=0;
+	END IF;
+	IF br_t_1_aux IS NULL 
+	THEN 
+	br_t_1_aux:=0;
+	END IF;
+	
+	IF mx_t_0_aux IS NULL 
+	THEN 
+	mx_t_0_aux:=0;
+	END IF;
+	IF mx_t_1_aux IS NULL 
+	THEN 
+	mx_t_1_aux:=0;
+	END IF;
+	
+	IF cl_t_0_aux IS NULL 
+	THEN 
+	cl_t_0_aux:=0;
+	END IF;
+	IF cl_t_1_aux IS NULL 
+	THEN 
+	cl_t_1_aux:=0;
+	END IF;
+	
+	IF otro_t_0_aux IS NULL 
+	THEN 
+	otro_t_0_aux:=0;
+	END IF;
+	IF otro_t_1_aux IS NULL 
+	THEN 
+	otro_t_1_aux:=0;
+	END IF;
+	
+	total_t_0_aux=pe_t_0_aux+ar_t_0_aux+co_t_0_aux+pa_t_0_aux+br_t_0_aux+mx_t_0_aux+cl_t_0_aux+otro_t_0_aux;
+	total_t_1_aux=pe_t_1_aux+ar_t_1_aux+co_t_1_aux+pa_t_1_aux+br_t_1_aux+mx_t_1_aux+cl_t_1_aux+otro_t_1_aux;
+	
+	pe_t_0:=round((pe_t_0_aux/total_t_0_aux)*100,2);
+	pe_t_1:=round((pe_t_1_aux/total_t_1_aux)*100,2);
+	
+	ar_t_0:=round((ar_t_0_aux/total_t_0_aux)*100,2);
+	ar_t_1:=round((ar_t_1_aux/total_t_1_aux)*100,2);
+	
+	co_t_0:=round((co_t_0_aux/total_t_0_aux)*100,2);
+	co_t_1:=round((co_t_1_aux/total_t_1_aux)*100,2);
+	
+	pa_t_0:=round((pa_t_0_aux/total_t_0_aux)*100,2);
+	pa_t_1:=round((pa_t_1_aux/total_t_1_aux)*100,2);
+	
+	br_t_0:=round((br_t_0_aux/total_t_0_aux)*100,2);
+	br_t_1:=round((br_t_1_aux/total_t_1_aux)*100,2);
+	
+	mx_t_0:=round((mx_t_0_aux/total_t_0_aux)*100,2);
+	mx_t_1:=round((mx_t_1_aux/total_t_1_aux)*100,2);
+	
+	cl_t_0:=round((cl_t_0_aux/total_t_0_aux)*100,2);
+	cl_t_1:=round((cl_t_1_aux/total_t_1_aux)*100,2);
+	
+	otro_t_0:=round((otro_t_0_aux/total_t_0_aux)*100,2);
+	otro_t_1:=round((otro_t_1_aux/total_t_1_aux)*100,2);
+	
+	pe_dif:=round(pe_t_0-pe_t_1,2);
+	ar_dif:=round(ar_t_0-ar_t_1,2);
+	co_dif:=round(co_t_0-co_t_1,2);
+	pa_dif:=round(pa_t_0-pa_t_1,2);
+	br_dif:=round(br_t_0-pe_t_1,2);
+	mx_dif:=round(mx_t_0-mx_t_1,2);
+	cl_dif:=round(cl_t_0-cl_t_1,2);
+	otro_dif:=round(otro_t_0-otro_t_1,2);
+	
+
+	
+RETURN NEXT;	
+END;
+$$ LANGUAGE 'plpgsql';
+
+===========
+Esta función es para calcular los porcentajes por sector
+
+select sector,100*(sum(valor_nominal)/(Select sum(valor_nominal) from "RFI_sw" where fecha_subida='2020-01-01' and institucion='BANCHILE DOLLAR INVESTMENT GRADE')) AS promedio 
+			   from "RFI_sw" where fecha_subida='2020-01-01' 
+and institucion='BANCHILE DOLLAR INVESTMENT GRADE' group by sector
+
+==============
+
+/home/gvera/Descargas/datos_rfi_salida.csv
+/home/gvera/Descargas/clientes_rfi_para_subir.csv
+
+
+COPY "RFI.clientes_rfi"(nombre_cliente,categoria,pais,operador,activo) FROM "/home/gvera/Descargas/clientes_rfi para subir.csv" CSV HEADER DELIMITER ";"
+
+======================
+
+
+
+CREATE OR REPLACE FUNCTION eqder_generaciones_bases(fecha_inicial date,fecha_final date) RETURNS TABLE(cliente text, provision numeric)
+AS $$
+DECLARE
+fee_buyer_clp_aux NUMERIC;
+fee_seller_clp_aux NUMERIC;
+r TEXT;
+BEGIN
+	FOR r IN SELECT nombre from "BASES_clientes"
+	LOOP
+		cliente:=r;
+		raise notice 'nombre %',r;
+		SELECT sum(fee_buyer_clp) into fee_buyer_clp_aux from "BASES_bases" where buy=r and fee_buyer_clp>0 and fecha BETWEEN $1 and $2;
+		IF fee_buyer_clp_aux IS NULL THEN
+		fee_buyer_clp_aux:=0;
+		END IF;
+		raise notice 'fee_buyer_clp_aux %',fee_buyer_clp_aux;
+		SELECT sum(fee_seller_clp) into fee_seller_clp_aux from "BASES_bases" where seller=r and fee_seller_clp>0 and fecha BETWEEN $1 and $2;
+		raise notice 'fee_seller_clp_aux %',fee_seller_clp_aux;
+		IF fee_seller_clp_aux IS NULL THEN
+		fee_seller_clp_aux:=0;
+		END IF;
+		provision:=fee_buyer_clp_aux+fee_seller_clp_aux;
+		raise notice 'provision %',provision;
+		
+	RETURN NEXT;	
+	END LOOP;
+END;
+$$ LANGUAGE 'plpgsql';
+SELECT * FROM generaciones_bases('2020-02-01','2020-02-27') order by provision desc;
+
+==========
+CREATE OR REPLACE FUNCTION eqder_montos_transados(fecha_inicial date,fecha_final date,otctr text, basedepo text) RETURNS TABLE(cliente text, monto_transado numeric)
+AS $$
+DECLARE
+valor_buyer_clp_aux NUMERIC;
+valor_seller_clp_aux NUMERIC;
+r TEXT;
+BEGIN
+	FOR r IN SELECT nombre from "BASES_clientes"
+	LOOP
+		cliente:=r;
+		raise notice 'nombre %',r;
+		if $4='B' THEN
+			SELECT sum(valor_clp) into valor_buyer_clp_aux from "BASES_bases" where buy=r and otc_tr=$3 and nemo ilike 'B%' and fecha BETWEEN $1 and $2;
+			IF valor_buyer_clp_aux IS NULL THEN
+			valor_buyer_clp_aux:=0;
+			END IF;
+			raise notice 'valor_buyer_clp_aux %',valor_buyer_clp_aux;
+			SELECT sum(valor_clp) into valor_seller_clp_aux from "BASES_bases" where seller=r and otc_tr=$3 and nemo ilike 'B%' and fecha BETWEEN $1 and $2;
+			raise notice 'valor_seller_clp_aux %',valor_seller_clp_aux;
+			IF valor_seller_clp_aux IS NULL THEN
+			valor_seller_clp_aux:=0;
+			END IF;
+			monto_transado:=valor_buyer_clp_aux+valor_seller_clp_aux;
+			raise notice 'monto_transado %',monto_transado;
+		END IF;
+		if $4='F' THEN
+			SELECT sum(valor_clp) into valor_buyer_clp_aux from "BASES_bases" where buy=r and otc_tr=$3 and nemo ilike 'F%' and fecha BETWEEN $1 and $2;
+			IF valor_buyer_clp_aux IS NULL THEN
+			valor_buyer_clp_aux:=0;
+			END IF;
+			raise notice 'valor_buyer_clp_aux %',valor_buyer_clp_aux;
+			SELECT sum(valor_clp) into valor_seller_clp_aux from "BASES_bases" where seller=r and otc_tr=$3 and nemo ilike 'F%' and fecha BETWEEN $1 and $2;
+			raise notice 'valor_seller_clp_aux %',valor_seller_clp_aux;
+			IF valor_seller_clp_aux IS NULL THEN
+			valor_seller_clp_aux:=0;
+			END IF;
+			monto_transado:=valor_buyer_clp_aux+valor_seller_clp_aux;
+			raise notice 'monto_transado %',monto_transado;
+		END IF;
+		
+	RETURN NEXT;	
+	END LOOP;
+END;
+$$ LANGUAGE 'plpgsql';
+
+
+select * from eqder_montos_transados('2020-02-01','2020-02-28','OTC','F') order by monto_transado desc;
+
+================
+CREATE OR REPLACE FUNCTION eqder_generacion_tasas(fecha_inicial date,fecha_final date,basedepo text) RETURNS TABLE(cliente text, util_tasa numeric)
+AS $$
+DECLARE
+valor_p1_clp_aux NUMERIC;
+valor_p2_clp_aux NUMERIC;
+r TEXT;
+BEGIN
+	FOR r IN SELECT nombre from "BASES_clientes"
+	LOOP
+		cliente:=r;
+		raise notice 'nombre %',r;
+		if $3='B' THEN
+			SELECT sum(valor_clp) into valor_p1_clp_aux from "BASES_bases" where buy=r and nemo ilike 'B%' and fecha BETWEEN $1 and $2;
+			IF valor_p1_clp_aux IS NULL THEN
+			valor_p1_clp_aux:=0;
+			END IF;
+			raise notice 'valor_p1_clp_aux %',valor_p1_clp_aux;
+			SELECT sum(valor_clp) into valor_p2_clp_aux from "BASES_bases" where seller=r and nemo ilike 'B%' and fecha BETWEEN $1 and $2;
+			raise notice 'valor_p2_clp_aux %',valor_p2_clp_aux;
+			IF valor_p2_clp_aux IS NULL THEN
+			valor_p2_clp_aux:=0;
+			END IF;
+			util_tasa:=(valor_p1_clp_aux+valor_p2_clp_aux)/2;
+			raise notice 'util_tasa %',util_tasa;
+		END IF;
+		if $3='F' THEN
+			SELECT sum(util_depo) into valor_p1_clp_aux from "BASES_bases" where participante_1=r and nemo ilike 'F%' and fecha BETWEEN $1 and $2;
+			IF valor_p1_clp_aux IS NULL THEN
+			valor_p1_clp_aux:=0;
+			END IF;
+			raise notice 'valor_p1_clp_aux %',valor_p1_clp_aux;
+			SELECT sum(util_depo) into valor_p2_clp_aux from "BASES_bases" where participante_2=r and nemo ilike 'F%' and fecha BETWEEN $1 and $2;
+			raise notice 'valor_p2_clp_aux %',valor_p2_clp_aux;
+			IF valor_p2_clp_aux IS NULL THEN
+			valor_p2_clp_aux:=0;
+			END IF;
+			util_tasa:=(valor_p1_clp_aux+valor_p2_clp_aux)/2;
+			raise notice 'util_tasa %',util_tasa;
+		END IF;
+		
+	RETURN NEXT;	
+	END LOOP;
+END;
+$$ LANGUAGE 'plpgsql';
+
+
+select * from eqder_generacion_tasas('2020-02-01','2020-02-28','F') order by util_tasa desc;
+
+
+
+========================
+
+--ESTA FUNCION CALCULA LOS VENCIMIENTOS DE LOS DAP
+
+select *,(fecha+dias) as fecha_final 
+from "BASES_bases" 
+where (fecha+dias)>now() 
+order by fecha_final asc;
+
+select fecha,nemo,dias,monto,buy,seller,trader_buy,trader_seller,tasa,(fecha+dias) as fecha_final 
+from "BASES_bases" 
+where (fecha+dias)>now() 
+order by fecha_final asc;
+
+================
+
+
+
+Hay que hacer 2 funciones
+eqder_montos_transados(fecha_inicial,fecha_final,OTC/TR,BASE/DEPO)
+eqder_generacion_tasas(fecha_inicial,fecha_final,BASE/DEPO)
+
+=================
+PROCESAR LOS DATOS DE BASES ANTES DE METER
+	
+UPDATE "BASES_bases" set dias=0 where dias is null;
+UPDATE "BASES_bases" set fee_buyer=0 where fee_buyer is null;
+UPDATE "BASES_bases" set fee_seller=0 where fee_seller is null;
+UPDATE "BASES_bases" set fee_seller_moneda='CLP' where fee_seller_moneda is null;
+UPDATE "BASES_bases" set fee_buyer_moneda='CLP' where fee_buyer_moneda is null;
+UPDATE "BASES_bases" set fee_buyer_clp=fee_buyer where fee_buyer_clp is null and fee_buyer_moneda='CLP';
+UPDATE "BASES_bases" set fee_seller_clp=fee_seller where fee_seller_clp is null and fee_seller_moneda='CLP';
+UPDATE "BASES_bases" set fee_buyer_clp=fee_buyer*790 where fee_buyer_clp is null and fee_buyer_moneda='USD';
+UPDATE "BASES_bases" set fee_seller_clp=fee_seller*790 where fee_seller_clp is null and fee_seller_moneda='USD';
+UPDATE "BASES_bases" set compra_depo=0 where compra_depo is null;
+UPDATE "BASES_bases" set venta_depo=0 where venta_depo is null;
+UPDATE "BASES_bases" set util_depo=0 where util_depo is null;
+UPDATE "BASES_bases" set participante_1=0 where participante_1 is null;
+UPDATE "BASES_bases" set participante_2=0 where participante_2 is null;
+UPDATE "BASES_bases" set valor_clp=monto*28000 where valor_clp is null and nemo ilike 'BTU%' OR nemo ilike 'BCU%';
+UPDATE "BASES_bases" set valor_clp=monto where valor_clp is null and nemo ilike 'BTP%' OR nemo ilike 'BCP%';
+UPDATE "BASES_bases" set valor_clp=monto where valor_clp is null and nemo ilike 'F%';
+update "BASES_bases" set trader_seller='PABLO ARROYO' where trader_seller='P ARROYO';
+update "BASES_bases" set trader_seller='MIGUEL SARMIENTO' where trader_seller='MIGUE SARMIENTO';
+update "BASES_bases" set trader_seller='JORGE TROMBERT' where trader_seller='JORGE TROMBERG';
+update "BASES_bases" set trader_seller='IGNACIO SILVA' where trader_seller='IGNACIO ';
+update "BASES_bases" set trader_seller='GABRIELA VARGAS' where trader_seller='GABRIELA VARGAS ';
+update "BASES_bases" set trader_seller='FYNSA' where trader_seller='FYNSA ';
+update "BASES_bases" set trader_seller='FELIPE MENA' where trader_seller='FELIP MENA';
+update "BASES_bases" set trader_seller='DIEGO SOUPER' where trader_seller='DIEGO SUPER';
+UPDATE "BASES_bases" set buy='FM SURA' where buy='FM  SURA';
+UPDATE "BASES_bases" set buy='B HSBC' where buy='HSBC';
+UPDATE "BASES_bases" set buy='AFP AFC' where buy='AFC';
+UPDATE "BASES_bases" set seller='AFP AFC' where seller='AFC';
+UPDATE "BASES_bases" set buy='FM SCOTIABANK' where buy='FM SCOTIA';
+Update "BASES_bases" set seller='FM LARRAINVIAL' where seller='FM LV';
+Update "BASES_bases" set seller='FM LARRAINVIAL' where seller='FM LARRAIN VIAL';
+UPDATE "BASES_bases" set concate='' where concate is null;
+REFRESH MATERIALIZED VIEW cobranzas_view;
+REFRESH MATERIALIZED VIEW cobranzas_view_consolidada;
+REFRESH MATERIALIZED VIEW serie_cobranzas_view;
+REFRESH MATERIALIZED VIEW serie_mensual_generacion_total_view;
+select * from eq_der_cargador_tabla_serie_generacion_total_diaria();
+REFRESH MATERIALIZED VIEW eq_der_serie_generacion_acumulada_diaria_view;
+select * from eq_der_rutinas()
+
+=========
+
+COPY "BASES_bases"(fecha,fynsa,otc_tr,nemo,dias,monto,tipo_de_pago,buy,seller,trader_buy,trader_seller,tasa,valor_final,fee_buyer,fee_seller,fee_buyer_moneda,fee_seller_moneda,compra_depo,venta_depo,util_depo,valor_clp,fee_buyer_clp,fee_seller_clp,participante_1,participante_2,tipo_de_cambio,uf) FROM '/home/gvera/Descargas/blotter_28-04.csv' CSV HEADER DELIMITER ';';
+
+
+====================
+
+CREATE OR REPLACE FUNCTION eqder_torta_montos_transados(fecha_inicial date,fecha_final date) RETURNS TABLE(categoria text, total numeric)
+AS $$
+DECLARE
+
+r TEXT;
+BEGIN
+	FOR r in SELECT categ from (VALUES (1,'OTC BASES'),(2,'OTC DEPOS'),(3,'TR BASES'),(4,'TR DEPOS')) as t (num,categ)
+	LOOP
+	
+	if r='OTC BASES' THEN
+		categoria:=r;
+		select sum(monto_transado) into total from eqder_montos_transados($1,$2,'OTR','B');
+	END IF;
+	if r='OTC DEPOS' THEN
+		categoria:=r;
+		select sum(monto_transado) into total from eqder_montos_transados($1,$2,'OTR','F');
+	END IF;
+	if r='TR BASES' THEN
+		categoria:=r;
+		select sum(monto_transado) into total from eqder_montos_transados($1,$2,'TR','B');
+	END IF;
+	if r='TR DEPOS' THEN
+		categoria:=r;
+		select sum(monto_transado) into total from eqder_montos_transados($1,$2,'TR','F');
+	END IF;
+			
+	RETURN NEXT;
+	END LOOP;
+
+
+END;
+$$ LANGUAGE 'plpgsql';
+
+
+
+================
+tabla cobranzas
+
+CREATE MATERIALIZED VIEW cobranzas_view as (Select 1 as linea,gen.cliente,gen.provision as provision,abs(gen.ida_vuelta)as ida_vuelta, 
+sum(coalesce(bas.monto_neto,0))
+as facturas,
+(gen.provision+gen.ida_vuelta-sum(coalesce(bas.monto_neto,0))) as saldo  
+from generaciones_bases_historico() as gen 
+left outer join "BASES_facturas_bases" as bas on bas.cliente=gen.cliente
+group by gen.cliente,gen.provision,gen.ida_vuelta 
+order by provision desc);
+alter MATERIALIZED view cobranzas_view owner to fynsa;
+
+=== rutinas de validaciones para bases
+no tiene que haber ninguno:
+
+si son el CLP la provision en fee_buyer tiene que ser igual a la provision fee_buyer_clp
+
+Select * from "BASES_bases" where fee_buyer<>fee_buyer_clp and fee_buyer_moneda='CLP';
+Select * from "BASES_bases" where fee_seller<>fee_seller_clp and fee_seller_moneda='CLP';
+Select * from "BASES_bases" where fee_seller<>0 and fee_seller_clp=0; 
+Select * from "BASES_bases" where fee_buyer<>0 and fee_buyer_clp=0;
+
+hay asignaciones a FYNSa, mal
+Select * from "BASES_bases" where fee_buyer<>0 and buy='FYNSA';
+Select * from "BASES_bases" where fee_seller<>0 and seller='FYNSA';
+
+ojo, hay provisiones en depos:
+Select * from "BASES_bases" where nemo ilike 'F%' and (fee_seller<>0 or fee_buyer<>0);
+
+detectar si hay numeros disparados:
+Select * from "BASES_bases" 
+where valor_clp>all(select max(valor_clp) from "BASES_bases" );
+
+detectar si hay participante1 o 2 sin asignacion
+Select * from "BASES_bases" 
+where util_depo<>0 and (participante_1='0' or participante_1='-' or participante_2='0' or participante_2='-' );
+
+
+detectar valores null
+select * from "BASES_bases" where not("BASES_bases" is not null);
+
+hacer rutina de validacion para ver que las facturas esten cuadradas en la fecha de emision y la fecha que existe en el blotter
+
+VER SI HAY INGRESO EN DOLARES QUE SE LE PUSO COMO PESO
+select * from "BASES_bases" where fee_buyer_clp>0 and fee_buyer_clp<1000;
+select * from "BASES_bases" where fee_seller_clp>0 and fee_seller_clp<1000;
+
+
+
+
+para ambos lados.
+también hay que fijarse en las provisiones para depósitos, van a haber?
+ver que no hayan montos asignados a fynsa y que estén en las columnas que correspondan.
+que los participantes 1 y 2 tengan correcta asignacion con el monto
+y no tiene que haber nada asignado a Fynsa.
+
+
+
+
+select * from "BASES_bases" where fee_buyer<>fee_buyer_clp and fee_buyer_moneda='CLP';;
+
+============
+
+
+CREATE OR REPLACE FUNCTION eqder_provisiones(fecha_inicial date,fecha_final date, B_o_F text) RETURNS TABLE(cliente text, provision numeric)
+AS $$
+DECLARE
+fee_buyer_clp_aux NUMERIC;
+fee_seller_clp_aux NUMERIC;
+r TEXT;
+BEGIN
+	
+	FOR r IN SELECT nombre from "BASES_clientes"
+	LOOP
+	
+		cliente:=r;
+		raise notice 'nombre %',r;
+		IF $3='B' THEN
+		SELECT sum(fee_buyer_clp) into fee_buyer_clp_aux from "BASES_bases" where buy=r and fee_buyer_clp>0 and fecha BETWEEN $1 and $2 and nemo ilike 'B%';
+		IF fee_buyer_clp_aux IS NULL THEN
+		fee_buyer_clp_aux:=0;
+		END IF;
+		raise notice 'fee_buyer_clp_aux %',fee_buyer_clp_aux;
+		SELECT sum(fee_seller_clp) into fee_seller_clp_aux from "BASES_bases" where seller=r and fee_seller_clp>0 and fecha BETWEEN $1 and $2 and nemo ilike 'B%';
+		raise notice 'fee_seller_clp_aux %',fee_seller_clp_aux;
+		IF fee_seller_clp_aux IS NULL THEN
+		fee_seller_clp_aux:=0;
+		END IF;
+		provision:=fee_buyer_clp_aux+fee_seller_clp_aux;
+		raise notice 'provision %',provision;
+		END IF;
+		IF $3='F' THEN
+		SELECT sum(fee_buyer_clp) into fee_buyer_clp_aux from "BASES_bases" where buy=r and fee_buyer_clp>0 and fecha BETWEEN $1 and $2 and nemo ilike 'F%';
+		IF fee_buyer_clp_aux IS NULL THEN
+		fee_buyer_clp_aux:=0;
+		END IF;
+		raise notice 'fee_buyer_clp_aux %',fee_buyer_clp_aux;
+		SELECT sum(fee_seller_clp) into fee_seller_clp_aux from "BASES_bases" where seller=r and fee_seller_clp>0 and fecha BETWEEN $1 and $2 and nemo ilike 'F%';
+		raise notice 'fee_seller_clp_aux %',fee_seller_clp_aux;
+		IF fee_seller_clp_aux IS NULL THEN
+		fee_seller_clp_aux:=0;
+		END IF;
+		provision:=fee_buyer_clp_aux+fee_seller_clp_aux;
+		raise notice 'provision %',provision;
+		END IF;
+	RETURN NEXT;	
+	END LOOP;
+END;
+$$ LANGUAGE 'plpgsql';
+
+SELECT * FROM eqder_provisiones('2019-08-09','2020-02-27','F') order by provision desc;
+
+
+CONCILIACIONES:
+select fecha,otc_tr,nemo,monto,tipo_de_pago,buy,seller,trader_buy,trader_seller,
+sum(
+	CASE WHEN trader_buy='CRISTIAN MORENO' THEN
+	fee_buyer
+	ELSE
+	0
+	END
+	)as fe_buyer, 
+sum(
+	CASE WHEN trader_seller='CRISTIAN MORENO' THEN
+	fee_seller
+	ELSE
+	0
+	END)as fe_seller
+from "BASES_bases"
+where (trader_buy='CRISTIAN MORENO' or trader_seller='CRISTIAN MORENO') AND (fee_seller>0 or fee_buyer>0)
+group by fecha,otc_tr,nemo,monto,tipo_de_pago,buy,seller,trader_buy,trader_seller,fee_buyer,fee_seller
+order by fecha asc;
+
+=====================
+
+select fecha,otc_tr,nemo,monto,tipo_de_pago,buy,seller,trader_buy,trader_seller,
+sum(
+	CASE WHEN trader_buy='CAMILA TOMBOLINI' OR trader_buy='CRISTIAN CATALDO' OR trader_buy='GABRIELA VARGAS' OR trader_buy='PATRICIO SEPULVEDA'  THEN
+	fee_buyer
+	ELSE
+	0
+	END
+	)as fe_buyer, 
+sum(
+	CASE WHEN trader_seller='CAMILA TOMBOLINI' OR trader_seller='CRISTIAN CATALDO' OR trader_seller='GABRIELA VARGAS' OR trader_seller='PATRICIO SEPULVEDA' THEN
+	fee_seller
+	ELSE
+	0
+	END)as fe_seller
+from "BASES_bases"
+where (trader_buy='CAMILA TOMBOLINI' OR trader_buy='CRISTIAN CATALDO' OR trader_buy='GABRIELA VARGAS' OR trader_buy='PATRICIO SEPULVEDA' or trader_seller='CAMILA TOMBOLINI' OR trader_seller='CRISTIAN CATALDO' OR trader_seller='GABRIELA VARGAS' OR trader_seller='PATRICIO SEPULVEDA') AND (fee_seller>0 or fee_buyer>0)
+group by fecha,otc_tr,nemo,monto,tipo_de_pago,buy,seller,trader_buy,trader_seller,fee_buyer,fee_seller
+order by fecha asc;
+
+COPY "BASES_bases_aux_2"(fecha,fynsa,otc_tr,nemo,dias,monto,tipo_de_pago,buy,seller,trader_buy,trader_seller,tasa,valor_final,fee_buyer,fee_seller,fee_buyer_moneda,fee_seller_moneda,compra_depo,venta_depo,util_depo,valor_clp,fee_buyer_clp,fee_seller_clp,participante_1,participante_2,tipo_de_cambio,uf) 
+FROM '/home/gvera/Descargas/BLOTTER TASA DERIVADOS FINAL_06_04_.csv'
+CSV HEADER DELIMITER ';';
+
+============================
+
+
+
+
+======================
+
+CREATE OR REPLACE FUNCTION eqder_serie_generaciones_categorias(fecha_incial date, fecha_final date) returns TABLE(fecha_salida date,generacion_base numeric, generacion_depo numeric, provision_base numeric, provision_depo numeric)
+AS $$
+DECLARE
+f date;
+BEGIN
+	FOR f in Select distinct(fecha) from "BASES_bases" where fecha BETWEEN $1 AND $2
+	LOOP
+	fecha_salida:=f;
+	SELECT sum(fee_seller_clp + fee_buyer_clp) into provision_base from "BASES_bases" where nemo ilike 'B%' and fecha=f and (fee_seller_clp>0 or fee_buyer_clp>0);
+	SELECT sum(fee_seller_clp + fee_buyer_clp) into provision_depo from "BASES_bases" where nemo ilike 'F%' and fecha=f and (fee_seller_clp>0 or fee_buyer_clp>0);
+	SELECT sum(util_depo) into generacion_base from "BASES_bases" where nemo ilike 'B%' and fecha=f and util_depo>0;
+	SELECT sum(util_depo) into generacion_depo from "BASES_bases" where nemo ilike 'F%' and fecha=f and util_depo>0;
+	
+	if provision_base is null then
+	provision_base:=0;
+	END IF;
+	if provision_depo is null then
+	provision_depo:=0;
+	END IF;
+	if generacion_depo is null then
+	generacion_depo:=0;
+	END IF;
+	if generacion_base is null then
+	generacion_base:=0;
+	END IF;
+	
+	RETURN NEXT;
+	END LOOP;
+END;
+$$ LANGUAGE 'plpgsql';
+--DROP FUNCTION eqder_serie_generaciones_categorias()
+select * from eqder_serie_generaciones_categorias('2019-09-08','2020-04-07') order by fecha_salida asc;
+
+
+==============
+codigo de colores
+0:{color:'#3498DB'}, provision base
+1:{color:'#D6EAF8'}, generacion base
+2:{color:'#E64A19'}, generacion depos
+3:{color:'#FF8A65'}, provision depos
+                    
+
+=========================
+
+Esta funcion saca los promedios en una columna al lado
+
+select nemo, sum(valor_clp) as suma, sum(valor_clp)/sum (valor_clp/100) over () from "BASES_bases" where nemo ilike 'B%' 
+group by nemo, valor_clp
+order by valor_clp desc
+
+PROVISIONES (PLATA QUE NOS DEBE) ACUMULADA
+with datos as (select fecha, sum(fee_seller_clp+fee_buyer_clp) as provi from "BASES_bases"
+where fee_seller_clp>0 or fee_buyer_clp>0
+group by fecha
+order by fecha asc)
+select fecha,provi, sum(provi) over (order by fecha asc) from datos
+
+PROVISIONES E IDAS Y VUELTAS TODO JUNTO
+select 1 as linea,*, (provi_agreg-idayvuelta_agreg-facturacion_agreg) as provi_neta from (
+with provisiones as (select fecha, sum(fee_seller_clp+fee_buyer_clp) as provi from "BASES_bases"
+where fee_seller_clp>0 or fee_buyer_clp>0
+group by fecha
+order by fecha asc),
+ida_vuelta as (select fecha, sum(fee_seller_clp+fee_buyer_clp) as idavuelta from "BASES_bases"
+where fee_seller_clp<0 or fee_buyer_clp<0
+group by fecha
+order by fecha asc
+),
+facturas as (
+	select fecha_emision,sum(monto_neto) as montofacturado  from "BASES_facturas_bases"
+group by fecha_emision order by fecha_emision asc
+)
+select p.fecha,
+provi, 
+coalesce(idavuelta,0) as idavuelta,
+coalesce(montofacturado,0) as montofacturado,
+coalesce(sum(abs(idavuelta)) over (order by p.fecha asc),0) as idayvuelta_agreg,
+coalesce(sum(montofacturado) over (order by p.fecha asc),0) as facturacion_agreg,
+sum(provi) over (order by p.fecha asc) as provi_agreg
+from provisiones p
+left join ida_vuelta i on p.fecha=i.fecha 
+left join facturas f on p.fecha=f.fecha_emision) as t
+
+
+=================
+VISTA MATERIALIZADA 
+
+CREATE MATERIALIZED VIEW serie_cobranzas_view as (
+select 1 as linea,*, (provi_agreg-idayvuelta_agreg-facturacion_agreg) as provi_neta from (
+with provisiones as (select fecha, sum(fee_seller_clp+fee_buyer_clp) as provi from "BASES_bases"
+where fee_seller_clp>0 or fee_buyer_clp>0
+group by fecha
+order by fecha asc),
+ida_vuelta as (select fecha, sum(fee_seller_clp+fee_buyer_clp) as idavuelta from "BASES_bases"
+where fee_seller_clp<0 or fee_buyer_clp<0
+group by fecha
+order by fecha asc
+),
+facturas as (
+	select fecha_emision,sum(monto_neto) as montofacturado  from "BASES_facturas_bases"
+group by fecha_emision order by fecha_emision asc
+)
+select p.fecha,
+provi, 
+coalesce(idavuelta,0) as idavuelta,
+coalesce(montofacturado,0) as montofacturado,
+coalesce(sum(abs(idavuelta)) over (order by p.fecha asc),0) as idayvuelta_agreg,
+coalesce(sum(montofacturado) over (order by p.fecha asc),0) as facturacion_agreg,
+sum(provi) over (order by p.fecha asc) as provi_agreg
+from provisiones p
+left join ida_vuelta i on p.fecha=i.fecha 
+left join facturas f on p.fecha=f.fecha_emision) as t
+);
+alter MATERIALIZED view serie_cobranzas_view owner to fynsa;
+
+=====================
+
+
+CREATE OR REPLACE FUNCTION eqder_serie_provisiones_clientes(cliente text) RETURNS TABLE(fecha date, provision numeric)
+AS
+$$
+with datos_cliente as (
+select fecha,
+sum(case when buy=$1 and fee_buyer_clp>0 THEN fee_buyer_clp else 0 end) as fee_buy,
+sum(case when seller=$1 and fee_seller_clp>0 THEN fee_seller_clp else 0 end) as fee_seller
+from "BASES_bases"
+group by fecha
+order by fecha asc)
+select fecha,sum(fee_buy+fee_seller) from datos_cliente 
+group by fecha
+order by fecha asc;
+$$
+LANGUAGE SQL;
+
+========================
+
+CREATE OR REPLACE FUNCTION eqder_torta_generaciones(fecha_inicial date,fecha_final date) RETURNS TABLE(categoria text, total numeric)
+AS $$
+DECLARE
+
+r TEXT;
+BEGIN
+	FOR r in SELECT categ from (VALUES (1,'PROVISION BASES TR'),(2,'PROVISION BASES OTC'),(3,'PROVISION DEPOS TR'),(4,'PROVISION DEPOS OTC'),(5,'GENERACION BASES TR'),(6,'GENERACION BASES OTC'),(7,'GENERACION DEPOS TR'),(8,'GENERACION DEPOS OTC')) as t (num,categ)
+	LOOP
+	
+	if r='PROVISION BASES TR' THEN
+		categoria:=r;
+		select COALESCE(SUM(fee_buyer_clp+fee_seller_clp),0) into total from "BASES_bases" where (fee_buyer_clp>0 or fee_seller_clp>0) and nemo ilike 'B%' and otc_tr='TR' and fecha between $1 and $2;
+
+		
+	END IF;
+	if r='PROVISION BASES OTC' THEN
+		categoria:=r;
+		select COALESCE(SUM(fee_buyer_clp+fee_seller_clp),0) into total from "BASES_bases" where (fee_buyer_clp>0 or fee_seller_clp>0) and nemo ilike 'B%' and otc_tr='OTC' and fecha between $1 and $2;
+
+	END IF;
+	if r='PROVISION DEPOS TR' THEN
+		categoria:=r;
+		select COALESCE(SUM(fee_buyer_clp+fee_seller_clp),0) into total from "BASES_bases" where (fee_buyer_clp>0 or fee_seller_clp>0) and nemo ilike 'F%' and otc_tr='TR' and fecha between $1 and $2;
+	
+	END IF;
+	if r='PROVISION DEPOS OTC' THEN
+		categoria:=r;
+		select COALESCE(SUM(fee_buyer_clp+fee_seller_clp),0) into total from "BASES_bases" where (fee_buyer_clp>0 or fee_seller_clp>0) and nemo ilike 'F%' and otc_tr='OTC' and fecha between $1 and $2;
+
+	END IF;
+	if r='GENERACION BASES TR' THEN
+		categoria:=r;
+		select COALESCE(SUM(util_depo),0) into total from "BASES_bases" where (util_depo>0) and nemo ilike 'B%' and otc_tr='TR' and fecha between $1 and $2;
+
+	END IF;
+	if r='GENERACION BASES OTC' THEN
+		categoria:=r;
+		select COALESCE(SUM(util_depo),0) into total from "BASES_bases" where (util_depo>0) and nemo ilike 'B%' and otc_tr='OTC' and fecha between $1 and $2;
+		END IF;
+	if r='GENERACION DEPOS TR' THEN
+		categoria:=r;
+		select COALESCE(SUM(util_depo),0) into total from "BASES_bases" where (util_depo>0) and nemo ilike 'F%' and otc_tr='TR' and fecha between $1 and $2;
+	END IF;
+	if r='GENERACION DEPOS OTC' THEN
+		categoria:=r;
+		select COALESCE(SUM(util_depo),0) into total from "BASES_bases" where (util_depo>0) and nemo ilike 'F%' and otc_tr='OTC' and fecha between $1 and $2;
+	END IF;
+			
+	RETURN NEXT;
+	END LOOP;
+
+
+END;
+$$ LANGUAGE 'plpgsql';
+
+
+SELECT * FROM eqder_torta_generaciones('2020-04-01','2020-04-21')
+
+
+=====================================
+
+CREATE OR REPLACE FUNCTION eqder_cobranzas() RETURNS TABLE(cliente text,provisiones numeric,idayvuelta numeric,facturas numeric, saldo numeric, facturabool bool)
+AS $$
+DECLARE
+r "BASES_clientes"%ROWTYPE;
+h "BASES_clientes"%ROWTYPE;
+provisiones_aux numeric;
+BEGIN
+	for r in select * from "BASES_clientes"
+	LOOP
+	cliente:=r.nombre;
+	facturabool:=r.factura;
+	if r.nombre='B CONSORCIO' THEN
+		SELECT SUM(COALESCE(gen.provision,0)) into provisiones from generaciones_bases_historico() gen where gen.cliente ILIKE 'B CONSORCIO%';
+		SELECT SUM(COALESCE(fac.monto_neto,0)) into facturas from "BASES_facturas_bases" fac where fac.cliente ilike 'B CONSORCIO%';
+			if facturas is null then
+				facturas:=0;
+			end if;
+		select COALESCE(sum(gen.ida_vuelta),0) into idayvuelta from generaciones_bases_historico() gen where gen.cliente ilike 'B CONSORCIO%';
+		saldo:=provisiones-facturas+idayvuelta;
+		if saldo is null then
+				saldo:=0;
+		end if;
+	ELSIF r.nombre='B ESTADO' THEN
+	SELECT SUM(COALESCE(gen.provision,0)) into provisiones from generaciones_bases_historico() gen where gen.cliente ILIKE 'B ESTADO%';
+	SELECT SUM(COALESCE(fac.monto_neto,0)) into facturas from "BASES_facturas_bases" fac where fac.cliente ilike 'B ESTADO%';
+		if facturas is null then
+		facturas:=0;
+		end if;
+		select COALESCE(sum(gen.ida_vuelta),0) into idayvuelta from generaciones_bases_historico() gen where gen.cliente ilike 'B ESTADO%';
+		saldo:=provisiones-facturas+idayvuelta;
+		if saldo is null then
+				saldo:=0;
+		end if;
+	ELSIF r.nombre='B BCI' THEN
+	SELECT SUM(COALESCE(gen.provision,0)) into provisiones from generaciones_bases_historico() gen where gen.cliente ILIKE 'B BCI%';
+	SELECT SUM(COALESCE(fac.monto_neto,0)) into facturas from "BASES_facturas_bases" fac where fac.cliente ilike 'B BCI%';
+	if facturas is null then
+	facturas:=0;
+	end if;
+	select COALESCE(sum(gen.ida_vuelta),0) into idayvuelta from generaciones_bases_historico() gen where gen.cliente ilike 'B BCI%';
+		saldo:=provisiones-facturas+idayvuelta;
+		if saldo is null then
+				saldo:=0;
+		end if;
+	ELSIF r.nombre='B CHILE' THEN
+	SELECT SUM(COALESCE(gen.provision,0)) into provisiones from generaciones_bases_historico() gen where gen.cliente ILIKE 'B CHILE%';
+	SELECT SUM(COALESCE(fac.monto_neto,0)) into facturas from "BASES_facturas_bases" fac where fac.cliente ilike 'B CHILE%';
+		if facturas is null then
+	facturas:=0;
+	end if;
+	select COALESCE(sum(gen.ida_vuelta),0) into idayvuelta from generaciones_bases_historico() gen where gen.cliente ilike 'B CHILE%';
+		saldo:=provisiones-facturas+idayvuelta;
+		if saldo is null then
+				saldo:=0;
+		end if;
+	ELSIF r.nombre='B FALABELLA' THEN
+	SELECT SUM(COALESCE(gen.provision,0)) into provisiones from generaciones_bases_historico() gen where gen.cliente ILIKE 'B FALABELLA%';
+	SELECT SUM(COALESCE(fac.monto_neto,0)) into facturas from "BASES_facturas_bases" fac where fac.cliente ilike 'B FALABELLA%';
+		if facturas is null then
+	facturas:=0;
+	end if;
+	select COALESCE(sum(gen.ida_vuelta),0) into idayvuelta from generaciones_bases_historico() gen where gen.cliente ilike 'B FALABELLA%';
+		saldo:=provisiones-facturas+idayvuelta;
+		if saldo is null then
+				saldo:=0;
+		end if;
+	ELSIF r.nombre='B SANTANDER' THEN
+	SELECT SUM(COALESCE(gen.provision,0)) into provisiones from generaciones_bases_historico() gen where gen.cliente ILIKE 'B SANTANDER%';
+	SELECT SUM(COALESCE(fac.monto_neto,0)) into facturas from "BASES_facturas_bases" fac where fac.cliente ilike 'B SANTANDER%';
+		if facturas is null then
+	facturas:=0;
+	end if;
+	select COALESCE(sum(gen.ida_vuelta),0) into idayvuelta from generaciones_bases_historico() gen where gen.cliente ilike 'B SANTANDER%';
+		saldo:=provisiones-facturas+idayvuelta;
+		if saldo is null then
+				saldo:=0;
+		end if;
+	ELSIF r.nombre='B SCOTIABANK' THEN
+	SELECT SUM(COALESCE(gen.provision,0)) into provisiones from generaciones_bases_historico() gen where gen.cliente ILIKE 'B SCOTIABANK%';
+	SELECT SUM(COALESCE(fac.monto_neto,0)) into facturas from "BASES_facturas_bases" fac where fac.cliente ilike 'B SCOTIABANK%';
+		if facturas is null then
+	facturas:=0;
+	end if;
+	select COALESCE(sum(gen.ida_vuelta),0) into idayvuelta from generaciones_bases_historico() gen where gen.cliente ilike 'B SCOTIABANK%';
+		saldo:=provisiones-facturas+idayvuelta;
+		if saldo is null then
+				saldo:=0;
+		end if;
+	
+	ELSE
+		
+				select COALESCE(gen.provision,0) into provisiones from generaciones_bases_historico() gen where gen.cliente=r.nombre;
+				select COALESCE(gen.ida_vuelta,0) into idayvuelta from generaciones_bases_historico() gen where gen.cliente=r.nombre;
+				SELECT SUM(COALESCE(fac.monto_neto,0)) into facturas from "BASES_facturas_bases" fac where fac.cliente=r.nombre;
+					if facturas is null then
+						facturas:=0;
+					end if;
+					if r.anidado='true' then
+					saldo:=0;
+					else
+					saldo:=provisiones-facturas+idayvuelta;
+					end if;
+					if saldo is null then
+						saldo:=0;
+					end if;
+	
+	END IF;
+	RETURN NEXT;
+	END LOOP;
+
+END;
+
+$$
+LANGUAGE 'plpgsql';
+
+select * from eqder_cobranzas() order by cliente asc;
+
+========================================
+CREATE MATERIALIZED VIEW serie_mensual_generacion_total_view as( 
+SELECT date_trunc('month', fecha)::date AS txn_month, sum(fee_buyer_clp+fee_seller_clp) as "bases", sum(util_depo) as "depo",
+sum(fee_buyer_clp+fee_seller_clp+util_depo) as "total"
+     from "BASES_bases"
+	 where fee_buyer_clp>0 or fee_seller_clp>0 or util_depo>0
+ GROUP BY txn_month
+ order by txn_month asc
+);
+alter MATERIALIZED view serie_mensual_generacion_total_view owner to fynsa;
+
+
+=====================================
+
+
+CREATE OR REPLACE FUNCTION eq_der_generacion_total_consolidad(fecha_inicial date,fecha_final date)
+RETURNS TABLE(nombre text,gen_depo numeric,gen_bases numeric,prov_bases numeric,prov_depos numeric,total numeric) 
+AS
+$$
+select cli.nombre,gen_tasas_depos.util_tasa as gen_depo,gen_tasas_bases.util_tasa as gen_bases,provision_bases.provision as prov_bases,provision_depos.provision as prov_depo,
+sum(gen_tasas_depos.util_tasa+gen_tasas_bases.util_tasa+provision_bases.provision+provision_depos.provision) as total
+from "BASES_clientes" cli 
+left join eqder_generacion_tasas($1,$2,'F') gen_tasas_depos ON gen_tasas_depos.cliente=cli.nombre 
+left join eqder_generacion_tasas($1,$2,'B') gen_tasas_bases ON gen_tasas_bases.cliente=cli.nombre
+left join eqder_provisiones($1,$2,'B') provision_bases ON provision_bases.cliente=cli.nombre
+left join eqder_provisiones($1,$2,'F') provision_depos ON provision_depos.cliente=cli.nombre 
+group by cli.nombre,gen_tasas_depos.util_tasa,gen_tasas_bases.util_tasa,provision_bases.provision,provision_depos.provision
+order by total desc;
+$$
+LANGUAGE SQL;
+
+
+with generacion_consolidada as ( select *,round(total/sum(total/100) over(),2) as porcentaje from eq_der_generacion_total_consolidad(%s,%s)) select 1 as linea,*,sum(porcentaje) over (order by porcentaje desc) as porcentaje_acumulado,row_number() OVER (order by total desc) as ranking from generacion_consolidada where total<>0;
+ 
+===================
+
+with instrumentos as (
+select nemo,
+sum(fee_seller_clp+fee_buyer_clp+util_depo) as generacion,
+sum(fee_seller_clp+fee_buyer_clp+util_depo)/sum(sum(fee_seller_clp+fee_buyer_clp+util_depo)/100) over () as porcentaje
+from "BASES_bases" where fecha between '2020-01-01' and '2020-04-30'
+and (fee_seller_clp>0 or fee_buyer_clp>0 or util_depo>0)
+group by nemo
+order by generacion desc
+)
+select nemo,
+generacion,
+round(porcentaje,2),
+round(sum(porcentaje) over (order by porcentaje desc),2) as porcentaje_acum
+from instrumentos;
+
+========================
+
+CREATE OR REPLACE FUNCTION eq_der_instrumentos_total(fecha_inicial date, fecha_final date) RETURNS TABLE(nemotecnico text,gen numeric,pje numeric,pje_acum numeric)
+AS
+$$
+with instrumentos as (
+		select nemo,
+		sum(fee_seller_clp+fee_buyer_clp+util_depo) as generacion,
+		sum(fee_seller_clp+fee_buyer_clp+util_depo)/sum(sum(fee_seller_clp+fee_buyer_clp+util_depo)/100) over () as porcentaje
+		from "BASES_bases" b where fecha between $1 and $2
+		and (fee_seller_clp>0 or fee_buyer_clp>0 or util_depo>0)
+		group by nemo
+		order by generacion desc
+		)
+		select nemo AS nemotecnico,
+		instrumentos.generacion,
+		round(instrumentos.porcentaje,2) as porcentaje,
+		round(sum(instrumentos.porcentaje) over (order by instrumentos.porcentaje desc),2) as porcentaje_acum
+		from instrumentos;
+		$$
+LANGUAGE SQL;
+
+CREATE OR REPLACE FUNCTION eq_der_instrumentos_bases(fecha_inicial date, fecha_final date) RETURNS TABLE(nemotecnico text,gen numeric,pje numeric,pje_acum numeric)
+AS
+$$
+with instrumentos as (
+		select nemo,
+		sum(fee_seller_clp+fee_buyer_clp+util_depo) as generacion,
+		sum(fee_seller_clp+fee_buyer_clp+util_depo)/sum(sum(fee_seller_clp+fee_buyer_clp+util_depo)/100) over () as porcentaje
+		from "BASES_bases" b where fecha between $1 and $2 and (nemo ilike 'B%')
+		and (fee_seller_clp>0 or fee_buyer_clp>0 or util_depo>0)
+		group by nemo
+		order by generacion desc
+		)
+		select nemo AS nemotecnico,
+		instrumentos.generacion,
+		round(instrumentos.porcentaje,2) as porcentaje,
+		round(sum(instrumentos.porcentaje) over (order by instrumentos.porcentaje desc),2) as porcentaje_acum
+		from instrumentos
+		;
+		$$
+LANGUAGE SQL;
+
+CREATE OR REPLACE FUNCTION eq_der_instrumentos_depos(fecha_inicial date, fecha_final date) RETURNS TABLE(nemotecnico text,gen numeric,pje numeric,pje_acum numeric)
+AS
+$$
+with instrumentos as (
+		select nemo,
+		sum(fee_seller_clp+fee_buyer_clp+util_depo) as generacion,
+		sum(fee_seller_clp+fee_buyer_clp+util_depo)/sum(sum(fee_seller_clp+fee_buyer_clp+util_depo)/100) over () as porcentaje
+		from "BASES_bases" b where fecha between $1 and $2 and (nemo ilike 'F%')
+		and (fee_seller_clp>0 or fee_buyer_clp>0 or util_depo>0)
+		group by nemo
+		order by generacion desc
+		)
+		select nemo AS nemotecnico,
+		instrumentos.generacion,
+		round(instrumentos.porcentaje,2) as porcentaje,
+		round(sum(instrumentos.porcentaje) over (order by instrumentos.porcentaje desc),2) as porcentaje_acum
+		from instrumentos
+		;
+		$$
+LANGUAGE SQL;
+
+
+select * from eq_der_instrumentos('2020-01-01','2020-04-30')
+
+
+==================================
+
+CREATE OR REPLACE FUNCTION eq_der_cargador_tabla_serie_generacion_total_diaria() RETURNS bool AS
+$$
+
+DECLARE
+f date;
+nom text;
+tot bigint;
+
+BEGIN
+	
+	FOR f in Select distinct(fecha) from "BASES_bases" order by fecha asc
+	LOOP
+	IF NOT EXISTS (select * from "BASES_serie_generacion_total_diaria" where fecha=f) THEN
+		FOR nom,tot in select nombre,total from eq_der_generacion_total_consolidad('2019-08-09',f)
+		LOOP
+		INSERT INTO "BASES_serie_generacion_total_diaria"(fecha,cliente,total_consolidada) VALUES(f,nom,tot);
+		END LOOP;
+	END IF;
+	END LOOP;
+	RETURN true;
+END;
+$$
+LANGUAGE 'plpgsql';
+select * from eq_der_cargador_tabla_serie_generacion_total_diaria();
+
+
+
+
+==================================
+
+SELECT fecha date,
+COALESCE("B CONSORCIO BCE",0) AS "B CONSORCIO BCE",
+COALESCE("FM ITAU",0) AS "FM ITAU",
+COALESCE("B CHILE",0) AS "B CHILE",
+COALESCE("B SANTANDER BCE",0) AS "B SANTANDER BCE",
+COALESCE("B BCI BCE",0) AS "B BCI BCE",
+COALESCE("B CONSORCIO",0) AS "B CONSORCIO",
+COALESCE("CB CREDICORP",0) AS "CB CREDICORP",
+COALESCE("AFP HABITAT",0) AS "AFP HABITAT",
+COALESCE("B ESTADO BCE",0) AS "B ESTADO BCE",
+COALESCE("B BCI INV",0) AS "B BCI INV",
+COALESCE("FM CREDICORP",0) AS "FM CREDICORP",
+COALESCE("FM SANTANDER",0) AS "FM SANTANDER",
+COALESCE("B SANTANDER TRAD",0) AS "B SANTANDER TRAD",
+COALESCE("ADC SANTANDER",0) AS "ADC SANTANDER",
+COALESCE("CB CONSORCIO",0) AS "CB CONSORCIO",
+COALESCE("B CHILE TRAD",0) AS "B CHILE TRAD",
+COALESCE("AFP AFC",0) AS "AFP AFC",
+COALESCE("AFP MODELO",0) AS "AFP MODELO",
+COALESCE("B SECURITY",0) AS "B SECURITY",
+COALESCE("FM BANCHILE",0) AS "FM BANCHILE",
+COALESCE("AFP PLANVITAL",0) AS "AFP PLANVITAL",
+COALESCE("FM LARRAINVIAL",0) AS "FM LARRAINVIAL",
+COALESCE("CDS BICE",0) AS "CDS BICE",
+COALESCE("FM MONEDA",0) AS "FM MONEDA",
+COALESCE("B BCI TRAD",0) AS "B BCI TRAD",
+COALESCE("VISION",0) AS "VISION",
+COALESCE("B MERRIL LYNCH",0) AS "B MERRIL LYNCH",
+COALESCE("FM SURA",0) AS "FM SURA",
+COALESCE("B ITAU",0) AS "B ITAU",
+COALESCE("FYNSA",0) AS "FYNSA",
+COALESCE("FM BCI",0) AS "FM BCI",
+COALESCE("CB EUROAMERICA",0) AS "CB EUROAMERICA",
+COALESCE("FM SCOTIA",0) AS "FM SCOTIA",
+COALESCE("B SANTANDER",0) AS "B SANTANDER",
+COALESCE("B FALABELLA BCE",0) AS "B FALABELLA BCE",
+COALESCE("FM SCOTIABANK",0) AS "FM SCOTIABANK",
+COALESCE("B FALABELLA TRAD",0) AS "B FALABELLA TRAD",
+COALESCE("CDS EUROAMERICA",0) AS "CDS EUROAMERICA",
+COALESCE("CB BTG",0) AS "CB BTG",
+COALESCE("B BICE",0) AS "B BICE",
+COALESCE("B INTERNACIONAL",0) AS "B INTERNACIONAL",
+COALESCE("ADC VISION",0) AS "ADC VISION",
+COALESCE("CDS PRINCIPAL",0) AS "CDS PRINCIPAL",
+COALESCE("B CONSORCIO TRAD",0) AS "B CONSORCIO TRAD",
+COALESCE("FM BTG",0) AS "FM BTG",
+COALESCE("B FALABELLA",0) AS "B FALABELLA",
+COALESCE("B BCI",0) AS "B BCI",
+COALESCE("B JPM",0) AS "B JPM",
+COALESCE("AFP CAPITAL",0) AS "AFP CAPITAL",
+COALESCE("FM FYNSA",0) AS "FM FYNSA",
+COALESCE("B CHILE BCE",0) AS "B CHILE BCE",
+COALESCE("FM SECURITY",0) AS "FM SECURITY",
+COALESCE("B SCOTIABANK",0) AS "B SCOTIABANK",
+COALESCE("B ESTADO",0) AS "B ESTADO",
+COALESCE("B BTG",0) AS "B BTG",
+COALESCE("B ESTADO TRAD",0) AS "B ESTADO TRAD",
+COALESCE("CB BCI",0) AS "CB BCI",
+COALESCE("B HSBC",0) AS "B HSBC",
+COALESCE("B SCOTIABANK TRAD",0) AS "B SCOTIABANK TRAD"
+		FROM crosstab(
+'SELECT fecha, cliente, total_consolidada
+	FROM "BASES_serie_generacion_total_diaria"
+	WHERE total_consolidada<>0
+	ORDER BY 1 ASC','SELECT distinct(cliente) from "BASES_serie_generacion_total_diaria"')
+	as (
+		fecha date,
+		"B CONSORCIO BCE" int,
+"FM ITAU" int,
+"B CHILE" int,
+"B SANTANDER BCE" int,
+"B BCI BCE" int,
+"B CONSORCIO" int,
+"CB CREDICORP" int,
+"AFP HABITAT" int,
+"B ESTADO BCE" int,
+"B BCI INV" int,
+"FM CREDICORP" int,
+"FM SANTANDER" int,
+"B SANTANDER TRAD" int,
+"ADC SANTANDER" int,
+"CB CONSORCIO" int,
+"B CHILE TRAD" int,
+"AFP AFC" int,
+"AFP MODELO" int,
+"B SECURITY" int,
+"FM BANCHILE" int,
+"AFP PLANVITAL" int,
+"FM LARRAINVIAL" int,
+"CDS BICE" int,
+"FM MONEDA" int,
+"B BCI TRAD" int,
+"VISION" int,
+"B MERRIL LYNCH" int,
+"FM SURA" int,
+"B ITAU" int,
+"FYNSA" int,
+"FM BCI" int,
+"CB EUROAMERICA" int,
+"FM SCOTIA" int,
+"B SANTANDER" int,
+"B FALABELLA BCE" int,
+"FM SCOTIABANK" int,
+"B FALABELLA TRAD" int,
+"CDS EUROAMERICA" int,
+"CB BTG" int,
+"B BICE" int,
+"B INTERNACIONAL" int,
+"ADC VISION" int,
+"CDS PRINCIPAL" int,
+"B CONSORCIO TRAD" int,
+"FM BTG" int,
+"B FALABELLA" int,
+"B BCI" int,
+"B JPM" int,
+"AFP CAPITAL" int,
+"FM FYNSA" int,
+"B CHILE BCE" int,
+"FM SECURITY" int,
+"B SCOTIABANK" int,
+"B ESTADO" int,
+"B BTG" int,
+"B ESTADO TRAD" int,
+"CB BCI" int,
+"B HSBC" int,
+"B SCOTIABANK TRAD" int
+	);
+
+======
+
+CREATE MATERIALIZED VIEW eq_der_serie_generacion_acumulada_diaria_view AS (
+ SELECT crosstab.fecha AS date,
+  COALESCE(crosstab."VISION",0) AS "VISION",
+COALESCE(crosstab."FYNSA",0) AS "FYNSA",
+COALESCE(crosstab."FM SURA",0) AS "FM_SURA",
+COALESCE(crosstab."FM SECURITY",0) AS "FM_SECURITY",
+COALESCE(crosstab."FM SCOTIABANK",0) AS "FM_SCOTIABANK",
+COALESCE(crosstab."FM SCOTIA",0) AS "FM_SCOTIA",
+COALESCE(crosstab."FM SANTANDER",0) AS "FM_SANTANDER",
+COALESCE(crosstab."FM MONEDA",0) AS "FM_MONEDA",
+COALESCE(crosstab."FM LARRAINVIAL",0) AS "FM_LARRAINVIAL",
+COALESCE(crosstab."FM ITAU",0) AS "FM_ITAU",
+COALESCE(crosstab."FM FYNSA",0) AS "FM_FYNSA",
+COALESCE(crosstab."FM CREDICORP",0) AS "FM_CREDICORP",
+COALESCE(crosstab."FM BTG",0) AS "FM_BTG",
+COALESCE(crosstab."FM BCI",0) AS "FM_BCI",
+COALESCE(crosstab."FM BANCHILE",0) AS "FM_BANCHILE",
+COALESCE(crosstab."CDS PRINCIPAL",0) AS "CDS_PRINCIPAL",
+COALESCE(crosstab."CDS EUROAMERICA",0) AS "CDS_EUROAMERICA",
+COALESCE(crosstab."CDS BICE",0) AS "CDS_BICE",
+COALESCE(crosstab."CB MERRIL LYNCH",0) AS "CB_MERRIL_LYNCH",
+COALESCE(crosstab."CB LARRAINVIAL",0) AS "CB_LARRAINVIAL",
+COALESCE(crosstab."CB EUROAMERICA",0) AS "CB_EUROAMERICA",
+COALESCE(crosstab."CB CREDICORP",0) AS "CB_CREDICORP",
+COALESCE(crosstab."CB CONSORCIO",0) AS "CB_CONSORCIO",
+COALESCE(crosstab."CB BTG",0) AS "CB_BTG",
+COALESCE(crosstab."CB BCI",0) AS "CB_BCI",
+COALESCE(crosstab."CB BANCHILE",0) AS "CB_BANCHILE",
+COALESCE(crosstab."B SECURITY",0) AS "B_SECURITY",
+COALESCE(crosstab."B SCOTIABANK TRAD",0) AS "B_SCOTIABANK_TRAD",
+COALESCE(crosstab."B SCOTIABANK",0) AS "B_SCOTIABANK",
+COALESCE(crosstab."B SANTANDER TRAD",0) AS "B_SANTANDER_TRAD",
+COALESCE(crosstab."B SANTANDER BCE",0) AS "B_SANTANDER_BCE",
+COALESCE(crosstab."B SANTANDER",0) AS "B_SANTANDER",
+COALESCE(crosstab."B MERRIL LYNCH",0) AS "B_MERRIL_LYNCH",
+COALESCE(crosstab."B JPM",0) AS "B_JPM",
+COALESCE(crosstab."B ITAU",0) AS "B_ITAU",
+COALESCE(crosstab."B INTERNACIONAL",0) AS "B_INTERNACIONAL",
+COALESCE(crosstab."B HSBC",0) AS "B_HSBC",
+COALESCE(crosstab."B FALABELLA TRAD",0) AS "B_FALABELLA_TRAD",
+COALESCE(crosstab."B FALABELLA BCE",0) AS "B_FALABELLA_BCE",
+COALESCE(crosstab."B FALABELLA",0) AS "B_FALABELLA",
+COALESCE(crosstab."B ESTADO TRAD",0) AS "B_ESTADO_TRAD",
+COALESCE(crosstab."B ESTADO BCE",0) AS "B_ESTADO_BCE",
+COALESCE(crosstab."B ESTADO",0) AS "B_ESTADO",
+COALESCE(crosstab."B CONSORCIO TRAD",0) AS "B_CONSORCIO_TRAD",
+COALESCE(crosstab."B CONSORCIO BCE",0) AS "B_CONSORCIO_BCE",
+COALESCE(crosstab."B CONSORCIO",0) AS "B_CONSORCIO",
+COALESCE(crosstab."B CHILE TRAD",0) AS "B_CHILE_TRAD",
+COALESCE(crosstab."B CHILE BCE",0) AS "B_CHILE_BCE",
+COALESCE(crosstab."B CHILE",0) AS "B_CHILE",
+COALESCE(crosstab."B BTG",0) AS "B_BTG",
+COALESCE(crosstab."B BICE",0) AS "B_BICE",
+COALESCE(crosstab."B BCI TRAD",0) AS "B_BCI_TRAD",
+COALESCE(crosstab."B BCI INV",0) AS "B_BCI_INV",
+COALESCE(crosstab."B BCI BCE",0) AS "B_BCI_BCE",
+COALESCE(crosstab."B BCI",0) AS "B_BCI",
+COALESCE(crosstab."AFP PLANVITAL",0) AS "AFP_PLANVITAL",
+COALESCE(crosstab."AFP MODELO",0) AS "AFP_MODELO",
+COALESCE(crosstab."AFP HABITAT",0) AS "AFP_HABITAT",
+COALESCE(crosstab."AFP CUPRUM",0) AS "AFP_CUPRUM",
+COALESCE(crosstab."AFP CAPITAL",0) AS "AFP_CAPITAL",
+COALESCE(crosstab."AFP AFC",0) AS "AFP_AFC",
+COALESCE(crosstab."ADC VISION",0) AS "ADC_VISION",
+COALESCE(crosstab."ADC SANTANDER",0) AS "ADC_SANTANDER"
+   FROM crosstab('SELECT fecha, cliente, total_consolidada
+	FROM "BASES_serie_generacion_total_diaria"
+	WHERE total_consolidada<>0
+	ORDER BY 1 ASC'::text, 'SELECT distinct(cliente) from "BASES_serie_generacion_total_diaria"'::text) 
+	crosstab(fecha date,
+			 "VISION" integer,
+"FYNSA" integer,
+"FM SURA" integer,
+"FM SECURITY" integer,
+"FM SCOTIABANK" integer,
+"FM SCOTIA" integer,
+"FM SANTANDER" integer,
+"FM MONEDA" integer,
+"FM LARRAINVIAL" integer,
+"FM ITAU" integer,
+"FM FYNSA" integer,
+"FM CREDICORP" integer,
+"FM BTG" integer,
+"FM BCI" integer,
+"FM BANCHILE" integer,
+"CDS PRINCIPAL" integer,
+"CDS EUROAMERICA" integer,
+"CDS BICE" integer,
+"CB MERRIL LYNCH" integer,
+"CB LARRAINVIAL" integer,
+"CB EUROAMERICA" integer,
+"CB CREDICORP" integer,
+"CB CONSORCIO" integer,
+"CB BTG" integer,
+"CB BCI" integer,
+"CB BANCHILE" integer,
+"B SECURITY" integer,
+"B SCOTIABANK TRAD" integer,
+"B SCOTIABANK" integer,
+"B SANTANDER TRAD" integer,
+"B SANTANDER BCE" integer,
+"B SANTANDER" integer,
+"B MERRIL LYNCH" integer,
+"B JPM" integer,
+"B ITAU" integer,
+"B INTERNACIONAL" integer,
+"B HSBC" integer,
+"B FALABELLA TRAD" integer,
+"B FALABELLA BCE" integer,
+"B FALABELLA" integer,
+"B ESTADO TRAD" integer,
+"B ESTADO BCE" integer,
+"B ESTADO" integer,
+"B CONSORCIO TRAD" integer,
+"B CONSORCIO BCE" integer,
+"B CONSORCIO" integer,
+"B CHILE TRAD" integer,
+"B CHILE BCE" integer,
+"B CHILE" integer,
+"B BTG" integer,
+"B BICE" integer,
+"B BCI TRAD" integer,
+"B BCI INV" integer,
+"B BCI BCE" integer,
+"B BCI" integer,
+"AFP PLANVITAL" integer,
+"AFP MODELO" integer,
+"AFP HABITAT" integer,
+"AFP CUPRUM" integer,
+"AFP CAPITAL" integer,
+"AFP AFC" integer,
+"ADC VISION" integer,
+"ADC SANTANDER" integer
+);
+		
+	alter MATERIALIZED view eq_der_serie_generacion_acumulada_diaria_view owner to fynsa;
+
+
+
+==================================
+
+--DROP FUNCTION eq_der_rutinas();
+CREATE OR REPLACE FUNCTION eq_der_rutinas() RETURNS TABLE(verificacion TEXT,item text[])
+AS
+$$
+DECLARE 
+r record;
+BEGIN
+	For r in select * from (values
+		(1,'Diferencia entre fee_buyer y fee_buyer_clp en CLP. Corregir'),
+		(2,'Diferencia entre fee_seller y fee_seller_clp en CLP. Corregir'),
+		(3,'Diferencia entre fee_seller y fee_seller_clp que no sean iguales. Corregir'),
+		(4,'Diferencia entre fee_buyer y fee_buyer_clp que no sean iguales. Corregir'),
+		(5,'Hay asignaciones con plata a FYNSA en el lado del buyer.Esto debería estar vacío. Corregir'),
+		(6,'Hay asignaciones con plata a FYNSA en el lado del seller. Esto debería estar vacío. Corregir'),
+		(7,'Detectar si hay numeros disparados. Corregir'),
+		(8,'Detectar hay participante1 o participante2 sin asignacion y tienen generacion. Corregir'),
+		(9,'Detectar si hay valores null. Corregir'),
+		(10,'Detectar si hay facturas cuadradas en la fecha de emision y la fecha del blotter. Se debería facturar el mismo dia, ojo con las notas de credito deben tener todos las misma fecha de emision.Corregir en la tabla facturas'),
+		(11,'Detectar si hay ingresos en dolares que se le puso como peso lado buyer.Corregir'),
+		(12,'Detectar si hay ingresos en dolares que se le puso como peso lado seller.Corregir'),
+		(13,'Detectar si hay participante 1 o participante 2 como FYNSA.Corregir'),
+		(14,'Cliente nuevo en el lado buy, agregar a tabla clientes y arreglar todo lo que tiene que ver con las tablas de cobranzas. Fynsa y Telrenta es correcto que aparezcan'),
+		(15,'Cliente nuevo en el lado seller, agregar a tabla clientes y arreglar todo lo que tiene que ver con las tablas de cobranzas. Fynsa y Telrenta es correcto que aparezcan'),
+		(16,'Cliente nuevo en el lado participante_1, agregar a tabla clientes y arreglar todo lo que tiene que ver con las tablas de cobranzas. Fynsa y Telrenta es correcto que aparezcan'),
+		(17,'Cliente nuevo en el lado participante_2, agregar a tabla clientes y arreglar todo lo que tiene que ver con las tablas de cobranzas. Fynsa y Telrenta es correcto que aparezcan')
+								   ) as t(num,descripcion)
+LOOP
+	verificacion=r.descripcion;
+	CASE r.num
+	WHEN 1 THEN
+	select array(Select linea from "BASES_bases" where fee_buyer<>fee_buyer_clp and fee_buyer_moneda='CLP') into item; 
+	WHEN 2 THEN
+	select array(Select linea from "BASES_bases" where fee_seller<>fee_seller_clp and fee_seller_moneda='CLP') into item;
+	WHEN 3 THEN
+	select array(Select linea from "BASES_bases" where fee_seller<>0 and fee_seller_clp=0 ) into item;
+	WHEN 4 THEN
+	select array(Select linea from "BASES_bases" where fee_buyer<>0 and fee_buyer_clp=0 ) into item;
+	WHEN 5 THEN
+	select array(Select linea from "BASES_bases" where fee_buyer<>0 and buy='FYNSA') into item;
+	WHEN 6 THEN
+	select array(Select linea from "BASES_bases" where fee_seller<>0 and seller='FYNSA' ) into item;
+	WHEN 7 THEN
+	select array(Select linea from "BASES_bases" where valor_clp>all(select max(valor_clp) from "BASES_bases" )) into item;
+	WHEN 8 THEN
+	select array(Select linea from "BASES_bases" where util_depo<>0 and (participante_1='0' or participante_1='-' or participante_2='0' or participante_2='-' ) ) into item;
+	WHEN 9 THEN
+	select array(Select linea from "BASES_bases" where not("BASES_bases" is not null) ) into item;
+	WHEN 10 THEN
+	---pendiente e importante
+	select array(select monto_facturado from serie_cobranzas_view where monto_facturado<0 order by fecha desc) into item;
+	WHEN 11 THEN
+	select array(Select linea from "BASES_bases" where fee_buyer_clp>0 and fee_buyer_clp<1000 ) into item;
+	WHEN 12 THEN
+	select array(Select linea from "BASES_bases" where fee_seller_clp>0 and fee_seller_clp<1000 ) into item;
+	WHEN 13 THEN
+	select array(Select linea from "BASES_bases" where participante_1='FYNSA' or participante_2='FYNSA') into item;
+	WHEN 14 THEN
+	select array(SELECT distinct(buy) FROM "BASES_bases" where buy not in (select nombre from "BASES_clientes")) into item;
+	WHEN 15 THEN
+	select array(SELECT distinct(seller) FROM "BASES_bases" where seller not in (select nombre from "BASES_clientes")) into item;
+	WHEN 16 THEN
+	select array(SELECT distinct(participante_1) FROM "BASES_bases" where participante_1 not in (select nombre from "BASES_clientes")) into item;
+	WHEN 17 THEN
+	select array(SELECT distinct(participante_2) FROM "BASES_bases" where participante_2 not in (select nombre from "BASES_clientes")) into item;
+	ELSE
+	item='{0}';
+		END CASE;
+RETURN NEXT;
+END LOOP;
+END;
+$$ 
+LANGUAGE 'plpgsql';
+
+select * from eq_der_rutinas();
+
+--DROP FUNCTION eq_der_serie_cobranzas_view();
+CREATE OR REPLACE FUNCTION eq_der_serie_cobranzas_view() RETURNS TABLE(
+	fecha date,	
+	provisiones numeric,
+	idayvuelta numeric,
+	monto_facturado numeric,
+	provisiones_agregada numeric,
+	idayvuelta_agregada numeric,
+	facturacion_agregada numeric,	
+	saldo numeric
+	)
+AS
+$$
+DECLARE
+f date;
+provision_agregada_aux numeric;
+idayvuelta_agregada_aux numeric;
+facturacion_agregada_aux numeric;
+BEGIN
+				provision_agregada_aux=0;idayvuelta_agregada_aux=0;facturacion_agregada_aux=0;
+				FOR f IN SELECT distinct(b.fecha) FROM "BASES_bases" b order by fecha asc
+				LOOP
+				fecha:=f;
+				SELECT sum(fee_buyer_clp+fee_seller_clp) into provisiones FROM "BASES_bases" b where b.fecha=f and (fee_buyer_clp>0 or fee_seller_clp>0);
+				 --SELECT sum(fee_buyer_clp+fee_seller_clp) into provisiones_agregada FROM "BASES_bases" b where b.fecha<=f and (fee_buyer_clp>0 or fee_seller_clp>0);
+				SELECT sum(fee_buyer_clp+fee_seller_clp) into idayvuelta FROM "BASES_bases" b where b.fecha=f and (fee_buyer_clp<0 or fee_seller_clp<0);
+				 --SELECT sum(fee_buyer_clp+fee_seller_clp) into idayvuelta_agregada FROM "BASES_bases" b where b.fecha<=f and (fee_buyer_clp<0 or fee_seller_clp<0);
+				SELECT sum(monto_neto) into monto_facturado FROM "BASES_facturas_bases" fac where fac.fecha_emision=f;
+				if provisiones is null then
+				provisiones:=0;
+				end if;
+				if idayvuelta is null then
+				idayvuelta:=0;
+				end if;
+				if monto_facturado is null then
+				monto_facturado:=0;
+				end if;
+				
+				provision_agregada_aux = provision_agregada_aux + provisiones;
+				idayvuelta_agregada_aux = idayvuelta_agregada_aux + idayvuelta;
+				facturacion_agregada_aux = facturacion_agregada_aux + monto_facturado;
+				
+				provisiones_agregada:=provision_agregada_aux;
+				idayvuelta_agregada:=abs(idayvuelta_agregada_aux);
+				facturacion_agregada:=facturacion_agregada_aux;
+				
+				saldo:=provisiones_agregada-idayvuelta_agregada-facturacion_agregada;
+				
+				RETURN NEXT;
+				END LOOP;
+END;
+$$
+LANGUAGE 'plpgsql';
+select * from eq_der_serie_cobranzas_view()
+REFRESH MATERIALIZED VIEW serie_cobranzas_view;
+
+==============================
+--DROP FUNCTION eq_der_instrumentos_generacion(date,date,text)
+CREATE OR REPLACE FUNCTION eq_der_instrumentos_generacion(fecha_inicial date, fecha_final date, T_F_B text) 
+RETURNS TABLE(nemotecnico text, generacion numeric, pct numeric, pct_acum numeric)
+AS
+$$
+DECLARE
+generacion_total numeric;
+r record;
+BEGIN
+	pct_acum:=0;
+	CASE $3
+	WHEN 'T' THEN
+		SELECT sum(fee_seller_clp+fee_buyer_clp+util_depo) into generacion_total from "BASES_bases" b where (fee_seller_clp>0 or fee_buyer_clp>0 or util_depo>0) and (fecha between $1 and $2);
+		FOR r IN SELECT DISTINCT(nemo),sum(fee_seller_clp+fee_buyer_clp+util_depo) FROM "BASES_bases" where fecha between $1 and $2 group by nemo order by sum(fee_seller_clp+fee_buyer_clp+util_depo) desc
+				LOOP
+				--raise notice '%', r.nemo;
+				nemotecnico:=r.nemo;
+				SELECT sum(fee_seller_clp+fee_buyer_clp+util_depo) into generacion from "BASES_bases" b where (fee_seller_clp>0 or fee_buyer_clp>0 or util_depo>0) and b.nemo=r.nemo and (fecha between $1 and $2);
+				IF generacion IS null THEN
+				generacion:=0;
+				END IF;
+				pct := round((generacion/generacion_total)*100,2);
+				pct_acum := pct_acum + pct;
+				raise notice '%',pct_acum;
+				RETURN NEXT;
+				END LOOP;
+	WHEN 'F' THEN
+		SELECT sum(fee_seller_clp+fee_buyer_clp+util_depo) into generacion_total from "BASES_bases" b where (fee_seller_clp>0 or fee_buyer_clp>0 or util_depo>0) and (fecha between $1 and $2) and (nemo ilike 'F%');
+		FOR r IN SELECT DISTINCT(nemo),sum(fee_seller_clp+fee_buyer_clp+util_depo) FROM "BASES_bases" where (fecha between $1 and $2) and (nemo ilike 'F%') group by nemo order by sum(fee_seller_clp+fee_buyer_clp+util_depo) desc
+				LOOP
+				nemotecnico:=r.nemo;
+				SELECT sum(fee_seller_clp+fee_buyer_clp+util_depo) into generacion from "BASES_bases" b where (fee_seller_clp>0 or fee_buyer_clp>0 or util_depo>0) and b.nemo=r.nemo and (fecha between $1 and $2) and (nemo ilike 'F%');
+				IF generacion IS null THEN
+				generacion:=0;
+				END IF;
+				pct := round((generacion/generacion_total)*100,2);
+				pct_acum := pct_acum + pct;
+				RETURN NEXT;
+				END LOOP;
+	WHEN 'B' THEN
+		SELECT sum(fee_seller_clp+fee_buyer_clp+util_depo) into generacion_total from "BASES_bases" b where (fee_seller_clp>0 or fee_buyer_clp>0 or util_depo>0) and (fecha between $1 and $2) and (nemo ilike 'B%');
+		FOR r IN SELECT DISTINCT(nemo),sum(fee_seller_clp+fee_buyer_clp+util_depo) FROM "BASES_bases" where (fecha between $1 and $2) and (nemo ilike 'B%') group by nemo order by sum(fee_seller_clp+fee_buyer_clp+util_depo) desc
+				LOOP
+				nemotecnico:=r.nemo;
+				SELECT sum(fee_seller_clp+fee_buyer_clp+util_depo) into generacion from "BASES_bases" b where (fee_seller_clp>0 or fee_buyer_clp>0 or util_depo>0) and b.nemo=r.nemo and (fecha between $1 and $2) and (nemo ilike 'B%');
+				IF generacion IS null THEN
+				generacion:=0;
+				END IF;
+				pct := round((generacion/generacion_total)*100,2);
+				pct_acum := pct_acum + pct;
+				RETURN NEXT;
+				END LOOP;
+	END CASE;
+	
+END;
+$$
+LANGUAGE 'plpgsql';
+
+select * from eq_der_instrumentos_generacion('2020-06-01','2020-06-12','F');
+
+==========================================
+GENERACIONES RFI.
+
+--DROP FUNCTION eq_rfi_generacion;
+CREATE OR REPLACE FUNCTION eq_rfi_generacion(fecha_inicial date, fecha_final date) RETURNS TABLE(
+	pais text,
+	cat text,
+	cliente text,
+	generacion_brk integer,
+	generacion_finales integer,
+	generacion_bancos_brk integer,
+	generacion_total integer,
+	spread_brk numeric,
+	spread_finales numeric,
+	spread_banco_brk numeric,	
+	generacion_brk_t_1 integer,
+	generacion_finales_t_1 integer,
+	generacion_bancos_brk_t_1 integer,
+	generacion_total_t_1 integer
+)
+AS
+$$
+DECLARE
+r "RFI_clientes_rfi"%ROWTYPE;
+suma_aux_compra_final integer;
+suma_aux_venta_final integer;
+suma_aux_compra_brk integer;
+suma_aux_venta_brk integer;
+suma_aux_compra_bancos_final integer;
+suma_aux_venta_bancos_final integer;
+suma_aux_compra_bancos_brk integer;
+suma_aux_venta_bancos_brk integer;
+---
+avg_aux_compra_final numeric;
+avg_aux_venta_final numeric;
+avg_aux_compra_brk numeric;
+avg_aux_venta_brk numeric;
+avg_aux_compra_bancos_final numeric;
+avg_aux_venta_bancos_final numeric;
+avg_aux_compra_bancos_brk numeric;
+avg_aux_venta_bancos_brk numeric;
+spread_bancos_finales numeric;
+avg_aux_compra_final_t_1 numeric;
+avg_aux_venta_final_t_1 numeric;
+avg_aux_compra_brk_t_1 numeric;
+avg_aux_venta_brk_t_1 numeric;
+avg_aux_compra_bancos_final_t_1 numeric;
+avg_aux_venta_bancos_final_t_1 numeric;
+avg_aux_compra_bancos_brk_t_1 numeric;
+avg_aux_venta_bancos_brk_t_1 numeric;
+spread_bancos_finales_t_1 numeric;
+---
+
+suma_aux_compra_final_t_1 integer;
+suma_aux_venta_final_t_1 integer;
+suma_aux_compra_brk_t_1 integer;
+suma_aux_venta_brk_t_1 integer;
+suma_aux_compra_bancos_final_t_1 integer;
+suma_aux_venta_bancos_final_t_1 integer;
+suma_aux_compra_bancos_brk_t_1 integer;
+suma_aux_venta_bancos_brk_t_1 integer;
+generacion_bancos_finales integer;
+generacion_bancos_finales_t_1 integer;
+
+
+BEGIN
+
+	FOR r IN SELECT * FROM "RFI_clientes_rfi" f WHERE f.final=true ORDER BY nombre_cliente DESC
+	LOOP
+		pais:=r.pais;
+		cat:=r.categoria;
+		cliente:=r.fondo;
+		suma_aux_compra_final:=0;
+		suma_aux_venta_final:=0;
+		suma_aux_compra_brk:=0;
+		suma_aux_venta_brk:=0;
+		suma_aux_compra_bancos_final:=0;
+		suma_aux_venta_bancos_final:=0;
+		suma_aux_compra_bancos_brk:=0;
+		suma_aux_venta_bancos_brk:=0;
+		suma_aux_compra_final_t_1:=0;
+		suma_aux_venta_final_t_1:=0;
+		suma_aux_compra_brk_t_1:=0;
+		suma_aux_venta_brk_t_1:=0;
+		suma_aux_compra_bancos_final_t_1:=0;
+		suma_aux_venta_bancos_final_t_1:=0;
+		suma_aux_compra_bancos_brk_t_1:=0;
+		suma_aux_venta_bancos_brk_t_1:=0;
+
+		--Acá empieza el cálculo para bancos finales en t
+
+		SELECT SUM(ingreso_mesa),avg(spread_mesa) INTO suma_aux_venta_bancos_final,avg_aux_venta_bancos_final FROM "RFI_rfi_beta" a
+		where (a.fecha between $1 AND $2) and a.vendedor=r.fondo and
+		comprador in (select fondo from "RFI_clientes_rfi" where final=true AND categoria='B');
+			if suma_aux_venta_bancos_final is null THEN
+			suma_aux_venta_bancos_final=0;
+			end if;
+			if avg_aux_venta_bancos_final is null THEN
+			avg_aux_venta_bancos_final=0;
+			end if;
+		SELECT SUM(ingreso_mesa),AVG(spread_mesa) INTO suma_aux_compra_bancos_final,avg_aux_compra_bancos_final FROM "RFI_rfi_beta" a
+		where (a.fecha between $1 AND $2) and a.comprador=r.fondo and
+		vendedor in (select fondo from "RFI_clientes_rfi" where final=true AND categoria='B');
+			if suma_aux_compra_bancos_final is null THEN
+			suma_aux_compra_bancos_final=0;
+			end if;
+			if avg_aux_compra_bancos_final is null THEN
+			avg_aux_compra_bancos_final=0;
+			end if;
+		generacion_bancos_finales=(suma_aux_compra_bancos_final+suma_aux_venta_bancos_final)/2;
+		spread_bancos_finales=round(avg(avg_aux_compra_bancos_final+avg_aux_venta_bancos_final),2);
+		
+		
+		
+		
+		--Acá finaliza el cálculo para bancos finales en t
+
+
+		--Acá empieza el cálculo para clientes finales en t
+		
+		
+		SELECT SUM(ingreso_mesa),AVG(spread_mesa) INTO suma_aux_venta_final,avg_aux_venta_final FROM "RFI_rfi_beta" a
+		where (a.fecha between $1 AND $2) and a.vendedor=r.fondo and
+		comprador in (select fondo from "RFI_clientes_rfi" where final=true AND categoria<>'B');
+			if suma_aux_venta_final is null THEN
+			suma_aux_venta_final=0;
+			end if;
+			if avg_aux_venta_final is null THEN
+			avg_aux_venta_final=0;
+			end if;
+		SELECT SUM(ingreso_mesa),AVG(spread_mesa) INTO suma_aux_compra_final,avg_aux_compra_final FROM "RFI_rfi_beta" a
+		where (a.fecha between $1 AND $2) and a.comprador=r.fondo and
+		vendedor in (select fondo from "RFI_clientes_rfi" where final=true AND categoria<>'B');
+			if suma_aux_compra_final is null THEN
+			suma_aux_compra_final=0;
+			end if;
+			if avg_aux_compra_final is null THEN
+			avg_aux_compra_final=0;
+			end if;
+		generacion_finales=(suma_aux_compra_final+suma_aux_venta_final)/2;
+		generacion_finales = generacion_finales + generacion_bancos_finales;
+		spread_finales = round((avg(avg_aux_compra_final+avg_aux_venta_final)+spread_bancos_finales),2);
+		
+		
+		--Acá termina el cálculo para clientes finales en t
+		
+		-------------------------------
+		--Acá comienza el cálculo para bancos brokers en t
+		
+		SELECT SUM(ingreso_mesa),AVG(spread_mesa) INTO suma_aux_venta_bancos_brk,avg_aux_venta_bancos_brk FROM "RFI_rfi_beta" a
+		where (a.fecha between $1 AND $2) and a.vendedor=r.fondo and
+		comprador in (select fondo from "RFI_clientes_rfi" where final=false AND categoria='B');
+			if suma_aux_venta_bancos_brk is null THEN
+			suma_aux_venta_bancos_brk=0;
+			end if;
+			if avg_aux_venta_bancos_brk is null THEN
+			avg_aux_venta_bancos_brk=0;
+			end if;
+		SELECT SUM(ingreso_mesa),AVG(spread_mesa) INTO suma_aux_compra_bancos_brk,avg_aux_compra_bancos_brk FROM "RFI_rfi_beta" a
+		where (a.fecha between $1 AND $2) and a.comprador=r.fondo and
+		vendedor in (select fondo from "RFI_clientes_rfi" where final=false AND categoria='B');
+			if suma_aux_compra_bancos_brk is null THEN
+			suma_aux_compra_bancos_brk=0;
+			end if;
+			if avg_aux_compra_bancos_brk is null THEN
+			avg_aux_compra_bancos_brk=0;
+			end if;
+		generacion_bancos_brk = suma_aux_compra_bancos_brk + suma_aux_venta_bancos_brk;
+		spread_banco_brk = round(avg(avg_aux_compra_bancos_brk+avg_aux_venta_bancos_brk),2);
+		
+		
+		
+		--Acá finaliza el cálculo para bancos brokers en t
+
+		--Acá comienza el cálculo para brokers en t
+					
+		
+		SELECT SUM(ingreso_mesa),AVG(spread_mesa) INTO suma_aux_venta_brk,avg_aux_venta_brk FROM "RFI_rfi_beta" a
+		where (a.fecha between $1 AND $2) and a.vendedor=r.fondo and
+		comprador in (select fondo from "RFI_clientes_rfi" where final=false AND categoria<>'B');
+			if suma_aux_venta_brk is null THEN
+			suma_aux_venta_brk=0;
+			end if;
+			if avg_aux_venta_brk is null THEN
+			avg_aux_venta_brk=0;
+			end if;
+		SELECT SUM(ingreso_mesa),AVG(spread_mesa) INTO suma_aux_compra_brk,avg_aux_compra_brk FROM "RFI_rfi_beta" a
+		where (a.fecha between $1 AND $2) and a.comprador=r.fondo and
+		vendedor in (select fondo from "RFI_clientes_rfi" where final=false AND categoria<>'B');
+			if suma_aux_compra_brk is null THEN
+			suma_aux_compra_brk=0;
+			end if;
+			if avg_aux_compra_brk is null THEN
+			avg_aux_compra_brk=0;
+			end if;
+		generacion_brk = suma_aux_compra_brk + suma_aux_venta_brk;
+		spread_brk = round(avg(avg_aux_venta_brk + avg_aux_compra_brk),2);
+		
+		generacion_total=generacion_finales+generacion_brk+generacion_bancos_brk;
+		--Acá finaliza el cálculo para brokers en t
+		
+		
+		
+	--Acá empieza el cálculo para t-1
+
+		--Acá empieza el cálculo para bancos finales en t-1
+		SELECT SUM(ingreso_mesa),AVG(spread_mesa) INTO suma_aux_venta_bancos_final_t_1,avg_aux_venta_bancos_final_t_1 FROM "RFI_rfi_beta" a
+		where (a.fecha between $1- interval '1 week' AND $2- interval '1 week') and a.vendedor=r.fondo and
+		comprador in (select fondo from "RFI_clientes_rfi" where final=true AND categoria='B');
+			if suma_aux_venta_bancos_final_t_1 is null THEN
+			suma_aux_venta_bancos_final_t_1=0;
+			end if;
+		SELECT SUM(ingreso_mesa),AVG(spread_mesa) INTO suma_aux_compra_bancos_final_t_1,avg_aux_compra_bancos_final_t_1 FROM "RFI_rfi_beta" a
+		where (a.fecha between $1- interval '1 week' AND $2- interval '1 week') and a.comprador=r.fondo and
+		vendedor in (select fondo from "RFI_clientes_rfi" where final=true AND categoria='B');
+			if suma_aux_compra_bancos_final_t_1 is null THEN
+			suma_aux_compra_bancos_final_t_1=0;
+			end if;
+		generacion_bancos_finales_t_1=(suma_aux_compra_bancos_final_t_1+suma_aux_venta_bancos_final_t_1)/2;
+		
+	
+		
+		SELECT SUM(ingreso_mesa),AVG(spread_mesa) INTO suma_aux_venta_final_t_1,avg_aux_venta_final_t_1 FROM "RFI_rfi_beta" a
+		where (a.fecha between $1 - interval '1 week' AND $2 - interval '1 week') and a.vendedor=r.fondo and
+		comprador in (select fondo from "RFI_clientes_rfi" where final=true);
+			if suma_aux_venta_final_t_1 is null THEN
+			suma_aux_venta_final_t_1=0;
+			end if;
+		SELECT SUM(ingreso_mesa),AVG(spread_mesa) INTO suma_aux_compra_final_t_1,avg_aux_compra_final_t_1 FROM "RFI_rfi_beta" a
+		where (a.fecha between $1 - interval '1 week' AND $2 - interval '1 week') and a.comprador=r.fondo and
+		vendedor in (select fondo from "RFI_clientes_rfi" where final=true);
+			if suma_aux_compra_final_t_1 is null THEN
+			suma_aux_compra_final_t_1=0;
+			end if;
+		generacion_finales_t_1=((suma_aux_compra_final_t_1+suma_aux_venta_final_t_1)/2)+generacion_bancos_finales_t_1;
+		
+		SELECT SUM(ingreso_mesa),AVG(spread_mesa) INTO suma_aux_venta_brk_t_1,avg_aux_venta_brk_t_1 FROM "RFI_rfi_beta" a
+		where (a.fecha between $1 - interval '1 week' AND $2 - interval '1 week') and a.vendedor=r.fondo and
+		comprador not in (select fondo from "RFI_clientes_rfi" where final=true);
+			if suma_aux_venta_brk_t_1 is null THEN
+			suma_aux_venta_brk_t_1=0;
+			end if;
+		SELECT SUM(ingreso_mesa),AVG(spread_mesa) INTO suma_aux_compra_brk_t_1,avg_aux_compra_brk_t_1 FROM "RFI_rfi_beta" a
+		where (a.fecha between $1 - interval '1 week' AND $2 - interval '1 week') and a.comprador=r.fondo and
+		vendedor not in (select fondo from "RFI_clientes_rfi" where final=true);
+			if suma_aux_compra_brk_t_1 is null THEN
+			suma_aux_compra_brk_t_1=0;
+			end if;
+		generacion_brk_t_1 = suma_aux_compra_brk_t_1 + suma_aux_venta_brk_t_1;
+		
+		
+		
+		
+		--Acá finaliza el cálculo para bancos finales en t-1
+		-------------------------------
+		--Acá comienza el cálculo para bancos brokers en t-1
+		
+		SELECT SUM(ingreso_mesa),AVG(spread_mesa) INTO suma_aux_venta_bancos_brk_t_1,avg_aux_venta_bancos_brk_t_1 FROM "RFI_rfi_beta" a
+		where (a.fecha between $1 - interval '1 week' AND $2 - interval '1 week') and a.vendedor=r.fondo and
+		comprador in (select fondo from "RFI_clientes_rfi" where final=false AND categoria='B');
+			if suma_aux_venta_bancos_brk_t_1 is null THEN
+			suma_aux_venta_bancos_brk_t_1=0;
+			end if;
+		SELECT SUM(ingreso_mesa),AVG(spread_mesa) INTO suma_aux_compra_bancos_brk_t_1,avg_aux_compra_bancos_brk_t_1 FROM "RFI_rfi_beta" a
+		where (a.fecha between $1 - interval '1 week' AND $2 - interval '1 week') and a.comprador=r.fondo and
+		vendedor in (select fondo from "RFI_clientes_rfi" where final=false AND categoria='B');
+			if suma_aux_compra_bancos_brk_t_1 is null THEN
+			suma_aux_compra_bancos_brk_t_1=0;
+			end if;
+		generacion_bancos_brk_t_1 = suma_aux_compra_bancos_brk_t_1 + suma_aux_venta_bancos_brk_t_1;
+		
+		
+		
+		--Acá finaliza el cálculo para bancos brokers en t-1
+		
+		generacion_total_t_1=generacion_finales_t_1+generacion_brk_t_1+generacion_bancos_brk_t_1;
+
+	RETURN NEXT;
+	
+	END LOOP;
+	
+END;
+$$
+LANGUAGE 'plpgsql';
+select * from eq_rfi_generacion('2020-08-01','2020-08-18') where generacion_total<>0 
+order by generacion_total desc
+
+===========
+CREATE OR REPLACE FUNCTION eq_der_conteo_operaciones(fecha_inicial date, fecha_final date) RETURNS TABLE(fecha date,op_gen integer,op_total integer)
+AS
+$$
+DECLARE
+f date;
+BEGIN
+	FOR f IN SELECT DISTINCT(b.fecha) FROM "BASES_bases" b where b.fecha between fecha_inicial and fecha_final order by b.fecha desc
+	LOOP
+	fecha:=f;
+	SELECT COUNT(linea) into op_gen FROM "BASES_bases" b where (util_depo>0 or fee_buyer_clp>0 or fee_seller_clp>0) and b.fecha=f;
+	SELECT COUNT(linea) into op_total FROM "BASES_bases" b where b.fecha=f;
+	RETURN NEXT;
+	END LOOP;
+END;
+$$
+LANGUAGE 'plpgsql';
+
+
+============
+*Torta países
+
+select cl.pais, count(gen.cliente),sum(gen.generacion_total) from eq_rfi_generacion('2020-02-12','2020-03-12') gen
+left join "RFI_clientes_rfi" cl on gen.cliente=cl.fondo
+where generacion_total<>0
+group by cl.pais
+
+*Torta categoría
+
+select cl.categoria, count(gen.cliente),sum(gen.generacion_total) from eq_rfi_generacion('2020-02-12','2020-03-12') gen
+left join "RFI_clientes_rfi" cl on gen.cliente=cl.fondo
+where generacion_total<>0
+group by cl.categoria
+
+***barras negocios unicos y conteo papeles
+select country_of_risk, count(papel),sum(ingreso_mesa) from "RFI_rfi_beta" where fecha between '2020-02-12' and '2020-03-12'
+and ejecutivo='200'
+group by country_of_risk
+
+**hacer graficos con papeles de mejor rendimiento
+select papel, sum(nominales),sum(ingreso_mesa),sum(ingreso_mesa)/sum(nominales) as ratio,round(avg(spread_mesa),3) 
+from "RFI_rfi_beta" where fecha between '2020-02-12' and '2020-03-12'
+and ejecutivo='200'
+group by papel
+order by ratio desc;
+
+*** serie de tiempo ingreso_mesa
+select fecha, sum(ingreso_mesa) from "RFI_rfi_beta"
+group by fecha
+order by fecha desc
+
+*** serie de tiempo nominale
+select fecha, sum(nominales) from "RFI_rfi_beta"
+where crncy='USD'
+group by fecha
+order by fecha desc
+
+**** torta country_of_risk
+select country_of_risk,sum(ingreso_mesa) from "RFI_rfi_beta"
+where fecha between '2020-08-01' and '2020-08-18'
+group by country_of_risk
+
+==================
+
+CREATE OR REPLACE FUNCTION eq_rfi_actividad_brokers(fecha_inicial date, fecha_final date) RETURNS TABLE(cliente text,monto numeric)
+AS
+$$
+DECLARE
+r text;
+BEGIN
+	FOR r in SELECT fondo FROM "RFI_clientes_rfi" WHERE categoria='BKR' or categoria='DLR' or (categoria='B' and final='false')
+	LOOP
+		cliente:=r;
+		select sum(nominales) into monto from "RFI_rfi_beta" WHERE (vendedor=r or comprador=r) and fecha between $1 and $2;
+		if monto is null THEN
+		monto:=0;
+		end if;
+		RETURN NEXT;
+		
+	END LOOP;
+END;
+$$
+LANGUAGE 'plpgsql';
+select * from eq_rfi_actividad_brokers('2020-06-01','2020-06-30') where monto<>0 order by monto desc
+
+select comprador from "RFI_rfi_beta" where vendedor not in (select fondo from "RFI_clientes_rfi")
+
+
+==============
+informe trimestral bases
+
+select a.nombre,a.gen_depo,a.gen_bases,a.prov_bases,a.prov_depos,a.total,b.monto_transado as monto_otc_b,c.monto_transado as monto_otc_depo,d.monto_transado as monto_tr_b,e.monto_transado as monto_tr_depo 
+from eq_der_generacion_total_consolidad('2020-07-01','2020-09-30') a
+left join eqder_montos_transados('2020-07-01','2020-09-30','OTC','B') b on a.nombre=b.cliente
+left join eqder_montos_transados('2020-07-01','2020-09-30','OTC','F') c on a.nombre=c.cliente
+left join eqder_montos_transados('2020-07-01','2020-09-30','TR','B') d on a.nombre=d.cliente
+left join eqder_montos_transados('2020-07-01','2020-09-30','TR','F') e on a.nombre=e.cliente
+
+
+============
+ESta funcion es la tabla madre para sacar las generaciones mensual semanal, anual, por cliente, etc
+
+
+CREATE OR REPLACE FUNCTION cargardor_rfi_generacion_historica(fecha_inicial date, fecha_date date) returns text 
+AS
+$$
+DECLARE
+r date;
+resultado RECORD;
+BEGIN
+	FOR r IN SELECT distinct(fecha) FROM "RFI_rfi_beta" b WHERE b.fecha between $1 and $2 and (b.fecha NOT IN (SELECT distinct(fecha) FROM "RFI_rfi_generacion_historica"))
+	LOOP
+		FOR resultado IN SELECT * FROM eq_rfi_generacion(r,r) where generacion_total<>0
+		LOOP
+			raise notice '%,%,%,%,%',r,resultado.pais,resultado.cat,resultado.cliente,resultado.generacion_total;
+			if resultado.pais is null then
+			resultado.pais:='';
+			end if;
+			INSERT INTO "RFI_rfi_generacion_historica"(fecha,pais,categoria,nombre_cliente,generacion) VALUES (r,resultado.pais,resultado.cat,resultado.cliente,resultado.generacion_total);
+		END LOOP;
+	END LOOP;
+	RETURN 'todo bien!';
+END;
+$$ LANGUAGE 'plpgsql';
+
+select * from cargardor_rfi_generacion_historica('2020-01-03','2020-01-31')
+
+==== generacion promedio RFI por cliente
+
+SELECT nombre_cliente,sum(generacion),avg(generacion),count(nombre_cliente),sum(generacion)/count(distinct(date_part('month',fecha)))
+	FROM "RFI_rfi_generacion_historica" 
+	where fecha between '2019-01-01' and '2019-03-31'
+	group by nombre_cliente,
+	date_part('year',fecha)
+
+ahora hay que sacar una crosstab mensual por cliente
+
+===================================
+CREATE OR REPLACE FUNCTION eq_rfi_generacion_crosstab(fecha_inicial date,fecha_final date) RETURNS text LANGUAGE plpgsql
+as 
+$$
+DECLARE
+lista_columnas text;
+texto text;
+
+BEGIN
+	select string_agg(DISTINCT(pais),' NUMERIC ,') into lista_columnas from eq_rfi_generacion(fecha_inicial,fecha_final) where generacion_total<>0 order by 1;
+	lista_columnas = lista_columnas || ' NUMERIC';
+	texto = 'SELECT * FROM crosstab(''select cat,pais,sum(generacion_total) from eq_rfi_generacion(' || concat('''''',fecha_inicial,'''''') || ',' || concat('''''',fecha_final,'''''') || ') where generacion_total<>0 group by cat,pais order by cat,pais desc '',
+	''SELECT DISTINCT(pais) from eq_rfi_generacion(' || concat('''''',fecha_inicial,'''''') || ',' || concat('''''',fecha_final,'''''') || ') where generacion_total<>0 order by 1 '')
+	as ct(
+	pais text,
+	' ||lista_columnas||'
+	)
+	';
+	return texto;
+
+END;
+$$;
+select eq_rfi_generacion_crosstab('2020-01-01','2020-09-01');
+
+====================
+
+select * from crosstab('select cat,pais,sum(generacion_total) from eq_rfi_generacion(''2020-01-01'',''2020-09-01'') where generacion_total<>0 group by cat,pais order by cat desc')
+
+select string_agg(DISTINCT(pais),' NUMERIC ,') from eq_rfi_generacion('2020-01-01','2020-09-01')
+
+--DROP FUNCTION eq_rfi_generacion_crosstab;
+CREATE OR REPLACE FUNCTION eq_rfi_generacion_crosstab(fecha_inicial date,fecha_final date) RETURNS text LANGUAGE plpgsql
+as 
+$$
+DECLARE
+lista_columnas text;
+texto text;
+
+BEGIN
+	select string_agg(DISTINCT(pais),' NUMERIC ,') into lista_columnas from eq_rfi_generacion(fecha_inicial,fecha_final) where generacion_total<>0 order by 1;
+	lista_columnas = lista_columnas || ' NUMERIC';
+	texto = 'SELECT * FROM crosstab(''select cat,pais,sum(generacion_total) from eq_rfi_generacion(' || concat('''''',fecha_inicial,'''''') || ',' || concat('''''',fecha_final,'''''') || ') where generacion_total<>0 group by cat,pais order by cat,pais desc '',
+	''SELECT DISTINCT(pais) from eq_rfi_generacion(' || concat('''''',fecha_inicial,'''''') || ',' || concat('''''',fecha_final,'''''') || ') where generacion_total<>0 order by 1 '')
+	as ct(
+	pais text,
+	' ||lista_columnas||')';
+	RETURN texto;
+
+END;
+$$;
+
+select 1 as linea, * from eq_rfi_generacion_crosstab('2020-01-01','2020-09-01')
+
+CREATE OR REPLACE FUNCTION eq_rfi_generacion_crosstab_tabla(fecha_inicial date,fecha_final date) RETURNS void LANGUAGE plpgsql
+as 
+$$
+DECLARE
+lista_columnas text;
+texto text;
+
+BEGIN
+	select string_agg(DISTINCT(pais),' NUMERIC ,') into lista_columnas from eq_rfi_generacion(fecha_inicial,fecha_final) where generacion_total<>0 order by 1;
+	lista_columnas = lista_columnas || ' NUMERIC';
+	texto = 'SELECT * FROM crosstab(''select cat,pais,sum(generacion_total) from eq_rfi_generacion(' || concat('''''',fecha_inicial,'''''') || ',' || concat('''''',fecha_final,'''''') || ') where generacion_total<>0 group by cat,pais order by cat,pais desc '',
+	''SELECT DISTINCT(pais) from eq_rfi_generacion(' || concat('''''',fecha_inicial,'''''') || ',' || concat('''''',fecha_final,'''''') || ') where generacion_total<>0 order by 1 '')
+	as ct(
+	pais text,
+	' ||lista_columnas||')';
+	EXECUTE 'SELECT * FROM crosstab(''select cat,pais,sum(generacion_total) from eq_rfi_generacion(' || concat('''''',fecha_inicial,'''''') || ',' || concat('''''',fecha_final,'''''') || ') where generacion_total<>0 group by cat,pais order by cat,pais desc '',
+	''SELECT DISTINCT(pais) from eq_rfi_generacion(' || concat('''''',fecha_inicial,'''''') || ',' || concat('''''',fecha_final,'''''') || ') where generacion_total<>0 order by 1 '')
+	as ct(
+	pais text,
+	' ||lista_columnas||')';
+	
+END;
+$$;
+
+select eq_rfi_generacion_crosstab_tabla('2020-01-01','2020-09-01')
+
+
+============0
+Funcion para ver si hay operaciones entre brokers
+select a.ingreso_mesa,a.comprador,a.vendedor,b.categoria,c.categoria from "RFI_rfi_beta" a 
+JOIN "RFI_clientes_rfi" b ON a.comprador=b.fondo
+JOIN "RFI_clientes_rfi" c ON a.vendedor=c.fondo
+where fecha between '2020-10-01' and '2020-10-20'
+and b.categoria='DLR' and c.categoria='BKR'
+
+
+=
+ESTA SI 22-10
+--DROP FUNCTION eq_rfi_generacion_crosstab;
+CREATE OR REPLACE FUNCTION eq_rfi_generacion_crosstab(fecha_inicial date,fecha_final date) RETURNS TABLE(datos JSON) LANGUAGE plpgsql
+as 
+$$
+DECLARE
+lista_columnas text;
+texto text;
+_ret JSON;
+BEGIN
+	select string_agg(DISTINCT(pais),' NUMERIC ,') into lista_columnas from eq_rfi_generacion(fecha_inicial,fecha_final) where generacion_total<>0 order by 1;
+	lista_columnas = lista_columnas || ' NUMERIC';
+	texto = 'SELECT * FROM crosstab(''select cat,pais,sum(generacion_total) from eq_rfi_generacion(' || concat('''''',fecha_inicial,'''''') || ',' || concat('''''',fecha_final,'''''') || ') where generacion_total<>0 group by cat,pais order by cat,pais desc '',
+	''SELECT DISTINCT(pais) from eq_rfi_generacion(' || concat('''''',fecha_inicial,'''''') || ',' || concat('''''',fecha_final,'''''') || ') where generacion_total<>0 order by 1 '')
+	as ct(
+	pais text,
+	' ||lista_columnas||')';
+	RETURN QUERY
+	EXECUTE 'SELECT array_to_json(array_agg(row_to_json(t))) FROM (SELECT * FROM crosstab(''select cat,pais,sum(generacion_total) from eq_rfi_generacion(' || concat('''''',fecha_inicial,'''''') || ',' || concat('''''',fecha_final,'''''') || ') where generacion_total<>0 group by cat,pais order by cat,pais desc '',
+	''SELECT DISTINCT(pais) from eq_rfi_generacion(' || concat('''''',fecha_inicial,'''''') || ',' || concat('''''',fecha_final,'''''') || ') where generacion_total<>0 order by 1 '')
+	as ct(
+	pais text,
+	' ||lista_columnas||'))t;';
+
+END;
+$$;
+select 1 as linea, * from eq_rfi_generacion_crosstab('2020-01-01','2020-09-01')
+======
+CREATE OR REPLACE FUNCTION eq_rfi_generacion_crosstab_3() RETURNS TABLE(datos JSON) LANGUAGE plpgsql
+as 
+$$
+DECLARE
+lista_columnas text;
+texto text;
+_ret JSON;
+BEGIN
+	select string_agg(DISTINCT(pais),' NUMERIC ,') into lista_columnas from "RFI_rfi_generacion_comite_temporal" where generacion_total<>0 order by 1;
+	lista_columnas = lista_columnas || ' NUMERIC';
+	RETURN QUERY
+	EXECUTE 'SELECT array_to_json(array_agg(row_to_json(t))) FROM (SELECT * FROM crosstab(''select categoria,pais,sum(generacion_total) from "RFI_rfi_generacion_comite_temporal" where generacion_total<>0 group by categoria,pais order by categoria,pais desc '',
+	''SELECT DISTINCT(pais) from "RFI_rfi_generacion_comite_temporal" where generacion_total<>0 order by 1 '')
+	as ct(
+	pais text,
+	' ||lista_columnas||'))t;';
+
+END;
+$$;
+select 1 as linea, * from eq_rfi_generacion_crosstab_3()
+==================0
+qué dia de la semana se genera más
+
+select extract(dow from fecha) as dia,sum(fee_buyer_clp+fee_seller_clp) as generacion from "BASES_bases"
+where fee_buyer_clp >0 or fee_seller_clp>0
+group by dia
+order by generacion desc
+
+
+===========
+===========
+===========
+
+CREATE OR REPLACE FUNCTION eq_bases_montos_transados_mensual_cliente(sobrescribir bool,agno numeric,d_o_b text)
+RETURNS TABLE (cliente text, enero numeric,febrero numeric,marzo numeric,abril numeric, mayo numeric, junio numeric, julio numeric,agosto numeric,septiembre numeric,octubre numeric,noviembre numeric, diciembre numeric)
+LANGUAGE 'plpgsql'
+AS 
+$$
+DECLARE
+n text;
+primer_dia date;
+ultimo_dia date;
+mes_actual integer;
+agno_actual integer;
+c text;
+BEGIN
+IF sobrescribir is true THEN
+	DELETE FROM "BASES_serie_montos_mensual_por_cliente";
+	FOR n IN SELECT * FROM generate_series(1,12)
+	LOOP
+		raise notice '%',n;
+		--primer_dia = agno ||'-'|| n || '-01';
+		primer_dia = concat(agno,'-',n,'-01');
+		ultimo_dia = last_day(primer_dia);
+		raise notice ' primer dia %',primer_dia;
+		raise notice ' ultimo dia %',ultimo_dia;
+		INSERT INTO "BASES_serie_montos_mensual_por_cliente"(cliente, monto_bases_otc) select * from eqder_montos_transados(primer_dia::date,ultimo_dia::date,'OTC','B') where monto_transado<>0;
+		INSERT INTO "BASES_serie_montos_mensual_por_cliente"(cliente, monto_bases_tr) select * from eqder_montos_transados(primer_dia::date,ultimo_dia::date,'TR','B') where monto_transado<>0;
+		INSERT INTO "BASES_serie_montos_mensual_por_cliente"(cliente, monto_depos_otc) select * from eqder_montos_transados(primer_dia::date,ultimo_dia::date,'OTC','F') where monto_transado<>0;
+		INSERT INTO "BASES_serie_montos_mensual_por_cliente"(cliente, monto_depos_tr) select * from eqder_montos_transados(primer_dia::date,ultimo_dia::date,'TR','F') where monto_transado<>0;
+		UPDATE "BASES_serie_montos_mensual_por_cliente" set fecha=primer_dia where fecha is NULL;
+		UPDATE "BASES_serie_montos_mensual_por_cliente" set monto_bases_otc=0 where monto_bases_otc is NULL;
+		UPDATE "BASES_serie_montos_mensual_por_cliente" set monto_bases_tr=0 where monto_bases_tr is NULL;
+		UPDATE "BASES_serie_montos_mensual_por_cliente" set monto_depos_otc=0 where monto_depos_otc is NULL;
+		UPDATE "BASES_serie_montos_mensual_por_cliente" set monto_depos_tr=0 where monto_depos_tr is NULL;
+		
+	END LOOP;
+
+END IF;
+IF sobrescribir is false THEN
+		--detectar el mes actual
+		mes_actual = date_part('MONTH',now());
+		agno_actual = date_part('YEAR',now());
+		primer_dia = concat(agno_actual,'-',mes_actual,'-01');
+		ultimo_dia = last_day(primer_dia);
+				
+		IF EXISTS (SELECT * FROM "BASES_serie_montos_mensual_por_cliente" where fecha=primer_dia::date) THEN
+			raise notice 'EXISTE LA FECHA';
+			DELETE FROM "BASES_serie_montos_mensual_por_cliente" WHERE fecha=primer_dia;
+			INSERT INTO "BASES_serie_montos_mensual_por_cliente"(cliente, monto_bases_otc) select * from eqder_montos_transados(primer_dia,ultimo_dia,'OTC','B') where monto_transado<>0;
+			INSERT INTO "BASES_serie_montos_mensual_por_cliente"(cliente, monto_bases_tr) select * from eqder_montos_transados(primer_dia::date,ultimo_dia::date,'TR','B') where monto_transado<>0;
+			INSERT INTO "BASES_serie_montos_mensual_por_cliente"(cliente, monto_depos_otc) select * from eqder_montos_transados(primer_dia::date,ultimo_dia::date,'OTC','F') where monto_transado<>0;
+			INSERT INTO "BASES_serie_montos_mensual_por_cliente"(cliente, monto_depos_tr) select * from eqder_montos_transados(primer_dia::date,ultimo_dia::date,'TR','F') where monto_transado<>0;
+			UPDATE "BASES_serie_montos_mensual_por_cliente" set fecha=primer_dia where fecha is NULL;
+			UPDATE "BASES_serie_montos_mensual_por_cliente" set monto_bases_otc=0 where monto_bases_otc is NULL;
+			UPDATE "BASES_serie_montos_mensual_por_cliente" set monto_bases_tr=0 where monto_bases_tr is NULL;
+			UPDATE "BASES_serie_montos_mensual_por_cliente" set monto_depos_otc=0 where monto_depos_otc is NULL;
+			UPDATE "BASES_serie_montos_mensual_por_cliente" set monto_depos_tr=0 where monto_depos_tr is NULL;
+		
+			UPDATE "BASES_serie_montos_mensual_por_cliente" set fecha=primer_dia::date where fecha=primer_dia;
+		ELSE
+			raise notice 'NO EXISTE LA FECHA, ciclo else';
+			INSERT INTO "BASES_serie_montos_mensual_por_cliente"(cliente, monto_bases_otc) select * from eqder_montos_transados(primer_dia::date,ultimo_dia::date,'OTC','B') where monto_transado<>0;
+			INSERT INTO "BASES_serie_montos_mensual_por_cliente"(cliente, monto_bases_tr) select * from eqder_montos_transados(primer_dia::date,ultimo_dia::date,'TR','B') where monto_transado<>0;
+			INSERT INTO "BASES_serie_montos_mensual_por_cliente"(cliente, monto_depos_otc) select * from eqder_montos_transados(primer_dia::date,ultimo_dia::date,'OTC','F') where monto_transado<>0;
+			INSERT INTO "BASES_serie_montos_mensual_por_cliente"(cliente, monto_depos_tr) select * from eqder_montos_transados(primer_dia::date,ultimo_dia::date,'TR','F') where monto_transado<>0;
+			UPDATE "BASES_serie_montos_mensual_por_cliente" set fecha=primer_dia::date where fecha is null;
+			UPDATE "BASES_serie_montos_mensual_por_cliente" set monto_bases_otc=0 where monto_bases_otc is NULL;
+			UPDATE "BASES_serie_montos_mensual_por_cliente" set monto_bases_tr=0 where monto_bases_tr is NULL;
+			UPDATE "BASES_serie_montos_mensual_por_cliente" set monto_depos_otc=0 where monto_depos_otc is NULL;
+			UPDATE "BASES_serie_montos_mensual_por_cliente" set monto_depos_tr=0 where monto_depos_tr is NULL;
+		END IF;
+END IF;
+	--AHORA CREAMOS LA TABLA PIVOTE
+	IF d_o_b = 'b' THEN
+		
+		FOR c IN SELECT nombre FROM "BASES_clientes"
+		LOOP
+			cliente=c;			
+			Select COALESCE(sum(monto_bases_otc + monto_bases_tr),0) into enero FROM "BASES_serie_montos_mensual_por_cliente" a where date_part('MONTH',fecha)=1 and date_part('YEAR',fecha)=agno and a.cliente=c;
+			Select COALESCE(sum(monto_bases_otc + monto_bases_tr),0) into febrero FROM "BASES_serie_montos_mensual_por_cliente" a where date_part('MONTH',fecha)=2 and date_part('YEAR',fecha)=agno and a.cliente=c;
+			Select COALESCE(sum(monto_bases_otc + monto_bases_tr),0) into marzo FROM "BASES_serie_montos_mensual_por_cliente" a where date_part('MONTH',fecha)=3 and date_part('YEAR',fecha)=agno and a.cliente=c;
+			Select COALESCE(sum(monto_bases_otc + monto_bases_tr),0) into abril FROM "BASES_serie_montos_mensual_por_cliente" a where date_part('MONTH',fecha)=4 and date_part('YEAR',fecha)=agno and a.cliente=c;
+			Select COALESCE(sum(monto_bases_otc + monto_bases_tr),0) into mayo FROM "BASES_serie_montos_mensual_por_cliente" a where date_part('MONTH',fecha)=5 and date_part('YEAR',fecha)=agno and a.cliente=c;
+			Select COALESCE(sum(monto_bases_otc + monto_bases_tr),0) into junio FROM "BASES_serie_montos_mensual_por_cliente" a where date_part('MONTH',fecha)=6 and date_part('YEAR',fecha)=agno and a.cliente=c;
+			Select COALESCE(sum(monto_bases_otc + monto_bases_tr),0) into julio FROM "BASES_serie_montos_mensual_por_cliente" a where date_part('MONTH',fecha)=7 and date_part('YEAR',fecha)=agno and a.cliente=c;
+			Select COALESCE(sum(monto_bases_otc + monto_bases_tr),0) into agosto FROM "BASES_serie_montos_mensual_por_cliente" a where date_part('MONTH',fecha)=8 and date_part('YEAR',fecha)=agno and a.cliente=c;
+			Select COALESCE(sum(monto_bases_otc + monto_bases_tr),0) into septiembre FROM "BASES_serie_montos_mensual_por_cliente" a where date_part('MONTH',fecha)=9 and date_part('YEAR',fecha)=agno and a.cliente=c;
+			Select COALESCE(sum(monto_bases_otc + monto_bases_tr),0) into octubre FROM "BASES_serie_montos_mensual_por_cliente" a where date_part('MONTH',fecha)=10 and date_part('YEAR',fecha)=agno and a.cliente=c;
+			Select COALESCE(sum(monto_bases_otc + monto_bases_tr),0) into noviembre FROM "BASES_serie_montos_mensual_por_cliente" a where date_part('MONTH',fecha)=11 and date_part('YEAR',fecha)=agno and a.cliente=c;
+			Select COALESCE(sum(monto_bases_otc + monto_bases_tr),0) into diciembre FROM "BASES_serie_montos_mensual_por_cliente" a where date_part('MONTH',fecha)=12 and date_part('YEAR',fecha)=agno and a.cliente=c;
+			
+			RETURN NEXT;
+		END LOOP;
+	END IF;
+	IF d_o_b = 'd' THEN
+	FOR c IN SELECT nombre FROM "BASES_clientes"
+		LOOP
+			cliente=c;
+			Select COALESCE(sum(monto_depos_otc + monto_depos_tr),0) into enero FROM "BASES_serie_montos_mensual_por_cliente" a where date_part('MONTH',fecha)=1 and date_part('YEAR',fecha)=agno and a.cliente=c;
+			Select COALESCE(sum(monto_depos_otc + monto_depos_tr),0) into febrero FROM "BASES_serie_montos_mensual_por_cliente" a where date_part('MONTH',fecha)=2 and date_part('YEAR',fecha)=agno and a.cliente=c;
+			Select COALESCE(sum(monto_depos_otc + monto_depos_tr),0) into marzo FROM "BASES_serie_montos_mensual_por_cliente" a where date_part('MONTH',fecha)=3 and date_part('YEAR',fecha)=agno and a.cliente=c;
+			Select COALESCE(sum(monto_depos_otc + monto_depos_tr),0) into abril FROM "BASES_serie_montos_mensual_por_cliente" a where date_part('MONTH',fecha)=4 and date_part('YEAR',fecha)=agno and a.cliente=c;
+			Select COALESCE(sum(monto_depos_otc + monto_depos_tr),0) into mayo FROM "BASES_serie_montos_mensual_por_cliente" a where date_part('MONTH',fecha)=5 and date_part('YEAR',fecha)=agno and a.cliente=c;
+			Select COALESCE(sum(monto_depos_otc + monto_depos_tr),0) into junio FROM "BASES_serie_montos_mensual_por_cliente" a where date_part('MONTH',fecha)=6 and date_part('YEAR',fecha)=agno and a.cliente=c;
+			Select COALESCE(sum(monto_depos_otc + monto_depos_tr),0) into julio FROM "BASES_serie_montos_mensual_por_cliente" a where date_part('MONTH',fecha)=7 and date_part('YEAR',fecha)=agno and a.cliente=c;
+			Select COALESCE(sum(monto_depos_otc + monto_depos_tr),0) into agosto FROM "BASES_serie_montos_mensual_por_cliente" a where date_part('MONTH',fecha)=8 and date_part('YEAR',fecha)=agno and a.cliente=c;
+			Select COALESCE(sum(monto_depos_otc + monto_depos_tr),0) into septiembre FROM "BASES_serie_montos_mensual_por_cliente" a where date_part('MONTH',fecha)=9 and date_part('YEAR',fecha)=agno and a.cliente=c;
+			Select COALESCE(sum(monto_depos_otc + monto_depos_tr),0) into octubre FROM "BASES_serie_montos_mensual_por_cliente" a where date_part('MONTH',fecha)=10 and date_part('YEAR',fecha)=agno and a.cliente=c;
+			Select COALESCE(sum(monto_depos_otc + monto_depos_tr),0) into noviembre FROM "BASES_serie_montos_mensual_por_cliente" a where date_part('MONTH',fecha)=11 and date_part('YEAR',fecha)=agno and a.cliente=c;
+			Select COALESCE(sum(monto_depos_otc + monto_depos_tr),0) into diciembre FROM "BASES_serie_montos_mensual_por_cliente" a where date_part('MONTH',fecha)=12 and date_part('YEAR',fecha)=agno and a.cliente=c;
+		RETURN NEXT; 
+		END LOOP;
+	END IF;
+
+RETURN;
+END;
+$$;
+--select * FROM eq_bases_montos_transados_mensual_cliente(sobrescribir bool,agno numeric,d_o_b text);
+--DELETE FROM "BASES_serie_montos_mensual_por_cliente";
+select * FROM eq_bases_montos_transados_mensual_cliente(false,2020,'b') order by cliente desc;
+
+=============
+0=====
+
+
+DROP FUNCTION eq_bases_generacion_mensual_cliente(boolean,numeric,text);
+CREATE OR REPLACE FUNCTION eq_bases_generacion_mensual_cliente(sobrescribir bool,agno numeric,d_o_b text)
+RETURNS TABLE (cliente text, gen_enero numeric,gen_febrero numeric,gen_marzo numeric,gen_abril numeric, gen_mayo numeric, gen_junio numeric, gen_julio numeric,gen_agosto numeric,gen_septiembre numeric,gen_octubre numeric,gen_noviembre numeric, gen_diciembre numeric)
+LANGUAGE 'plpgsql'
+AS 
+$$
+DECLARE
+n text;
+primer_dia date;
+ultimo_dia date;
+mes_actual integer;
+agno_actual integer;
+c text;
+BEGIN
+IF sobrescribir is true THEN
+	DELETE FROM "BASES_serie_generacion_mensual_por_cliente";
+	FOR n IN SELECT * FROM generate_series(1,12)
+	LOOP
+		raise notice '%',n;
+		--primer_dia = agno ||'-'|| n || '-01';
+		primer_dia = concat(agno,'-',n,'-01');
+		ultimo_dia = last_day(primer_dia);
+		raise notice ' primer dia %',primer_dia;
+		raise notice ' ultimo dia %',ultimo_dia;
+		INSERT INTO "BASES_serie_generacion_mensual_por_cliente"(cliente, gen_depo,gen_bases,prov_bases,prov_depos) select nombre,gen_depo,gen_bases,prov_bases,prov_depos from eq_der_generacion_total_consolidad(primer_dia::date,ultimo_dia::date) where total<>0;
+		UPDATE "BASES_serie_generacion_mensual_por_cliente" set fecha=primer_dia where fecha is NULL;
+		UPDATE "BASES_serie_generacion_mensual_por_cliente" set gen_depo=0 where gen_depo is NULL;
+		UPDATE "BASES_serie_generacion_mensual_por_cliente" set gen_bases=0 where gen_bases is NULL;
+		UPDATE "BASES_serie_generacion_mensual_por_cliente" set prov_bases=0 where prov_bases is NULL;
+		UPDATE "BASES_serie_generacion_mensual_por_cliente" set prov_depos=0 where prov_depos is NULL;
+		
+	END LOOP;
+
+END IF;
+IF sobrescribir is false THEN
+		--detectar el mes actual
+		mes_actual = date_part('MONTH',now());
+		agno_actual = date_part('YEAR',now());
+		primer_dia = concat(agno_actual,'-',mes_actual,'-01');
+		ultimo_dia = last_day(primer_dia);
+				
+		IF EXISTS (SELECT * FROM "BASES_serie_generacion_mensual_por_cliente" where fecha=primer_dia::date) THEN
+			raise notice 'EXISTE LA FECHA';
+			DELETE FROM "BASES_serie_generacion_mensual_por_cliente" WHERE fecha=primer_dia;
+			INSERT INTO "BASES_serie_generacion_mensual_por_cliente"(cliente, gen_depo,gen_bases,prov_bases,prov_depos) select * from eq_der_generacion_total_consolidad(primer_dia::date,ultimo_dia::date) where total<>0;
+			UPDATE "BASES_serie_generacion_mensual_por_cliente" set fecha=primer_dia where fecha is NULL;
+			UPDATE "BASES_serie_generacion_mensual_por_cliente" set gen_depo=0 where gen_depo is NULL;
+			UPDATE "BASES_serie_generacion_mensual_por_cliente" set gen_bases=0 where gen_bases is NULL;
+			UPDATE "BASES_serie_generacion_mensual_por_cliente" set prov_bases=0 where prov_bases is NULL;
+			UPDATE "BASES_serie_generacion_mensual_por_cliente" set prov_depos=0 where prov_depos is NULL;
+			
+		ELSE
+			raise notice 'NO EXISTE LA FECHA, ciclo else';
+			INSERT INTO "BASES_serie_generacion_mensual_por_cliente"(cliente, gen_depo,gen_bases,prov_bases,prov_depos) select * from eq_der_generacion_total_consolidad(primer_dia::date,ultimo_dia::date) where total<>0;
+			UPDATE "BASES_serie_generacion_mensual_por_cliente" set fecha=primer_dia where fecha is NULL;
+			UPDATE "BASES_serie_generacion_mensual_por_cliente" set gen_depo=0 where gen_depo is NULL;
+			UPDATE "BASES_serie_generacion_mensual_por_cliente" set gen_bases=0 where gen_bases is NULL;
+			UPDATE "BASES_serie_generacion_mensual_por_cliente" set prov_bases=0 where prov_bases is NULL;
+			UPDATE "BASES_serie_generacion_mensual_por_cliente" set prov_depos=0 where prov_depos is NULL;
+		END IF;
+END IF;
+	--AHORA CREAMOS LA TABLA PIVOTE
+	IF d_o_b = 'b' THEN
+		
+		FOR c IN SELECT nombre FROM "BASES_clientes"
+		LOOP
+			cliente=c;			
+			Select COALESCE(sum(gen_bases + prov_bases),0) into gen_enero FROM "BASES_serie_generacion_mensual_por_cliente" a where date_part('MONTH',fecha)=1 and date_part('YEAR',fecha)=agno and a.cliente=c;
+			Select COALESCE(sum(gen_bases + prov_bases),0) into gen_febrero FROM "BASES_serie_generacion_mensual_por_cliente" a where date_part('MONTH',fecha)=2 and date_part('YEAR',fecha)=agno and a.cliente=c;
+			Select COALESCE(sum(gen_bases + prov_bases),0) into gen_marzo FROM "BASES_serie_generacion_mensual_por_cliente" a where date_part('MONTH',fecha)=3 and date_part('YEAR',fecha)=agno and a.cliente=c;
+			Select COALESCE(sum(gen_bases + prov_bases),0) into gen_abril FROM "BASES_serie_generacion_mensual_por_cliente" a where date_part('MONTH',fecha)=4 and date_part('YEAR',fecha)=agno and a.cliente=c;
+			Select COALESCE(sum(gen_bases + prov_bases),0) into gen_mayo FROM "BASES_serie_generacion_mensual_por_cliente" a where date_part('MONTH',fecha)=5 and date_part('YEAR',fecha)=agno and a.cliente=c;
+			Select COALESCE(sum(gen_bases + prov_bases),0) into gen_junio FROM "BASES_serie_generacion_mensual_por_cliente" a where date_part('MONTH',fecha)=6 and date_part('YEAR',fecha)=agno and a.cliente=c;
+			Select COALESCE(sum(gen_bases + prov_bases),0) into gen_julio FROM "BASES_serie_generacion_mensual_por_cliente" a where date_part('MONTH',fecha)=7 and date_part('YEAR',fecha)=agno and a.cliente=c;
+			Select COALESCE(sum(gen_bases + prov_bases),0) into gen_agosto FROM "BASES_serie_generacion_mensual_por_cliente" a where date_part('MONTH',fecha)=8 and date_part('YEAR',fecha)=agno and a.cliente=c;
+			Select COALESCE(sum(gen_bases + prov_bases),0) into gen_septiembre FROM "BASES_serie_generacion_mensual_por_cliente" a where date_part('MONTH',fecha)=9 and date_part('YEAR',fecha)=agno and a.cliente=c;
+			Select COALESCE(sum(gen_bases + prov_bases),0) into gen_octubre FROM "BASES_serie_generacion_mensual_por_cliente" a where date_part('MONTH',fecha)=10 and date_part('YEAR',fecha)=agno and a.cliente=c;
+			Select COALESCE(sum(gen_bases + prov_bases),0) into gen_noviembre FROM "BASES_serie_generacion_mensual_por_cliente" a where date_part('MONTH',fecha)=11 and date_part('YEAR',fecha)=agno and a.cliente=c;
+			Select COALESCE(sum(gen_bases + prov_bases),0) into gen_diciembre FROM "BASES_serie_generacion_mensual_por_cliente" a where date_part('MONTH',fecha)=12 and date_part('YEAR',fecha)=agno and a.cliente=c;
+			
+			RETURN NEXT;
+		END LOOP;
+	END IF;
+	IF d_o_b = 'd' THEN
+	FOR c IN SELECT nombre FROM "BASES_clientes"
+		LOOP
+			cliente=c;
+			Select COALESCE(sum(gen_depo + prov_depos),0) into gen_enero FROM "BASES_serie_generacion_mensual_por_cliente" a where date_part('MONTH',fecha)=1 and date_part('YEAR',fecha)=agno and a.cliente=c;
+			Select COALESCE(sum(gen_depo + prov_depos),0) into gen_febrero FROM "BASES_serie_generacion_mensual_por_cliente" a where date_part('MONTH',fecha)=2 and date_part('YEAR',fecha)=agno and a.cliente=c;
+			Select COALESCE(sum(gen_depo + prov_depos),0) into gen_marzo FROM "BASES_serie_generacion_mensual_por_cliente" a where date_part('MONTH',fecha)=3 and date_part('YEAR',fecha)=agno and a.cliente=c;
+			Select COALESCE(sum(gen_depo + prov_depos),0) into gen_abril FROM "BASES_serie_generacion_mensual_por_cliente" a where date_part('MONTH',fecha)=4 and date_part('YEAR',fecha)=agno and a.cliente=c;
+			Select COALESCE(sum(gen_depo + prov_depos),0) into gen_mayo FROM "BASES_serie_generacion_mensual_por_cliente" a where date_part('MONTH',fecha)=5 and date_part('YEAR',fecha)=agno and a.cliente=c;
+			Select COALESCE(sum(gen_depo + prov_depos),0) into gen_junio FROM "BASES_serie_generacion_mensual_por_cliente" a where date_part('MONTH',fecha)=6 and date_part('YEAR',fecha)=agno and a.cliente=c;
+			Select COALESCE(sum(gen_depo + prov_depos),0) into gen_julio FROM "BASES_serie_generacion_mensual_por_cliente" a where date_part('MONTH',fecha)=7 and date_part('YEAR',fecha)=agno and a.cliente=c;
+			Select COALESCE(sum(gen_depo + prov_depos),0) into gen_agosto FROM "BASES_serie_generacion_mensual_por_cliente" a where date_part('MONTH',fecha)=8 and date_part('YEAR',fecha)=agno and a.cliente=c;
+			Select COALESCE(sum(gen_depo + prov_depos),0) into gen_septiembre FROM "BASES_serie_generacion_mensual_por_cliente" a where date_part('MONTH',fecha)=9 and date_part('YEAR',fecha)=agno and a.cliente=c;
+			Select COALESCE(sum(gen_depo + prov_depos),0) into gen_octubre FROM "BASES_serie_generacion_mensual_por_cliente" a where date_part('MONTH',fecha)=10 and date_part('YEAR',fecha)=agno and a.cliente=c;
+			Select COALESCE(sum(gen_depo + prov_depos),0) into gen_noviembre FROM "BASES_serie_generacion_mensual_por_cliente" a where date_part('MONTH',fecha)=11 and date_part('YEAR',fecha)=agno and a.cliente=c;
+			Select COALESCE(sum(gen_depo + prov_depos),0) into gen_diciembre FROM "BASES_serie_generacion_mensual_por_cliente" a where date_part('MONTH',fecha)=12 and date_part('YEAR',fecha)=agno and a.cliente=c;
+		RETURN NEXT; 
+		END LOOP;
+	END IF;
+
+RETURN;
+END;
+$$;
+--select * FROM eq_bases_montos_transados_mensual_cliente(sobrescribir bool,agno numeric,d_o_b text);
+--DELETE FROM "BASES_serie_generacion_mensual_por_cliente";
+select * FROM eq_bases_generacion_mensual_cliente(true,2020,'b') order by cliente desc;
+
+--select distinct(concat(seller,' - ',trader_seller)) as cliente_trader from "BASES_bases"
+order by cliente_trader asc;
+
+--Update FROM "BASES_bases" set trader_seller='' where trader_seller='';
+select distinct(trader_buy) FROM "BASES_bases" order by trader_buy asc

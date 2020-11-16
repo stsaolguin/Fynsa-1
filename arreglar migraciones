@@ -1,0 +1,46 @@
+/home/gvera/Descargas/todos_clientes_rfi_2.csv
+
+gvera@gvera-ubuntu:~$ source ./script_inicial_fynsa_2.sh
+Watching for file changes with StatReloader
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 22, 2020 - 20:22:26
+Django version 2.2.5, using settings 'fynsa.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+^C(fynsa_env) gvera@gvera-ubuntu:~/Fynsa/fynsa_src/fynsals
+BASES                          bases_serie_01-06-2020.csv    RFI
+bases_bases_01-06-2020.csv     db.sqlite3                    RFL
+bases_clientes_01-06-2020.csv  fynsa                         settings.py
+bases_facturas_01-06-2020.csv  fynsa_db_respaldo_01-06-2020  static
+(fynsa_env) gvera@gvera-ubuntu:~/Fynsa/fynsa_src/fynsa$ python3 manage.py makemigrations
+Migrations for 'RFI':
+  RFI/migrations/0001_initial.py
+    - Create model bonos_rfi
+    - Create model clientes_rfi
+    - Create model rfi_beta
+(fynsa_env) gvera@gvera-ubuntu:~/Fynsa/fynsa_src/fynsa$ python3 manage.py migrate
+Operations to perform:
+  Apply all migrations: BASES, RFI, RFL, admin, auth, contenttypes, sessions
+Running migrations:
+  No migrations to apply.
+(fynsa_env) gvera@gvera-ubuntu:~/Fynsa/fynsa_src/fynsa$ python3 manage.py migrate RFI
+Operations to perform:
+  Apply all migrations: RFI
+Running migrations:
+  No migrations to apply.
+(fynsa_env) gvera@gvera-ubuntu:~/Fynsa/fynsa_src/fynsa$ python manage.py migrate --fake RFI zero
+Operations to perform:
+  Unapply all migrations: RFI
+Running migrations:
+  Rendering model states... DONE
+  Unapplying RFI.0001_initial... FAKED
+(fynsa_env) gvera@gvera-ubuntu:~/Fynsa/fynsa_src/fynsa$ python manage.py migrate RFI
+Operations to perform:
+  Apply all migrations: RFI
+Running migrations:
+  Applying RFI.0001_initial... OK
+(fynsa_env) gvera@gvera-ubuntu:~/Fynsa/fynsa_src/fynsa$ ^C
+(fynsa_env) gvera@gvera-ubuntu:~/Fynsa/fynsa_src/fynsa$ 
+

@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="/static/BASES/css/estilos.css" media="screen" >
+    <link rel="stylesheet" type="text/css" href="/static/BASES/css/estilos_print.css" media="print">
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <title>Fynsa - Stats</title>
+
+</head>
+<body>
+       
+        
+                    <div class="jumbotron">
+                            
+                            <hr class="my-4">
+                            
+                    </div>
+                    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                            
+                       
+                        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                                        <ul class="navbar-nav mr-auto">
+                                                <li class="nav-item dropdown mx-3">
+                                                        <a class="nav-link dropdown-toggle" href="#" id="bases_dropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                                Bases</a>
+                                                                <div class="dropdown-menu" aria-labelledby="bases_dropdown">
+                                                                        <a class="nav-link" href="/logeado/bases/comite/">Comité<span class="sr-only">(current)</span></a>
+                                                                </div>
+                                                </li>
+                                                <li class="nav-item dropdown mx-3">
+                                                        <a class="nav-link dropdown-toggle" href="#" id="bases_dropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                                RFI</a>
+                                                                <div class="dropdown-menu" aria-labelledby="bases_dropdown">
+                                                                                <a class="nav-link" href="/logeado/rfi/cruces/">Cruces<span class="sr-only">(current)</span></a>
+                                                                                <a class="nav-link" href="/logeado/rfi/comite-rfi/">Comité<span class="sr-only">(current)</span></a>
+                                                                </div>
+                                                </li>
+                                                <li class="nav-item dropdown mx-3">
+                                                        <a class="nav-link dropdown-toggle" href="#" id="rfl_dropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                        RFL</a>
+                                                        <div class="dropdown-menu" aria-labelledby="rfl_dropdown">
+                                                                <a class="dropdown-item" href="/logeado/rfl/arbitraje/">Arbitraje</a>
+                                                                
+                                                        </div>
+                                                </li>
+                                                
+                                        </ul>
+                                        <ul class="navbar-nav">
+                                                <li class="nav-item">
+                                                        <a class="nav-link" href="#">Home</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                        <a class="btn btn-outline-danger" href="/salida/">Salir</a>
+                                                </li>
+                                        </ul>
+                                
+                        </div>
+                    </nav>
+                      
+
+       
+     
+<div class="contenedor">
+    <div id="Titulo_principal">Generación RFI entre el 1 de Enero de 2020 y el 18 de Agosto de 2020</div>
+    <div id="Titulo_secundario">Generación Total : USD 1581199</div>
+    <div class="rfi_generacion_torta"><div id="rfi_generacion_torta"></div></div>
+    <div class="rfi_generacion_torta_tabla"><div id="rfi_generacion_torta_tabla"></div></div>
+    <div class="rfi_generacion"><div id="rfi_generacion"></div></div>
+    <div class="rfi_generacion_tabla"><div id="rfi_generacion_tabla"></div></div>
+
+    <div class="rfi_generacion_categoria_donut"><div id="rfi_generacion_categoria_donut"></div></div>
+    <div class="rfi_generacion_categoria_tabla_donut"><div id="rfi_generacion_categoria_tabla_donut"></div></div>
+    
+    <div class="rfi_country_torta"><div id="rfi_country_torta"></div></div>
+    <div class="rfi_country_geo_torta"><div id="rfi_country_geo_torta"></div></div>
+    <div class="rfi_country_torta_tabla"><div id="rfi_country_torta_tabla"></div></div>
+
+    <div class="series">
+          <div id="rfi_serie_spread"></div>
+          <div id="rfi_serie_nominales"></div>
+          <div id="rfi_serie_generacion"></div> 
+    </div>
+</div>
+
+<script>
+        google.charts.load('current', {packages: ['corechart', 'bar','Table','geochart'],'language': 'es-cl'});
+        google.charts.setOnLoadCallback(rfi_generacion);
+        google.charts.setOnLoadCallback(rfi_generacion_torta);
+        google.charts.setOnLoadCallback(rfi_generacion_categoria_donut);
+        google.charts.setOnLoadCallback(rfi_countryofrisk_torta);
+        google.charts.setOnLoadCallback(rfi_series);
+        
+
+    function rfi_generacion() {
+      var data = new google.visualization.DataTable();
+      data.addColumn('string','Cliente');
+      data.addColumn('number','Generación por Brokers');
+      data.addColumn('number','Generación por Finales');
+      data.addColumn('number','Generación por Bancos Brokers');
+      data.addColumn({type:'number', role:'annotation'}); 
+      data.addRows([
+      
+       ['CB CONSORCIO',123179,52384,154238,329801],
+       
+       ['CI ARG FM BALANZ',104525,31820,21050,157395],
+       
+       ['CI ARG FM SANTANDER RIO',45298,14398,48589,108285],
+       
+       ['CI ARG FM MEGAINVER',21245,5588,62970,89803],
+       
+       ['CI ARG FM ICBC',43342,12812,11110,67264],
+       
+       ['FP INVINSA',38865,6257,10313,55435],
+       
+       ['CI ARG FM COMPASS',4400,28293,15520,48213],
+       
+       ['CI ARG FM GALILEO',30973,12922,2938,46833],
+       
+       ['FM SECURITY',2200,37595,0,39795],
+       
+       ['CI UK AM SANTANDER',6275,32106,0,38381],
+       
+       ['FO MEGEVE',13400,24450,0,37850],
+       
+       ['FYNSA',15125,9723,10928,35776],
+       
+       ['CI ARG FM SOUTHERN',17090,13813,4139,35042],
+       
+       ['FM BTG',0,33492,0,33492],
+       
+       ['FP MONEDA',4760,24738,0,29498],
+       
+       ['CI argent FM Cohen',14781,6325,6711,27817],
+       
+       ['FO ESTRELLA DEL SUR',16131,8650,0,24781],
+       
+       ['B SECURITY',6150,15219,1820,23189],
+       
+       ['FP VISION',19743,2668,500,22911],
+       
+       ['CI ARG FM DELTA',1300,14760,3784,19844],
+       
+       ['B BCI',5850,11912,0,17762],
+       
+       ['ADC BICE',5123,9874,1750,16747],
+       
+       ['CI ARG FM GAINVEST',9775,660,4875,15310],
+       
+       ['CI PERU AFP PRIMA',0,14935,0,14935],
+       
+       ['FO ARIZONA',555,9725,4250,14530],
+       
+       ['FO STARS',6538,2500,4625,13663],
+       
+       ['ADC BTG',3674,9825,0,13499],
+       
+       ['FO ODISEA',10120,0,3000,13120],
+       
+       ['CI PERU FM SURA',1375,8655,2766,12796],
+       
+       ['CI PERU ASSET CREDICORP',5600,6954,0,12554],
+       
+       ['CI ARG FM SCHRODERS',0,10572,1365,11937],
+       
+       ['CI PERU CREDICORP CAPITAL',0,10667,0,10667],
+       
+       ['CDS CONSORCIO CHILE',0,0,9000,9000],
+       
+       ['CI PERU FM BBVA',3206,4493,1100,8799],
+       
+       ['B CONSORCIO',0,8755,0,8755],
+       
+       ['FO CORSO',0,0,8750,8750],
+       
+       ['ADC MBI',0,8069,0,8069],
+       
+       ['FM BCI',2385,5037,0,7422],
+       
+       ['CB MONEDA',2000,3562,1650,7212],
+       
+       ['CDS BTG CHILE',3950,750,1750,6450],
+       
+       ['FM EUROAMERICA',5479,637,0,6116],
+       
+       ['FM COMPASS',0,6000,0,6000],
+       
+       ['ADC BANCO SANTANDER',2185,3750,0,5935],
+       
+       ['FM CI ARGENTINA AXIS',3338,307,2200,5845],
+       
+       ['CI ARG FM SBS',0,5200,0,5200],
+       
+       ['CDS CONFUTURO CHILE',4500,625,0,5125],
+       
+       ['CI FM ACTINVER MEX',0,5050,0,5050],
+       
+       ['CI PERU INTERFONDOS',640,4301,100,5041],
+       
+       ['CI ARG FM TORONTO TRUST',1085,2622,0,3707],
+       
+       ['ADC SURA CHILE SA',310,0,3000,3310],
+       
+       ['FO BANCARD',3000,0,0,3000],
+       
+       ['CI BRAZIL OCTANTE FUND',0,0,2750,2750],
+       
+       ['CI MEX GBM',2520,0,0,2520],
+       
+       ['FM BICE',813,1500,0,2313],
+       
+       ['CDS SECURITY CHILE',283,0,1325,1608],
+       
+       ['CI ARG FM MARIVA',325,637,586,1548],
+       
+       ['CI FM ACTINVER US',0,1494,0,1494],
+       
+       ['CI PERU FO FARO CAPITAL',460,942,0,1402],
+       
+       ['CI USA DOUBLE LINE',0,1265,0,1265],
+       
+       ['CI SZ VONTOBEL',0,1150,0,1150],
+       
+       ['CDS PRINCIPAL CHILE',-225,1250,0,1025],
+       
+       ['CI ARG FM GALICIA',175,794,0,969],
+       
+       ['FM CREDICORP CHILE (IM TRUST)',0,732,0,732],
+       
+       ['CI FP ABERDEEN',0,650,0,650],
+       
+       ['CI ARGENT HSBC',0,0,600,600],
+       
+       ['FYNSA AGF',500,0,0,500],
+       
+       ['AGF FYNSA',500,0,0,500],
+       
+       ['CI PERU CDS RIMAC',200,250,0,450],
+       
+       ['FO COSTA VERDE',375,0,0,375],
+       
+       ['CI UK APOLLO',0,375,0,375],
+       
+       ['CI URUGUAY SURA',350,0,0,350],
+       
+       ['CB MBI',0,312,0,312],
+       
+       ['CI BRAZIL BANCO ABC',0,300,0,300],
+       
+       ['FM SANTANDER',0,300,0,300],
+       
+        ]);
+        var altoDelGrafico = data.getNumberOfRows()*40;
+        var altoDelLienzo = altoDelGrafico + 100;
+        var options = {
+          annotations : {
+            textStyle:{
+            fontSize:15,
+            color:'black'
+            },
+          },
+        colors :['#708BB1','#FF0D0D','#69B34C'],
+        fontSize:13,
+        height: altoDelLienzo,
+        legend: { position: 'right', maxLines: 3,textStyle:{fontSize:20} },
+        bar: { groupWidth: '75%' },
+        isStacked: true,
+        chartArea:{
+            top:0,
+            height:altoDelGrafico,
+            },
+      };
+     
+      var groupData = google.visualization.data.group(
+          data,
+          [{column: 0, modifier: function () {return 'total'}, type:'string'}],
+          [{column: 4, aggregation: google.visualization.data.sum, type: 'number'}]
+        );
+        // console.log("view",groupData.getValue(0,1));
+        var formatPercent = new google.visualization.NumberFormat({
+          pattern: '#,##0.0%'
+        });
+
+        var formatShort = new google.visualization.NumberFormat({
+          groupingSymbol : '.',
+          fractionDigits : 0,
+          
+        });
+        data.setColumnLabel(4,'Total');
+        var vista_tabla = new google.visualization.DataView(data);
+               
+        var option_tabla={
+        width: '100%',
+        showRowNumber:true,
+        sortAscending:false,
+        sortColumn:4,
+        
+      };
+        var view = new google.visualization.DataView(data);
+
+          view.setColumns([0, 1,2,3, {
+            calc: function (dt, row) {
+              var amount =  formatShort.formatValue(dt.getValue(row, 4));
+              var percent = formatPercent.formatValue(dt.getValue(row, 4) / groupData.getValue(0, 1));
+              return amount + ' (' + percent + ')';
+            },
+            type: 'string',
+            role: 'annotation',
+           }]);
+        // console.log("view",view.getNumberOfColumns());
+
+      var chart = new google.visualization.BarChart(document.getElementById('rfi_generacion'));
+      var tabla = new google.visualization.Table(document.getElementById('rfi_generacion_tabla'));
+      chart.draw(view, options);
+      tabla.draw(vista_tabla,option_tabla)
+
+      google.visualization.events.addListener(tabla,'select',function(){
+        var row = tabla.getSelection()[0].row;
+        window.open('http://www.google.cl/' + data.getValue(row,0));
+      });
+    };
+
+    function rfi_generacion_categoria_donut(){
+      var data = new google.visualization.DataTable();
+      data.addColumn('string','Categoría');
+      data.addColumn('number','Conteo');
+      data.addColumn('number','Generación');
+      data.addRows([
+        
+        ['FO',9,117471],
+        
+        ['FYNSA',1,35776],
+        
+        ['B',4,50006],
+        
+        ['FM',31,837197],
+        
+        ['CB',4,347992],
+        
+        ['AFP',1,14935],
+        
+        ['ADC/FP',1,8069],
+        
+        ['ADC',4,23244],
+        
+        ['CDS',6,23658],
+        
+        ['AGF',2,17247],
+        
+        ['FP',11,105604],
+        
+      ]);
+        var options = {
+          title : 'Generación por Categorías.',
+          pieHole : 0.2,
+          titleTextStyle:{fontSize:20},
+          height:400,
+          chartArea : {
+            left:20, top:60, width:'100%', height:'100%',
+            },
+            pieSliceText:'value-and-percentage',
+          
+
+        };
+        var options_tabla={
+          sortAscending:false,
+          sortColumn:2,
+        }
+
+      var vista_grafico = new google.visualization.DataView(data);
+      vista_grafico.setColumns([0,2]);
+      var chart = new google.visualization.PieChart(document.getElementById('rfi_generacion_categoria_donut'));
+      var tabla = new google.visualization.Table(document.getElementById('rfi_generacion_categoria_tabla_donut'));
+      chart.draw(vista_grafico,options);
+      tabla.draw(data,options_tabla);
+
+
+    };
+
+
+    function rfi_generacion_torta(){
+      var data = new google.visualization.DataTable();
+      data.addColumn('string','Categoría');
+      data.addColumn('number','Generación');
+      data.addRows([
+        ['Generación Finales',555401],
+        ['Generación Brokers',615746],
+        ['Generación Banco Brokers',410052],
+
+      ]);
+        var options = {
+          title:"Generación por tipo de cliente.",
+          titleTextStyle:{fontSize:20},
+          height:400,
+          chartArea : {
+            left:20, top:100, width:'100%', height:'100%',
+            },
+            pieSliceText:'value-and-percentage',
+          colors :['#FF0D0D','#708BB1','#69B34C'],
+
+        };
+        var options_tabla={
+          sortAscending:false,
+        sortColumn:1,
+        }
+      var chart = new google.visualization.PieChart(document.getElementById('rfi_generacion_torta'));
+      var tabla = new google.visualization.Table(document.getElementById('rfi_generacion_torta_tabla'));
+      chart.draw(data,options);
+      tabla.draw(data,options_tabla);
+
+
+    }
+
+    function rfi_countryofrisk_torta(){
+      var data = new google.visualization.DataTable();
+      data.addColumn('string','Country of Risk');
+      data.addColumn('number','Generación');
+      data.addRows([
+        
+        ['BR', 586401.87],
+        
+        ['CL', 496461.18],
+        
+        ['CO', 164307.50],
+        
+        ['MX', 97520.75],
+        
+        ['PE', 75296.75],
+        
+        ['AR', 58210.65],
+        
+        ['KY', 42991.00],
+        
+        ['CA', 20280.00],
+        
+        ['US', 13851.16],
+        
+        ['PY', 5540.00],
+        
+        ['ES', 4496.00],
+        
+        ['PA', 4160.00],
+        
+        ['UY', 3794.00],
+        
+        ['NL', 1438.00],
+        
+        ['LU', 1152.00],
+        
+        ['DO', 750.00],
+        
+        ['NO', 460.00],
+        
+        ['AT', 362.50],
+        
+
+      ]);
+        var options = {
+          title: 'Generación por Country of Risk.',
+          titleTextStyle:{fontSize:20},
+          height:'450',
+          chartArea : {
+            
+            left:20,top:60, width:'100%', height:'100%',
+            title : 'Generación por Country of Risk',
+            },
+            pieSliceText:'value-and-percentage',
+          };
+          var options_map = {
+            keepAspectRatio:true,
+            height:'550',
+            colorAxis:{minValue: 0, colors:['#00d263','#00391b']},
+          }
+
+      var chart = new google.visualization.PieChart(document.getElementById('rfi_country_torta'));
+      var geo = new google.visualization.GeoChart(document.getElementById('rfi_country_geo_torta'));
+      var tabla = new google.visualization.Table(document.getElementById('rfi_country_torta_tabla'));
+      chart.draw(data,options);
+      tabla.draw(data);
+      geo.draw(data,options_map);
+    }
+
+    function rfi_series(){
+      var data = new google.visualization.DataTable();
+      data.addColumn('date','Fecha');
+      data.addColumn('number','Spread');
+      data.addColumn('number','Nominales');
+      data.addColumn('number','Generación');
+      data.addRows([
+        
+        [new Date('2020-08-18'), 0.20, 2425000, 5713.50],
+        
+        [new Date('2020-08-17'), 0.25, 200000, 500.00],
+        
+        [new Date('2020-08-14'), 0.08, 15000000, 19100.00],
+        
+        [new Date('2020-08-13'), 0.19, 7051000, 13252.50],
+        
+        [new Date('2020-08-12'), 0.34, 150000, 510.00],
+        
+        [new Date('2020-08-11'), 0.15, 3650000, 8105.00],
+        
+        [new Date('2020-08-10'), 0.15, 3600000, 6010.00],
+        
+        [new Date('2020-08-07'), 0.14, 2285000, 2788.37],
+        
+        [new Date('2020-08-06'), 0.19, 100000, 505.00],
+        
+        [new Date('2020-08-05'), 0.38, 5750000, 16155.00],
+        
+        [new Date('2020-08-04'), 0.17, 1600000, 2390.00],
+        
+        [new Date('2020-08-03'), 0.22, 4025000, 8575.00],
+        
+        [new Date('2020-07-30'), 0.27, 350000, 2250.00],
+        
+        [new Date('2020-07-29'), 0.05, 185000, 92.50],
+        
+        [new Date('2020-07-28'), 0.13, 5100000, 5250.00],
+        
+        [new Date('2020-07-27'), 0.19, 600000, 1155.00],
+        
+        [new Date('2020-07-24'), 0.17, 1000000, 2130.00],
+        
+        [new Date('2020-07-23'), 0.17, 1310000, 2180.00],
+        
+        [new Date('2020-07-22'), 0.22, 5410000, 11266.00],
+        
+        [new Date('2020-07-21'), 0.36, 2983000, 9981.00],
+        
+        [new Date('2020-07-20'), 0.18, 4450000, 4366.00],
+        
+        [new Date('2020-07-17'), 0.13, 800000, 1000.00],
+        
+        [new Date('2020-07-15'), 0.81, 1700000, 5322.00],
+        
+        [new Date('2020-07-14'), 0.25, 700000, 1750.00],
+        
+        [new Date('2020-07-13'), 0.21, 9800000, 16900.00],
+        
+        [new Date('2020-07-10'), 0.19, 890000, 1354.00],
+        
+        [new Date('2020-07-09'), 0.21, 1300000, 2673.00],
+        
+        [new Date('2020-07-08'), 0.37, 2410000, 6921.00],
+        
+        [new Date('2020-07-07'), 0.12, 3633000, 6806.00],
+        
+        [new Date('2020-07-06'), 0.09, 3400000, 3600.00],
+        
+        [new Date('2020-07-02'), 0.20, 1000000, 2000.00],
+        
+        [new Date('2020-07-01'), 0.42, 1000000, 3963.00],
+        
+        [new Date('2020-06-30'), 0.05, 800000, 1125.00],
+        
+        [new Date('2020-06-26'), 0.12, 800000, 1685.00],
+        
+        [new Date('2020-06-25'), 0.10, 1800000, 1875.00],
+        
+        [new Date('2020-06-24'), 0.20, 3450000, 5960.00],
+        
+        [new Date('2020-06-23'), 0.27, 1700000, 4275.00],
+        
+        [new Date('2020-06-22'), 0.25, 605000, 2492.00],
+        
+        [new Date('2020-06-19'), 0.19, 300000, 600.00],
+        
+        [new Date('2020-06-18'), 0.15, 400000, 600.00],
+        
+        [new Date('2020-06-17'), 0.14, -2000000, 3260.00],
+        
+        [new Date('2020-06-16'), 0.06, 4500000, 2500.00],
+        
+        [new Date('2020-06-15'), 0.19, 1300000, 2575.00],
+        
+        [new Date('2020-06-12'), 0.60, 1200000, 3501.00],
+        
+        [new Date('2020-06-11'), 0.25, 6735000, 17885.00],
+        
+        [new Date('2020-06-10'), 0.09, 1500000, 1215.00],
+        
+        [new Date('2020-06-09'), 0.38, 8900000, 50550.00],
+        
+        [new Date('2020-06-08'), 0.10, 500000, 500.00],
+        
+        [new Date('2020-06-05'), 0.28, 1440000, 4410.00],
+        
+        [new Date('2020-06-04'), 0.23, 3200000, 9860.00],
+        
+        [new Date('2020-06-03'), 0.22, 4295000, 4427.00],
+        
+        [new Date('2020-06-02'), 0.24, 1550000, 3355.00],
+        
+        [new Date('2020-05-29'), 0.72, 520000, 3380.00],
+        
+        [new Date('2020-05-28'), 0.44, 700000, 2125.00],
+        
+        [new Date('2020-05-27'), 0.20, 17300000, 43665.00],
+        
+        [new Date('2020-05-26'), 0.29, 900000, 3400.00],
+        
+        [new Date('2020-05-22'), 0.35, 3200000, 13500.00],
+        
+        [new Date('2020-05-20'), 0.14, 2900000, 3450.00],
+        
+        [new Date('2020-05-19'), 0.25, 2200000, 6025.00],
+        
+        [new Date('2020-05-18'), 0.34, 7060000, 27994.00],
+        
+        [new Date('2020-05-15'), 0.28, 1275000, 1975.00],
+        
+        [new Date('2020-05-14'), 0.32, 1700000, 3106.00],
+        
+        [new Date('2020-05-13'), 0.20, 2200000, 6200.00],
+        
+        [new Date('2020-05-12'), 0.26, 4400000, 9050.00],
+        
+        [new Date('2020-05-11'), 0.25, 1300000, 3100.00],
+        
+        [new Date('2020-05-07'), 0.10, 3500000, 2950.00],
+        
+        [new Date('2020-05-06'), 0.16, 2000000, 2735.00],
+        
+        [new Date('2020-05-05'), 0.26, 2846000, 7180.00],
+        
+        [new Date('2020-05-04'), 0.19, 1545000, 2856.00],
+        
+        [new Date('2020-04-30'), 0.22, 6536000, 14290.00],
+        
+        [new Date('2020-04-29'), 0.36, 12150000, 43535.00],
+        
+        [new Date('2020-04-28'), 0.27, 2900000, 8140.00],
+        
+        [new Date('2020-04-27'), 0.37, 1810000, 6350.00],
+        
+        [new Date('2020-04-24'), 0.12, 8700000, 11450.00],
+        
+        [new Date('2020-04-23'), 0.14, 2700000, 3890.00],
+        
+        [new Date('2020-04-22'), 0.43, 1361000, 4553.00],
+        
+        [new Date('2020-04-21'), 0.29, 4864000, 14611.00],
+        
+        [new Date('2020-04-20'), 0.31, 6601000, 21433.00],
+        
+        [new Date('2020-04-17'), 0.21, 10895000, 18750.00],
+        
+        [new Date('2020-04-16'), 0.24, 1925000, 5664.00],
+        
+        [new Date('2020-04-15'), 0.20, 500000, 1000.00],
+        
+        [new Date('2020-04-14'), 0.17, 2150000, 5786.00],
+        
+        [new Date('2020-04-13'), 0.60, 1700000, 12350.00],
+        
+        [new Date('2020-04-09'), 0.02, -3566600, 8366.00],
+        
+        [new Date('2020-04-08'), 0.32, 1790000, 3876.00],
+        
+        [new Date('2020-04-07'), 0.29, 5500000, 10585.00],
+        
+        [new Date('2020-04-06'), 0.63, 2575000, 19563.00],
+        
+        [new Date('2020-04-03'), 0.45, 1200000, 4050.00],
+        
+        [new Date('2020-04-02'), 1.08, 1260000, 13608.00],
+        
+        [new Date('2020-04-01'), 0.67, 3200000, 24630.00],
+        
+        [new Date('2020-03-31'), 0.25, -1000000, 2500.00],
+        
+        [new Date('2020-03-30'), 0.04, -3057300, 7002.00],
+        
+        [new Date('2020-03-27'), 0.46, 3150000, 17760.00],
+        
+        [new Date('2020-03-26'), 0.39, 3300000, 12165.00],
+        
+        [new Date('2020-03-25'), 0.57, 2900000, 17950.00],
+        
+        [new Date('2020-03-24'), 0.42, 7400000, 32494.00],
+        
+        [new Date('2020-03-23'), 1.50, 90000, 1350.00],
+        
+        [new Date('2020-03-20'), 0.52, 2500000, 14605.00],
+        
+        [new Date('2020-03-19'), 0.47, 506000, 4774.00],
+        
+        [new Date('2020-03-18'), 1.09, 2800000, 27375.00],
+        
+        [new Date('2020-03-17'), 0.36, 1175000, 5435.00],
+        
+        [new Date('2020-03-16'), 1.02, 9300000, 108265.00],
+        
+        [new Date('2020-03-13'), 0.08, 10362000, 25108.00],
+        
+        [new Date('2020-03-12'), 1.13, 13102000, 128630.00],
+        
+        [new Date('2020-03-11'), 0.72, 11000000, 77430.00],
+        
+        [new Date('2020-03-10'), 0.30, 4250000, 10565.00],
+        
+        [new Date('2020-03-09'), 0.92, 8000000, 72750.00],
+        
+        [new Date('2020-03-06'), 0.32, 2600000, 7980.00],
+        
+        [new Date('2020-03-05'), 0.12, 3000000, 4920.00],
+        
+        [new Date('2020-03-04'), 0.31, 5176000, 11426.00],
+        
+        [new Date('2020-03-03'), 0.14, 13554000, 24418.80],
+        
+        [new Date('2020-03-02'), 0.07, 73072000, -5127.81],
+        
+        [new Date('2020-02-28'), 0.19, 1850000, 3475.00],
+        
+        [new Date('2020-02-27'), 0.49, 2800000, 7875.00],
+        
+        [new Date('2020-02-26'), 0.12, 4184000, 6073.12],
+        
+        [new Date('2020-02-24'), 0.01, 1716000, 111.57],
+        
+        [new Date('2020-02-21'), 0.23, 7320000, 19099.00],
+        
+        [new Date('2020-02-20'), 0.03, 16275000, 17399.11],
+        
+        [new Date('2020-02-19'), 0.11, 7000000, 7400.00],
+        
+        [new Date('2020-02-18'), 0.06, 2680000, 2006.82],
+        
+        [new Date('2020-02-14'), 0.11, 1050000, 1250.00],
+        
+        [new Date('2020-02-13'), 0.10, 1700000, 1850.00],
+        
+        [new Date('2020-02-12'), 0.17, 1900000, 3575.00],
+        
+        [new Date('2020-02-11'), 0.18, 2270000, 4568.07],
+        
+        [new Date('2020-02-10'), 0.11, 3900000, 2000.00],
+        
+        [new Date('2020-02-06'), 0.13, 4200000, 5350.00],
+        
+        [new Date('2020-02-05'), 0.07, 2000000, 1490.00],
+        
+        [new Date('2020-02-04'), 0.18, 9859000, 23065.33],
+        
+        [new Date('2020-02-03'), 0.06, 5750000, 4482.50],
+        
+        [new Date('2020-01-31'), 0.18, 13900000, 21490.00],
+        
+        [new Date('2020-01-30'), 0.08, 6266000, 5916.00],
+        
+        [new Date('2020-01-29'), 0.16, 2009000, 3469.00],
+        
+        [new Date('2020-01-28'), 0.19, 1850000, 3754.50],
+        
+        [new Date('2020-01-27'), 0.28, 3970000, 13575.00],
+        
+        [new Date('2020-01-24'), 0.11, 4235000, 6290.00],
+        
+        [new Date('2020-01-23'), 0.13, 1875000, 2181.25],
+        
+        [new Date('2020-01-22'), 0.11, 8215000, 9553.75],
+        
+        [new Date('2020-01-21'), 0.19, 4594000, 6668.20],
+        
+        [new Date('2020-01-17'), 0.08, 1006000, 804.80],
+        
+        [new Date('2020-01-16'), 0.20, 3365000, 4665.00],
+        
+        [new Date('2020-01-15'), 0.24, 2250000, 8232.50],
+        
+        [new Date('2020-01-14'), 0.25, 14100000, 34750.00],
+        
+        [new Date('2020-01-13'), 0.15, 6072000, 6449.93],
+        
+        [new Date('2020-01-10'), 0.23, 2250000, 5425.00],
+        
+        [new Date('2020-01-09'), 0.08, 6900000, 5305.00],
+        
+        [new Date('2020-01-08'), 0.13, 7300000, 5560.00],
+        
+        [new Date('2020-01-07'), 0.07, 5521000, 4234.38],
+        
+        [new Date('2020-01-06'), 0.05, 5670000, 2572.00],
+        
+        [new Date('2020-01-03'), 0.75, 1000000, 5000.00],
+        
+        [new Date('2020-01-02'), 0.14, 5800000, 4346.67],
+        
+
+      ]);
+      
+      var vista_spread = new google.visualization.DataView(data);
+      var vista_nominales = new google.visualization.DataView(data);
+      var vista_generacion = new google.visualization.DataView(data);
+      vista_spread.setColumns([0,1]);
+      vista_nominales.setColumns([0,2]);
+      vista_generacion.setColumns([0,3]);
+      
+      var chart_spread = new google.visualization.LineChart(document.getElementById('rfi_serie_spread'));
+      var chart_nominales = new google.visualization.LineChart(document.getElementById('rfi_serie_nominales'));
+      var chart_generacion = new google.visualization.LineChart(document.getElementById('rfi_serie_generacion'));
+      chart_spread.draw(vista_spread,{title: 'Promedio Spread Diario.',width:'100%',height:550,legend:{position:'top',alignment:'end'}});
+      chart_nominales.draw(vista_nominales,{title: 'Suma Nominales Diario.',width:'100%',height:550,legend:{position:'top',alignment:'end'}});
+      chart_generacion.draw(vista_generacion,{hAxis:{format:'d/MM/y'},title: 'Suma de Generación Diario.',colors:['red'],width:'100%',height:550,legend:{position:'top',alignment:'end'}});
+
+      
+    };
+
+
+
+
+</script>
+
+
+     
+
+    
+</body>
+</html>

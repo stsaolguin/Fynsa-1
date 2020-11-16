@@ -1,0 +1,341 @@
+{% extends "index.html" %}
+
+{% block contenido %}
+<div class="contenedor">
+    <div id="Titulo_principal">Generación RFI entre el {{ fecha_inicial }} y el {{ fecha_final }}</div>
+    <div id="Titulo_secundario">Generación Total : USD {{ generacion_total | safe }}</div>
+    <div class="rfi_generacion_torta"><div id="rfi_generacion_torta"></div></div>
+    <div class="rfi_generacion_torta_tabla"><div id="rfi_generacion_torta_tabla"></div></div>
+    <div class="rfi_generacion"><div id="rfi_generacion"></div></div>
+    <div class="rfi_generacion_tabla"><div id="rfi_generacion_tabla"></div></div>
+
+    <div class="rfi_generacion_categoria_donut"><div id="rfi_generacion_categoria_donut"></div></div>
+    <div class="rfi_generacion_categoria_tabla_donut"><div id="rfi_generacion_categoria_tabla_donut"></div></div>
+
+    <div class="rfi_generacion_pais_donut"><div id="rfi_generacion_pais_donut"></div></div>
+    <div class="rfi_generacion_pais_tabla_donut"><div id="rfi_generacion_pais_tabla_donut"></div></div>
+   
+    
+    <div class="rfi_country_torta"><div id="rfi_country_torta"></div></div>
+    <div class="rfi_country_geo_torta"><div id="rfi_country_geo_torta"></div></div>
+    <div class="rfi_country_torta_tabla"><div id="rfi_country_torta_tabla"></div></div>
+    <div class="rfi_tabla_papeles"><div id="tabla_papeles_id"></div></div>
+    <div class="rfi_tabla_brk"><div id="tabla_brk_id"></div></div>
+
+    <div class="series">
+          <div id="rfi_serie_spread"></div>
+          <div id="rfi_serie_nominales"></div>
+          <div id="rfi_serie_generacion"></div> 
+    </div>
+    <div class="cat_pais_div"><div id="cat_pais_div"></div></div>
+    
+</div>
+
+<script>
+        google.charts.load('current', {packages: ['corechart', 'bar','Table','geochart'],'language': 'es-cl'});
+        google.charts.setOnLoadCallback(rfi_generacion);
+        google.charts.setOnLoadCallback(rfi_generacion_torta);
+        google.charts.setOnLoadCallback(rfi_countryofrisk_torta);
+        google.charts.setOnLoadCallback(rfi_series);
+        google.charts.setOnLoadCallback(rfi_generacion_categoria_donut);
+        google.charts.setOnLoadCallback(rfi_generacion_pais_donut);
+        google.charts.setOnLoadCallback(TablaBrokers);
+        google.charts.setOnLoadCallback(TablaPapeles);
+        google.charts.setOnLoadCallback(CategoriaPaisCrosstab);
+        
+
+function rfi_generacion() {
+      var data = new google.visualization.DataTable();
+      data.addColumn('string','Pais');
+      data.addColumn('string','categoria');
+      data.addColumn('string','Cliente');
+      data.addColumn('number','Generación por Brokers');
+      data.addColumn('number','Generación por Finales');
+      data.addColumn('number','Generación por Bancos Brokers');
+      data.addColumn({type:'number', role:'annotation'});
+      data.addColumn('number','spread_brk');
+      data.addColumn('number','spread_finales');
+      data.addColumn('number','spread_banco_brk');
+      data.addRows([
+      {% for r in rfi_generaciones %}
+       ['{{ r.pais | safe }}','{{ r.categoria |safe }}','{{ r.nombre_cliente|safe }}',{{ r.generacion_brk|safe }},{{ r.generacion_finales|safe }},{{ r.generacion_bancos_brk|safe }},{{ r.generacion_total|safe }},{{r.spread_brk | safe}},{{r.spread_finales | safe }},{{r.spread_banco_brk | safe}}],
+       {% endfor %}
+        ]);
+        var altoDelGrafico = data.getNumberOfRows()*40;
+        var altoDelLienzo = altoDelGrafico + 100;
+      var options = {
+        annotations : {
+            textStyle:{
+            fontSize:15,
+            color:'black'
+            },
+          },        
+        colors :['#708BB1','#FF0D0D','#69B34C'],
+        fontSize:13,
+        
+        height: altoDelLienzo,
+        legend: { position: 'right', maxLines: 3,textStyle:{fontSize:20} },
+        bar: { groupWidth: '75%' },
+        isStacked: true,
+        chartArea:{
+            top:0,
+            height:altoDelGrafico,
+            },
+      };
+      var groupData = google.visualization.data.group(
+          data,
+          [{column: 0, modifier: function () {return 'total'}, type:'string'}],
+          [{column: 6, aggregation: google.visualization.data.sum, type: 'number'}]
+        );
+        
+        var formatPercent = new google.visualization.NumberFormat({
+          negativeColor:'red',
+          pattern : '##0.#%'
+          
+        });
+                     
+        data.setColumnLabel(6,'Total');
+        var vista_tabla = new google.visualization.DataView(data);
+               
+        var option_tabla={
+        width: '100%',
+        showRowNumber:true,
+        sortAscending:false,
+        sortColumn:6,
+        
+      };
+        var view = new google.visualization.DataView(data);
+          view.setColumns([2, 3,4,5, {
+            calc: function (dt, row) {
+              var amount =  (dt.getValue(row, 3)+dt.getValue(row, 4)+dt.getValue(row, 5));
+              var percent = formatPercent.formatValue(amount / groupData.getValue(0, 1));
+              return amount + ' (' + percent + ')';
+              },
+            type: 'string',
+            role: 'annotation'
+          }]);
+  
+      var chart = new google.visualization.BarChart(document.getElementById('rfi_generacion'));
+      var tabla = new google.visualization.Table(document.getElementById('rfi_generacion_tabla'));
+      chart.draw(view, options);
+      tabla.draw(vista_tabla,option_tabla);
+
+      google.visualization.events.addListener(tabla,'select',function(){
+        var row = tabla.getSelection()[0].row;
+        var cli = data.getValue(row,2);
+        // alert(cli);
+        window.open('http://127.0.0.1:8000/logeado/rfi/comite-rfi/proceso/'+ cli);
+        
+      });
+    };
+
+    function rfi_generacion_categoria_donut(){
+      var data = new google.visualization.DataTable();
+      data.addColumn('string','Categoría');
+      data.addColumn('number','Cuenta');
+      data.addColumn('number','Generación');
+      data.addRows([
+        {% for r in generacion_categoria %}
+        ['{{ r.categoria | safe}}',{{ r.conteo | safe }},{{ r.generacion | safe }}],
+        {% endfor %}
+      ]);
+      var options = {
+          title : 'Generación Clientes por Categorías.',
+          pieHole : 0.2,
+          titleTextStyle:{fontSize:20},
+          height:400,
+          chartArea : {
+            left:20, top:60, width:'100%', height:'100%',
+            },
+            pieSliceText:'value-and-percentage',
+         };
+        var options_tabla={
+          sortAscending:false,
+          sortColumn:2,
+        };
+      var vista_grafico = new google.visualization.DataView(data);
+      vista_grafico.setColumns([0,2]);
+      var chart = new google.visualization.PieChart(document.getElementById('rfi_generacion_categoria_donut'));
+      var tabla = new google.visualization.Table(document.getElementById('rfi_generacion_categoria_tabla_donut'));
+      chart.draw(vista_grafico,options);
+      tabla.draw(data,options_tabla);
+    };
+
+    function rfi_generacion_pais_donut(){
+      var data = new google.visualization.DataTable();
+      data.addColumn('string','Pais');
+      data.addColumn('number','Cuenta');
+      data.addColumn('number','Generación');
+      data.addRows([
+        {% for r in generacion_pais %}
+        ['{{ r.pais | safe}}',{{ r.conteo | safe }},{{ r.generacion | safe }}],
+        {% endfor %}
+      ]);
+      var options = {
+          title : 'Generación Clientes por País.',
+          pieHole : 0.2,
+          titleTextStyle:{fontSize:20},
+          height:400,
+          chartArea : {
+            left:20, top:60, width:'100%', height:'100%',
+            },
+            pieSliceText:'value-and-percentage',
+         };
+        var options_tabla={
+          sortAscending:false,
+          sortColumn:2,
+        };
+      var vista_grafico = new google.visualization.DataView(data);
+      vista_grafico.setColumns([0,2]);
+      var chart = new google.visualization.PieChart(document.getElementById('rfi_generacion_pais_donut'));
+      var tabla = new google.visualization.Table(document.getElementById('rfi_generacion_pais_tabla_donut'));
+      chart.draw(vista_grafico,options);
+      tabla.draw(data,options_tabla);
+    };
+
+
+    function rfi_generacion_torta(){
+      var data = new google.visualization.DataTable();
+      data.addColumn('string','Categoría');
+      data.addColumn('number','Generación');
+      data.addRows([
+        ['Generación Finales',{{ generacion_finales | safe }}],
+        ['Generación Brokers',{{ generacion_brokers | safe }}],
+        ['Generación Banco Brokers',{{ generacion_bancos_brokers | safe }}],
+      ]);
+      var options = {
+          title:"Generación por tipo de cliente.",
+          titleTextStyle:{fontSize:20},
+          height:400,
+          chartArea : {
+            left:20, top:100, width:'100%', height:'100%',
+            },
+            pieSliceText:'value-and-percentage',
+          colors :['#FF0D0D','#708BB1','#69B34C'],
+
+        };
+        var options_tabla={
+          sortAscending:false,
+        sortColumn:1,
+        }
+      var chart = new google.visualization.PieChart(document.getElementById('rfi_generacion_torta'));
+      var tabla = new google.visualization.Table(document.getElementById('rfi_generacion_torta_tabla'));
+      chart.draw(data,options);
+      tabla.draw(data,options_tabla);
+
+
+    };
+
+    function rfi_countryofrisk_torta(){
+      var data = new google.visualization.DataTable();
+      data.addColumn('string','Country of Risk');
+      data.addColumn('number','Conteo');
+      data.addColumn('number','Generación');
+      data.addRows([
+        {% for r in cntry_of_risk %}
+        ['{{ r.pais|safe }}', {{ r.conteo |safe }},{{ r.generacion|safe }}],
+        {% endfor %}
+
+      ]);
+      var datos_grafico = new google.visualization.DataView(data);
+      datos_grafico.hideColumns([1]);
+      var options = {
+          title: 'Generación por Country of Risk.',
+          titleTextStyle:{fontSize:20},
+          height:'450',
+          chartArea : {
+            
+            left:20,top:60, width:'100%', height:'100%',
+            title : 'Generación por Country of Risk',
+            },
+            pieSliceText:'value-and-percentage',
+          };
+          var options_map = {
+            keepAspectRatio:true,
+            height:'550',
+            colorAxis:{minValue: 0, colors:['#00d263','#00391b']},
+          }
+
+      var chart = new google.visualization.PieChart(document.getElementById('rfi_country_torta'));
+      var geo = new google.visualization.GeoChart(document.getElementById('rfi_country_geo_torta'));
+      var tabla = new google.visualization.Table(document.getElementById('rfi_country_torta_tabla'));
+      chart.draw(datos_grafico,options);
+      tabla.draw(data);
+      geo.draw(data,options_map);
+    }
+
+    function rfi_series(){
+      var data = new google.visualization.DataTable();
+      data.addColumn('date','Fecha');
+      data.addColumn('number','Spread');
+      data.addColumn('number','Nominales');
+      data.addColumn('number','Generación');
+      data.addRows([
+        {% for r in series %}
+        [new Date('{{ r.fecha | safe }}'), {{ r.spread | safe }}, {{ r.nominales | safe }}, {{ r.generacion | safe }}],
+        {% endfor %}
+
+      ]);
+      
+      var vista_spread = new google.visualization.DataView(data);
+      var vista_nominales = new google.visualization.DataView(data);
+      var vista_generacion = new google.visualization.DataView(data);
+      vista_spread.setColumns([0,1]);
+      vista_nominales.setColumns([0,2]);
+      vista_generacion.setColumns([0,3]);
+
+      var chart_spread = new google.visualization.LineChart(document.getElementById('rfi_serie_spread'));
+      var chart_nominales = new google.visualization.LineChart(document.getElementById('rfi_serie_nominales'));
+      var chart_generacion = new google.visualization.LineChart(document.getElementById('rfi_serie_generacion'));
+      chart_spread.draw(vista_spread,{title: 'Promedio Spread Diario.',width:'100%',height:550,legend:{position:'top',alignment:'end'}});
+      chart_nominales.draw(vista_nominales,{title: 'Suma Nominales Diario.',width:'100%',height:550,legend:{position:'top',alignment:'end'}});
+      chart_generacion.draw(vista_generacion,{hAxis:{format:'d/MM/y'},title: 'Generación Diaria.',colors:['red'],width:'100%',height:550,legend:{position:'top',alignment:'end'}});
+      
+    };
+
+    function TablaBrokers(){
+        var data = new google.visualization.DataTable();
+        data.addColumn('string','Broker');
+        data.addColumn('number','monto');
+        data.addRows([
+            {% for r in actividad_brokers %}
+            ['{{ r.cliente | safe }}',{{ r.monto | safe }}],
+            {% endfor %}
+        ]);
+        var tabla_brk = new google.visualization.Table(document.getElementById('tabla_brk_id'));
+        tabla_brk.draw(data);
+
+    };
+    function TablaPapeles(){
+        var data = new google.visualization.DataTable();
+        data.addColumn('string','Papel');
+        data.addColumn('number','Ingreso Mesa');
+        data.addColumn('number','Conteo');
+        data.addColumn('number','Spread Mesa Promedio');
+        data.addColumn('number','Nominales');
+        data.addRows([
+            {% for r in papeles %}
+            ['{{ r.papel | safe }}',{{ r.ingreso_mesa | safe }},{{ r.conteo | safe }},{{ r.spread_mesa_promedio | safe }},{{ r.nominales | safe }}],
+            {% endfor %}
+        ]);
+        var tabla_papeles = new google.visualization.Table(document.getElementById('tabla_papeles_id'));
+        tabla_papeles.draw(data);
+
+    };
+
+    function CategoriaPaisCrosstab(){
+        var data = new google.visualization.arrayToDataTable({{ cross | safe }});
+        var options ={
+          isStacked:true,
+          height:600,
+          width:'100%',
+        };
+        var cat_pais = new google.visualization.ColumnChart(document.getElementById('cat_pais_div'));
+        cat_pais.draw(data,options);
+    };
+
+    
+
+</script>
+
+{% endblock %}
