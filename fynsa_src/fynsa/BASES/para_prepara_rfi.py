@@ -43,10 +43,10 @@ def truncar(numero,decimales):
 
 
 
-archivo_entrada = open('/home/gvera/Descargas/RFI_10_11_2020.csv',mode='r',encoding='utf-8',newline='')
+archivo_entrada = open('/home/gvera/Descargas/Blotter RFI desde el 10-11.csv',mode='r',encoding='utf-8',newline='')
 csv_entrada =csv.DictReader(archivo_entrada, delimiter=';')
 
-archivo_salida = open('/home/gvera/Descargas/RFI_10_11_2020_salidaa.csv',mode='w',encoding='utf-8',newline='')  
+archivo_salida = open('/home/gvera/Descargas/Blotter RFI desde el 10-11-salida.csv',mode='w',encoding='utf-8',newline='')  
 encabezados_salida = ['fecha', 'ejecutivo', 'papel', 'cusip', 'operacion', 'nominales', 'mesa', 'ejecutivo_precio', 'cliente_precio', 'ingreso_ejecutivo', 'ingreso_mesa', 'contraparte', 'spread_mesa', 'comprador', 'vendedor', 'country_of_risk', 'crncy']
 
 csv_salida =csv.DictWriter(archivo_salida, delimiter=';',fieldnames=encabezados_salida)
