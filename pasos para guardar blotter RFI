@@ -9,7 +9,7 @@ fecha,ejecutivo,papel,cusip,operacion,nominales,mesa,ejecutivo_precio,cliente_pr
 7.- subir la RFI que sale de ese script
 
 COPY "RFI_rfi_beta"(fecha, ejecutivo, papel, cusip, operacion, nominales, mesa, ejecutivo_precio, cliente_precio, ingreso_ejecutivo, ingreso_mesa, contraparte, spread_mesa, comprador, vendedor, country_of_risk, crncy) 
-FROM '/home/gvera/rfi_desde el 13_07.csv' CSV HEADER DELIMITER ';';
+FROM '/home/gvera/Descargas/rfi_desde el 13_07.csv' CSV HEADER DELIMITER ';';
 
 Esta es para ver si hay operaciones entre brokers:
 
@@ -21,5 +21,5 @@ and b.categoria='DLR' and c.categoria='BKR'
 
 ver si hay clientes nuevos. Hay que hacer lo mismo por el lado comprador
 select comprador from "RFI_rfi_beta" where comprador not in (select fondo from "RFI_clientes_rfi")
-
+select vendedor from "RFI_rfi_beta" where vendedor not in (select fondo from "RFI_clientes_rfi")
  

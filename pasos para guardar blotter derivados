@@ -65,8 +65,11 @@ UPDATE "BASES_bases" a set participante_2=rtrim(a.participante_2,' ');
 UPDATE "BASES_bases" set tipo_de_cambio=780 where tipo_de_cambio is null;
 UPDATE "BASES_bases" set valor_final=0 where valor_final is null;
 UPDATE "BASES_bases" set uf=0 where uf is null;
+update "BASES_bases" set seller='FM LARRAIN VIAL' WHERE seller='FM LARRAINVIAL'
+update "BASES_bases" set buyer='FM LARRAIN VIAL' WHERE buyer='FM LARRAINVIAL'
 UPDATE "BASES_bases" a set nemo=ltrim(nemo,' ');
 UPDATE "BASES_bases" a set nemo=rtrim(nemo,' ');
+
 
 
 select * from eq_der_rutinas()
