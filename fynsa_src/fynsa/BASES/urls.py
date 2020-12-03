@@ -10,5 +10,6 @@ urlpatterns = [
     path('comite/salida/detalles-clientes/<str:cliente>', views.detalles_cobranzas, name='detalles_cobranzas'),
     path('comite/salida/conciliaciones-csv', views.conciliaciones_views, name='conciliaciones_csv'),
     path('comite/salida/consolidado-csv', views.consolidado_csv_views, name='consolidado_csv'),
+    path('bases-ingreso-operaciones', views.ingreso_operaciones_views, name='ingreso_operaciones'),
     ]
 

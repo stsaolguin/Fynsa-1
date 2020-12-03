@@ -168,3 +168,8 @@ select 1 as linea,*,sum(porcentaje) over (order by porcentaje desc) as porcentaj
     
     return response
 
+def ingreso_operaciones_views(request):
+
+
+    return render(request,'bases-ingreso-operaciones.html',context={})
+

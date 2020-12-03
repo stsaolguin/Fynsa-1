@@ -5,13 +5,6 @@ from RFI.models import rfi_generacion_comite_temporal as comite
 from BASES.formularios_bases import f_fechas_comite_rfi
 from django.utils.dateparse import parse_date
     
-# Create your views here.
-
-
-
-#def rfi_fondos(request):
-#    fondos = sw.objects.all().distinct('institucion').filter(crncy='USD',fuente_del_instrumento='FFMM')    
-#    return render(request,'rfi.html',{'fondos':fondos})
 
 def rfi_cruce(request,f):
     fondo = sw.objects.raw(''' select 1 as id, * from dinamico(%s) where dif<>0 order by dif desc; ''',[f])
@@ -87,9 +80,9 @@ SELECT * from eq_rfi_generacion(%s,%s) WHERE generacion_total<>0;SELECT 1 as lin
         fila=[]
         fila = [v for k,v in h.items()]
         for i,item in enumerate(fila):
-            print(fila[i])
+            
             if fila[i] is None:
-               print(fila[i])
+               
                fila[i]=0
 
         tabla.append(fila)
@@ -100,7 +93,7 @@ SELECT * from eq_rfi_generacion(%s,%s) WHERE generacion_total<>0;SELECT 1 as lin
     
 def rfi_comite_cliente(request,cliente):
     datos={}
-    print(cliente)
+    
     datos['cliente'] = cliente
 
     return render(request,'comite-rfi-salida-cliente.html',datos)
