@@ -17,5 +17,13 @@ si vamos a resetear, reseteamos todo mejor.
 8.- levante el servidor. Debería funcionar.
 
 
+================
+alternativa 2
+Cuando se agrega una columna nueva en algún modelo, makemigrations recorre los formularios y llama a ese modelo y como encuentra incompleto el model, levanta el error.
+¿Cómo detecte esto? Hay que leer la salida del error y reconocer algun archivo *.py que sea utilizado en la revisión que hace makemigrations.
+Para solucionarlo hay que comentar todas las lineas que llamen el modelo en cuestión y luego correr makemigrations and migrate y todos seremos amigos nuevamente.
+
+
+
 
 

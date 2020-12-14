@@ -55,10 +55,10 @@ class bases(models.Model):
     tipo_de_cambio = models.DecimalField(max_digits=5, decimal_places=2,null=True, default=0)
     uf = models.DecimalField(max_digits=7, decimal_places=2,null=True, default=0)
     concate = models.TextField(null=True)
-#    institucion_trader_buyer = models.TextField(null=True)
-#    institucion_trader_seller = models.TextField(null=True)
-#    institucion_trader_participante_1 = models.TextField(null=True)
-#    institucion_trader_participante_2 = models.TextField(null=True)
+    institucion_trader_buyer = models.TextField(null=True)
+    institucion_trader_seller = models.TextField(null=True)
+    institucion_trader_participante_1 = models.TextField(null=True)
+    institucion_trader_participante_2 = models.TextField(null=True)
     
 
     def __str__(self):
@@ -105,6 +105,6 @@ class serie_generacion_mensual_por_cliente(models.Model):
     prov_bases = models.BigIntegerField(null=True, blank=True)
     prov_depos = models.BigIntegerField(null=True, blank=True)
     
-#class cliente_trader(models.Model):
-#    institucion_trader = models.TextField(null=True, default='')
+class cliente_trader(models.Model):
+    institucion_trader = models.TextField(null=True)
 

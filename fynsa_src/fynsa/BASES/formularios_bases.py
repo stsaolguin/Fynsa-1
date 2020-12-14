@@ -36,7 +36,6 @@ class f_conciliaciones(forms.Form):
     cliente = forms.ModelChoiceField(queryset=clientes.objects.filter(factura=True).order_by('nombre'),to_field_name='nombre')
     fecha_inicial = forms.DateField(widget=forms.DateInput(attrs={'class':'form-control mx-2','type':'date'}),label='fecha inicial', required=True, initial='2019-08-09')
     fecha_final = forms.DateField(widget=forms.DateInput(attrs={'class':'form-control mx-2','type':'date'}),label='fecha final', required=True, initial=bases.objects.latest('fecha'))
-    
     cliente.widget.attrs.update({'class':'form-control mx-2'})
 
 
