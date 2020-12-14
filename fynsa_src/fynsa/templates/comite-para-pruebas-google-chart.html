@@ -1,0 +1,2459 @@
+
+
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="/static/BASES/css/estilos.css" media="screen">
+    <link rel="stylesheet" href="/static/BASES/css/estilos_print.css" media="print">
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <title>Fynsa - Stats</title>
+
+</head>
+<body>
+                <div class="jumbotron">
+                   <hr class="my-4">
+                    </div>
+                    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                                        <ul class="navbar-nav mr-auto">
+                                                
+                                                <li class="nav-item dropdown mx-3">
+                                                        <a class="nav-link dropdown-toggle" href="#" id="bases_dropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                                Bases</a>
+                                                                <div class="dropdown-menu" aria-labelledby="bases_dropdown">
+                                                                        <a class="nav-link" href="/logeado/bases/comite/">Comité<span class="sr-only">(current)</span></a>
+                                                                        <a class="nav-link" href="/logeado/bases/bases-ingreso-operaciones">Ingreso Operaciones<span class="sr-only">(current)</span></a>
+                                                                </div>
+                                                </li>
+                                                
+                                                
+                                                <li class="nav-item dropdown mx-3">
+                                                        <a class="nav-link dropdown-toggle" href="#" id="bases_dropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                                RFI</a>
+                                                                <div class="dropdown-menu" aria-labelledby="bases_dropdown">
+                                                                                <a class="nav-link" href="/logeado/rfi/comite-rfi/">Comité<span class="sr-only">(current)</span></a>
+                                                                </div>
+                                                </li>
+                                                
+                                                
+                                                <li class="nav-item dropdown mx-3">
+                                                        <a class="nav-link dropdown-toggle" href="#" id="rfl_dropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                                RFL</a>
+                                                        <div class="dropdown-menu" aria-labelledby="rfl_dropdown">
+                                                                <a class="dropdown-item" href="/logeado/rfl/arbitraje/">Arbitraje</a>
+                                                                
+                                                        </div>
+                                                </li>
+                                                
+                                                
+                                        </ul>
+                                        <ul class="navbar-nav">
+                                                <li class="nav-item">
+                                                        <a class="nav-link" href="#">Home</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                        <a class="btn btn-outline-danger" href="/salida/">Salir</a>
+                                                </li>
+                                        </ul>
+                                
+                        </div>
+                        </nav>
+        
+        <div class="username">Hola, Gonzalo <br> </div> 
+                               
+       
+     
+<div class="contenedor_bases">
+    <div class="titulo_principal">Generaciones entre 1 de Diciembre de 2020 y 4 de Diciembre de 2020.  </div>
+    <div class="GenTorta_class">
+        <div id="GenTorta_div"></div>
+    </div>   
+    <div class="GenTorta_tabla_class">
+        <div id="GenTorta_tabla_div"></div>
+    </div>
+   
+    
+        
+          <h1 class="titulo">¿Cuál ha sido la generación por cliente y categoría?</h1>
+            
+                <div class="gen_bases_class">
+                        <div id="ProBases_div"></div>   
+                        <div id="GenBases_div"></div>
+                </div>
+                <div class="gen_depos_class">      
+                        <div id="ProDepos_div"></div>
+                        <div id="GenDepos_div"></div>
+                </div>
+           
+        
+       
+        <div class="serie_generacion_class">
+            <h1 class="titulo">¿Cómo ha sido la generación diaria total en pesos ($)?.</h1>
+            <h5>No incluye días en $0 porque no se ingresan</h5>
+            <div id='Serie_Generacion_div'></div>
+        </div>
+        
+        <div class="serie_generacion_apilada_class">
+          <h1 class="titulo">¿Cómo ha sido la generación diaria total en pesos ($) por categoria?</h1>
+          <div id='Serie_Generacion_apilada_div'></div>
+        </div>
+
+    <!-- ============================ aca termina un modulo  -->
+    <div class="TransTorta_class">
+        <div class="titulo">¿Cómo ha sido la actividad de montos transados en el período 1 de Diciembre de 2020 y 4 de Diciembre de 2020 ?</div>
+        <div id='TransTorta_div'></div>
+    </div>
+    
+        <div class="montos_otc_class">
+               <div id='Monto_OTC_Bases_div'></div>
+               <div id='Monto_OTC_Depos_div'></div>
+        </div>
+        <div class="montos_tr_class">
+                <div id='Monto_TR_Bases_div'></div>
+                <div id='Monto_TR_Depos_div'></div>
+        </div>
+        <div class="serie_montos_class">
+          <div id="Serie_Montos_div"></div>            
+        </div>
+        <div class="serie_conteo_class">
+              <div id="Serie_conteo_div"></div>
+        </div>
+            <!-- ============================ aca empieza un modulo  -->
+         <div class="serie_cobranzas_class">
+            <div id="Serie_cobranzas_div"></div>
+        </div>
+         <div class="idayvuelta_class">
+              <div class="titulo">Idas y Vuelta en el período 1 de Diciembre de 2020 y 4 de Diciembre de 2020  : -$ 1.479.954,00</div>
+              <div id="idayvueltatabla_div"></div>
+        </div>
+        <div class="cobranzas_class">
+            <div class="titulo">Por Cobrar desde el Big Bang! : $ 75.383.956</div>
+            <div id="cobranzastabla_div"></div>
+            <div id="torta_deuda_div"></div>
+            
+        </div>
+            <!-- ============================ aca termina un modulo  -->
+        <div class="genconsol_class">
+                <div class="titulo">Generación consolidada en el período de estudio 1 de Diciembre de 2020 y 4 de Diciembre de 2020 .</div>
+                <div id="generacionconsolidadatabla_div"></div>
+                
+        </div>   
+
+<!-- ===================================== COMIENZO INSTRUMENTOS CON MAS GENERACION ===== -->
+          
+        
+            <div class="instrumentos_bases_class">
+              <div class="titulo">Instrumentos con más generación en el período de estudio 1 de Diciembre de 2020 y 4 de Diciembre de 2020 . Bases.</div>
+              <div id="basesmasgeneraciontabla_div"></div>
+           </div>
+
+            <div class="instrumentos_dap_class">
+                <div class="titulo">Instrumentos con más generación en el período de estudio 1 de Diciembre de 2020 y 4 de Diciembre de 2020 . Depos.</div>
+                <div id="dapmasgeneraciontabla_div"></div>
+           </div>
+
+            <!-- ======================= FIN DE INSTRUMENTOS MAS GENERACION ======= -->
+
+            <!-- ============================ aca empieza un modulo  -->
+ 
+            <div class="vencimientos_class">
+            <div class="titulo">Vencimientos</div>
+            <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">fecha Inicial</th>
+                    <th scope="col">nemo</th>
+                    <th scope="col">días</th>
+                    <th scope="col">monto</th>
+                    <th scope="col">buy</th>
+                    <th scope="col">seller</th>
+                    <th scope="col">tasa</th>
+                    <th scope="col">fecha Final</th>
+                  </tr>
+                </thead>
+                <tbody>
+                    
+                  <tr>
+                    <td>8 de Enero de 2020</td>
+                    <td>FNCNO</td>
+                    <td>338</td>
+                    <td>6.175.200.000</td>
+                    <td>CB CREDICORP</td>
+                    <td>CB BTG</td>
+                    <td>0,21</td>
+                    <td>11 de Diciembre de 2020</td>
+                   </tr>
+                  
+                  <tr>
+                    <td>10 de Diciembre de 2019</td>
+                    <td>FNSEC</td>
+                    <td>367</td>
+                    <td>9.500.000.000</td>
+                    <td>B ESTADO TRAD</td>
+                    <td>FYNSA</td>
+                    <td>0,21</td>
+                    <td>11 de Diciembre de 2020</td>
+                   </tr>
+                  
+                  <tr>
+                    <td>10 de Diciembre de 2019</td>
+                    <td>FNSEC</td>
+                    <td>367</td>
+                    <td>10.000.000.000</td>
+                    <td>FYNSA</td>
+                    <td>B SECURITY</td>
+                    <td>0,21</td>
+                    <td>11 de Diciembre de 2020</td>
+                   </tr>
+                  
+                  <tr>
+                    <td>10 de Diciembre de 2019</td>
+                    <td>FNSEC</td>
+                    <td>367</td>
+                    <td>500.000.000</td>
+                    <td>B ESTADO TRAD</td>
+                    <td>FYNSA</td>
+                    <td>0,20</td>
+                    <td>11 de Diciembre de 2020</td>
+                   </tr>
+                  
+                  <tr>
+                    <td>1 de Junio de 2020</td>
+                    <td>FNCNO</td>
+                    <td>195</td>
+                    <td>1.315.067.000</td>
+                    <td>FYNSA</td>
+                    <td>CB BTG</td>
+                    <td>0,06</td>
+                    <td>13 de Diciembre de 2020</td>
+                   </tr>
+                  
+                  <tr>
+                    <td>1 de Junio de 2020</td>
+                    <td>FNCNO</td>
+                    <td>195</td>
+                    <td>11.835.603.000</td>
+                    <td>B BCI INV</td>
+                    <td>CB BTG</td>
+                    <td>0,05</td>
+                    <td>13 de Diciembre de 2020</td>
+                   </tr>
+                  
+                  <tr>
+                    <td>1 de Junio de 2020</td>
+                    <td>FNCNO</td>
+                    <td>195</td>
+                    <td>1.315.067.000</td>
+                    <td>B BCI INV</td>
+                    <td>FYNSA</td>
+                    <td>0,04</td>
+                    <td>13 de Diciembre de 2020</td>
+                   </tr>
+                  
+                  <tr>
+                    <td>10 de Diciembre de 2019</td>
+                    <td>FNSEC</td>
+                    <td>370</td>
+                    <td>10.000.000.000</td>
+                    <td>FYNSA</td>
+                    <td>B SECURITY</td>
+                    <td>0,21</td>
+                    <td>14 de Diciembre de 2020</td>
+                   </tr>
+                  
+                  <tr>
+                    <td>10 de Diciembre de 2019</td>
+                    <td>FNSEC</td>
+                    <td>370</td>
+                    <td>10.000.000.000</td>
+                    <td>AFP CAPITAL</td>
+                    <td>FYNSA</td>
+                    <td>0,21</td>
+                    <td>14 de Diciembre de 2020</td>
+                   </tr>
+                  
+                  <tr>
+                    <td>8 de Enero de 2020</td>
+                    <td>FNCNO</td>
+                    <td>345</td>
+                    <td>5.569.416.323</td>
+                    <td>CB CREDICORP</td>
+                    <td>CB BTG</td>
+                    <td>0,21</td>
+                    <td>18 de Diciembre de 2020</td>
+                   </tr>
+                  
+                  </tbody>
+              </table>
+
+            </div>
+            <div class="generacion_apilada_class">
+                <div class="titulo">Generación Mensual.</div>
+                   <div id="Serie_Mensual_Generacion_apilada_div"></div>
+            </div>
+            <div class="facturacion_class">
+                <div class="titulo">Facturación.</div>
+                   <div id="facturastabla_div"></div>
+            </div>
+            <div class="no_operaron_class">
+                <div class="titulo">Clientes que no han generado pero si han operado entre entre 1 de Diciembre de 2020 y 4 de Diciembre de 2020.</div>
+                     
+                <ul class="lista_no_operaron_class">
+                        
+                        <li>ADC BCI</li>
+                        
+                        <li>ADC CREDICORP</li>
+                        
+                        <li>ADC NEVASA</li>
+                        
+                        <li>ADC SANTANDER</li>
+                        
+                        <li>ADC VISION</li>
+                        
+                        <li>AFP AFC</li>
+                        
+                        <li>AFP CAPITAL</li>
+                        
+                        <li>AFP CUPRUM</li>
+                        
+                        <li>AFP HABITAT</li>
+                        
+                        <li>AFP MODELO</li>
+                        
+                        <li>AFP PLANVITAL</li>
+                        
+                        <li>B BCI</li>
+                        
+                        <li>B BCI BCE</li>
+                        
+                        <li>B BCI INV</li>
+                        
+                        <li>B BCI TRAD</li>
+                        
+                        <li>B BICE</li>
+                        
+                        <li>B CHILE BCE</li>
+                        
+                        <li>B CHILE TRAD</li>
+                        
+                        <li>B CONSORCIO BCE</li>
+                        
+                        <li>B CONSORCIO TRAD</li>
+                        
+                        <li>B ESTADO</li>
+                        
+                        <li>B ESTADO BCE</li>
+                        
+                        <li>B ESTADO TRAD</li>
+                        
+                        <li>B FALABELLA</li>
+                        
+                        <li>B FALABELLA BCE</li>
+                        
+                        <li>B HSBC</li>
+                        
+                        <li>B HSBC BCE</li>
+                        
+                        <li>B HSBC TRAD</li>
+                        
+                        <li>B INTERNACIONAL</li>
+                        
+                        <li>B ITAU</li>
+                        
+                        <li>B ITAU TRAD</li>
+                        
+                        <li>B JPM</li>
+                        
+                        <li>B MERRIL LYNCH</li>
+                        
+                        <li>B SANTANDER</li>
+                        
+                        <li>B SANTANDER BCE</li>
+                        
+                        <li>B SANTANDER TRAD</li>
+                        
+                        <li>B SCOTIABANK</li>
+                        
+                        <li>B SCOTIABANK BCE</li>
+                        
+                        <li>B SECURITY</li>
+                        
+                        <li>CB BANCHILE</li>
+                        
+                        <li>CB BCI</li>
+                        
+                        <li>CB BTG</li>
+                        
+                        <li>CB EUROAMERICA</li>
+                        
+                        <li>CB ITAU</li>
+                        
+                        <li>CB MERRIL LYNCH</li>
+                        
+                        <li>CB SCOTIABANK</li>
+                        
+                        <li>CB VECTOR</li>
+                        
+                        <li>CB VISION</li>
+                        
+                        <li>CDS BICE</li>
+                        
+                        <li>CDS CONSORCIO</li>
+                        
+                        <li>CDS EUROAMERICA</li>
+                        
+                        <li>CDS PRINCIPAL</li>
+                        
+                        <li>FM BANCHILE</li>
+                        
+                        <li>FM BANCOESTADO</li>
+                        
+                        <li>FM BCI</li>
+                        
+                        <li>FM BICE</li>
+                        
+                        <li>FM BTG</li>
+                        
+                        <li>FM FYNSA</li>
+                        
+                        <li>FM INTERNACIONAL</li>
+                        
+                        <li>FM ITAU</li>
+                        
+                        <li>FM LARRAIN VIAL</li>
+                        
+                        <li>FM MONEDA</li>
+                        
+                        <li>FM PRINCIPAL</li>
+                        
+                        <li>FM SCOTIABANK</li>
+                        
+                        <li>FM SECURITY</li>
+                        
+                        <li>FM SURA</li>
+                        
+                        <li>FM ZURICH</li>
+                        
+                        <li>FYNSA</li>
+                        
+                </ul>
+                </div>
+
+
+           <!-- ============================ aca termina un modulo  -->
+</div>
+
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript">
+            google.charts.load('current', {packages: ['corechart','bar','Table'], 'languaje':'es-cl'});
+            google.charts.setOnLoadCallback(ProvidPorBases);
+            google.charts.setOnLoadCallback(GenPorDepos);
+            google.charts.setOnLoadCallback(GenPorBases);
+            google.charts.setOnLoadCallback(GenTorta);
+            google.charts.setOnLoadCallback(TransTorta);
+            google.charts.setOnLoadCallback(Monto_OTC_Bases);
+            google.charts.setOnLoadCallback(Monto_OTC_Depos);
+            google.charts.setOnLoadCallback(Monto_TR_Depos);
+            google.charts.setOnLoadCallback(Monto_TR_Bases);
+            google.charts.setOnLoadCallback(SerieGeneraciones);
+            google.charts.setOnLoadCallback(SerieGeneracionesApiladas);
+            google.charts.setOnLoadCallback(ProvidPorDepos);
+            google.charts.setOnLoadCallback(SerieMontos);
+            google.charts.setOnLoadCallback(SerieCobranzas);
+            google.charts.setOnLoadCallback(SerieGeneracionesMensualApiladas);
+            google.charts.setOnLoadCallback(SerieConteo);
+            google.charts.setOnLoadCallback(GeneracionConsolidadaTabla);
+            google.charts.setOnLoadCallback(IdayvueltaTabla);
+            google.charts.setOnLoadCallback(CobranzasTabla);
+            google.charts.setOnLoadCallback(DAPMasGeneracionTabla);
+            google.charts.setOnLoadCallback(BasesMasGeneracionTabla);
+            google.charts.setOnLoadCallback(FacturasTabla);
+            function ProvidPorBases() {
+                                            var data = google.visualization.arrayToDataTable([
+                                            ['Cliente', 'Generación',{role:'annotation'}],
+                                            
+                                            ['CB BANCOESTADO' , 871513,871513],
+                                            
+                                            ['CB CONSORCIO' , 267000,267000],
+                                            
+                                            ['B SCOTIABANK TRAD' , 230000,230000],
+                                            
+                                            ['B FALABELLA TRAD' , 100000,100000],
+                                            
+                                        ]);
+                                        var altoDelGrafico = data.getNumberOfRows()*40;
+                                        var altoDelLienzo = altoDelGrafico + 100;
+                                        var valorMaximo = data.getColumnRange(1);
+                                                                               
+                                        var options = {         
+                                            colors :['#137AFD'],
+                                            // backgroundColor:'red',
+                                            title: 'PROVISIONES POR BASES',
+                                            titleTextStyle:{
+                                                fontSize: 20,
+                                            },
+                                            width: '650',
+                                            height: altoDelLienzo,
+                                            chartArea: {
+                                                width: '50%',
+                                                left : '33%',
+                                                height:altoDelGrafico,
+                                                // backgroundColor:'green',
+                                                
+                                                },
+                                            hAxis: {
+                                                    title: 'Generación',
+                                                    minValue: 0,
+                                                    maxValue : valorMaximo.max*1.5,
+                                                    
+                                                },
+                                            
+                                            legend: { position: "none" },
+                                            bar : {groupWidth:'20'},
+                                            fontSize : '17',
+                                            annotations : {
+                                                  textStyle:{
+                                                  fontSize:17,
+                                                  color:'black',
+                                                  alwaysOutside:false,
+                                                  },
+                                                },        
+                                            
+                                                                };
+            // acá empieza va lo incluido en stack OverflowEvent
+            
+                var groupData = google.visualization.data.group(
+                    data,
+                    [{column: 0, modifier: function () {return 'total'}, type:'string'}],
+                    [{column: 1, aggregation: google.visualization.data.sum, type: 'number'}]
+                );
+
+                var formatPercent = new google.visualization.NumberFormat({
+                    pattern: '#,##0.0%'
+                });
+
+                var formatShort = new google.visualization.NumberFormat({
+                    pattern: '$#,##0'
+                });
+
+       
+                var view = new google.visualization.DataView(data);
+                view.setColumns([0, 1, {
+                    calc: function (dt, row) {
+                    var amount =  formatShort.formatValue(dt.getValue(row, 1));
+                    var percent = formatPercent.formatValue(dt.getValue(row, 1) / groupData.getValue(0, 1));
+                    return amount + ' (' + percent + ')';
+                    },
+                    type: 'string',
+                    role: 'annotation'
+                }]);
+
+            // acá termina va lo incluido en stack OverflowEvent
+
+            var chart = new google.visualization.BarChart(document.getElementById('ProBases_div'));
+            chart.draw(view, options);
+            }
+
+            // =======================================
+            // =======================================
+
+            function GenPorDepos() {
+                                            var data = google.visualization.arrayToDataTable([
+                                            ['Cliente', 'Generación',{role:'annotation'}],
+                                            
+                                            ['B ITAU BCE' , 739977, 739977],
+                                            
+                                            ['B SCOTIABANK TRAD' , 739977, 739977],
+                                            
+                                            ['FM CREDICORP' , 60079, 60079],
+                                            
+                                            ['FM SANTANDER' , 60079, 60079],
+                                            
+                                        ]);
+                                        var altoDelGrafico = data.getNumberOfRows()*40;
+                                        var altoDelLienzo = altoDelGrafico + 100;
+                                        var options = {
+                                            title: 'GENERACIONES POR DEPÓSITOS',
+                                            colors :['#FEC774'],
+                                            titleTextStyle:{
+                                                fontSize: 20,
+                                            },
+                                            width: '650',
+                                            height: altoDelLienzo,
+                                            chartArea: {
+                                                width: '50%',
+                                                height:altoDelGrafico,
+                                                left : '33%',
+                                                },
+                                            hAxis: {
+                                            title: 'Generacion',
+                                            minValue: 0,
+                                            maxValue : data.getColumnRange(1).max*1.5,
+                                            },
+                                            legend: { position: "none" },
+                                            bar : {groupWidth:'20'},
+                                            fontSize : '17',
+                                            annotations : {
+                                                  textStyle:{
+                                                  fontSize:17,
+                                                  color:'black'
+                                                  },
+                                                }, 
+                                            
+                                                                };
+            // acá empieza va lo incluido en stack OverflowEvent
+            
+                var groupData = google.visualization.data.group(
+                    data,
+                    [{column: 0, modifier: function () {return 'total'}, type:'string'}],
+                    [{column: 1, aggregation: google.visualization.data.sum, type: 'number'}]
+                );
+
+                var formatPercent = new google.visualization.NumberFormat({
+                    pattern: '#,##0.0%'
+                });
+
+                var formatShort = new google.visualization.NumberFormat({
+                    pattern: '$#,##0'
+                });
+
+                var view = new google.visualization.DataView(data);
+                view.setColumns([0, 1, {
+                    calc: function (dt, row) {
+                    var amount =  formatShort.formatValue(dt.getValue(row, 1));
+                    var percent = formatPercent.formatValue(dt.getValue(row, 1) / groupData.getValue(0, 1));
+                    return amount + ' (' + percent + ')';
+                    },
+                    type: 'string',
+                    role: 'annotation'
+                }]);
+
+            // acá termina va lo incluido en stack OverflowEvent
+
+            var chart = new google.visualization.BarChart(document.getElementById('GenDepos_div'));
+            chart.draw(view, options);
+            }
+            // ========================================
+            // ========================================
+
+
+
+            function GenPorBases() {
+                                            var data = google.visualization.arrayToDataTable([
+                                            ['Cliente', 'Generación',{role:'annotation'}],
+                                            
+                                        ]);
+                                        var altoDelGrafico = data.getNumberOfRows()*40;
+                                        var altoDelLienzo = altoDelGrafico + 100;
+                                        var options = {
+                                            colors:['#C5DDFC'],
+                                            title: 'GENERACIONES POR BASES',
+                                            titleTextStyle:{
+                                                fontSize: 20,
+                                            },
+                                            width: '650',
+                                            height:altoDelLienzo,
+                                            chartArea: {
+                                                width: '50%',
+                                                height:altoDelGrafico,
+                                                left : '33%',
+                                                },
+                                            hAxis: {
+                                            title: 'Generacion',
+                                            minValue: 0,
+                                            maxValue : data.getColumnRange(1).max*1.5,
+                                            },
+                                            legend: { position: "none" },
+                                            bar : {groupWidth:'20'},
+                                            fontSize : '17',
+                                            annotations : {
+                                                  textStyle:{
+                                                  fontSize:17,
+                                                  color:'black'
+                                                  },
+                                                }, 
+                                            
+                                                                };
+            // acá empieza va lo incluido 
+            
+                var groupData = google.visualization.data.group(
+                    data,
+                    [{column: 0, modifier: function () {return 'total'}, type:'string'}],
+                    [{column: 1, aggregation: google.visualization.data.sum, type: 'number'}]
+                );
+
+                var formatPercent = new google.visualization.NumberFormat({
+                    pattern: '#,##0.0%'
+                });
+
+                var formatShort = new google.visualization.NumberFormat({
+                    pattern: '$#,##0'
+                });
+
+                var view = new google.visualization.DataView(data);
+                view.setColumns([0, 1, {
+                    calc: function (dt, row) {
+                    var amount =  formatShort.formatValue(dt.getValue(row, 1));
+                    var percent = formatPercent.formatValue(dt.getValue(row, 1) / groupData.getValue(0, 1));
+                    return amount + ' (' + percent + ')';
+                    },
+                    type: 'string',
+                    role: 'annotation'
+                }]);
+
+       
+            var chart = new google.visualization.BarChart(document.getElementById('GenBases_div'));
+            chart.draw(view, options);
+            
+            }
+
+
+             // ========================================
+            // ========================================
+
+            function GenTorta() {
+                                            var data = google.visualization.arrayToDataTable([
+                                            ['Cliente', 'Generación',{role:'annotation'}],
+                                            
+                                            ['PROVISION BASES TR' , 1268513, 1268513],
+                                            
+                                            ['PROVISION BASES OTC' , 200000, 200000],
+                                            
+                                            ['PROVISION DEPOS TR' , 0, 0],
+                                            
+                                            ['PROVISION DEPOS OTC' , 0, 0],
+                                            
+                                            ['GENERACION BASES TR' , 0, 0],
+                                            
+                                            ['GENERACION BASES OTC' , 0, 0],
+                                            
+                                            ['GENERACION DEPOS TR' , 120158, 120158],
+                                            
+                                            ['GENERACION DEPOS OTC' , 1479954, 1479954],
+                                            
+                                        ]);
+                                        var datos_tabla = new google.visualization.DataTable();
+                                        datos_tabla.addColumn('string','Procedencia');
+                                        datos_tabla.addColumn('number','Generación');
+                                        
+                                        datos_tabla.addRows([
+                                            ['DAP',1600112],
+                                            ['BASES',1468513],
+                                            ['TOTAL',3068625]
+
+                                        ]);
+                                        var options = {
+                                            title: 'GENERACIÓN TOTAL',
+                                            titleTextStyle:{fontSize:20},
+                                            // is3D:'true',
+                                            width:700,
+                                            height:700,
+                                            chartArea: {width: '100%',height:'50%'},
+                                            // hAxis: {
+                                            // title: 'Generacion',
+                                            // minValue: 0,
+                                            // },
+                                            legend:{position:'labeled'},
+                                            pieSliceText:'value-and-percentage',
+                                            slices:{
+                                                0:{color:'#137AFD'},
+                                                1:{color:'#4495FD'}, 
+                                                2:{color:'#FF9900'}, 
+                                                3:{color:'#FBAD38'}, 
+                                                4:{color:'#80B7FD'}, 
+                                                5:{color:'#C5DDFC'},
+                                                6:{color:'#FEC774'},   
+                                                7:{color:'#FAD59C'}, 
+                                            },
+                                            pieSliceTextStyle:{
+                                                color:'black',
+                                                fontSize:15,
+
+                                            },
+                                            
+                                                                };
+            var datos_tabla_opciones = {
+                alternatingRowStyle:false,
+                cssClassNames:{
+                            headerRow:'letragrande',
+                            tableRow:'letragrande',
+                      },
+            };
+           
+            var chart = new google.visualization.PieChart(document.getElementById('GenTorta_div'));
+            var tabla = new google.visualization.Table(document.getElementById('GenTorta_tabla_div'));
+            chart.draw(data, options);
+            tabla.draw(datos_tabla,datos_tabla_opciones);
+            };
+
+
+            // ==================
+            // ================= 
+            function TransTorta() {
+                                            var data = google.visualization.arrayToDataTable([
+                                            ['Cliente', 'Generación',{role:'annotation'}],
+                                            
+                                            ['OTC BASES' , 0.002000000000000000000000, 0.002000000000000000000000],
+                                            
+                                            ['OTC DEPOS' , 0.004000000000000000000000, 0.004000000000000000000000],
+                                            
+                                            ['TR BASES' , 0.024740000000000000000000, 0.024740000000000000000000],
+                                            
+                                            ['TR DEPOS' , 0.044000000000000000000000, 0.044000000000000000000000],
+                                            
+                                        ]);
+                                        var options = {
+                                            title: 'MONTOS TRANSADOS TOTAL',
+                                            is3D : 'true', 
+                                            width: '80%',
+                                            height:700,
+                                            chartArea: {width: '100%',height:'50%'},
+                                            hAxis: {
+                                            title: 'Montos transados',
+                                            minValue: 0,
+                                            maxValue : data.getColumnRange(1).max*1.5,
+                                            },
+                                            lengend:{position:'left'},
+                                            pieSliceText:'value-and-percentage',
+                                            slices:{
+                                                0:{color:'#E59866'},
+                                                1:{color:'#D35400'}, 
+                                                2:{color:'#76D7C4'}, 
+                                                3:{color:'#1ABC9C'}, 
+                                            },
+                                            pieSliceTextStyle:{
+                                                color:'black',
+                                                fontSize:15,
+
+                                            },
+                                                                };
+           
+            var chart = new google.visualization.PieChart(document.getElementById('TransTorta_div'));
+            chart.draw(data, options);
+            }
+
+
+            // ===============
+            // ===============MONTOS TRANSADOS
+            
+
+
+
+            function Monto_OTC_Bases() {
+                                            var data = google.visualization.arrayToDataTable([
+                                            ['Cliente', 'Generación',{role:'annotation'}],
+                                            
+                                            ['B FALABELLA TRAD' , 1000.0000000000000000, 1000.0000000000000000],
+                                            
+                                            ['B SCOTIABANK TRAD' , 1000.0000000000000000, 1000.0000000000000000],
+                                            
+                                        ]);
+                                        var altoDelGrafico = data.getNumberOfRows()*40;
+                                        var altoDelLienzo = altoDelGrafico + 100;
+                                        var options = {
+                                            title: 'MONTOS TRANSADOS OTC BASES',
+                                            titleTextStyle:{
+                                                fontSize: 20,
+                                            },
+                                            width: '650',
+                                            height:altoDelLienzo,
+                                            chartArea: {
+                                                width: '50%',
+                                                height:altoDelGrafico,
+                                                left : '33%',
+                                                },
+                                            hAxis: {
+                                            title: 'Monto',
+                                            minValue: 0,
+                                            maxValue : data.getColumnRange(1).max*1.5,
+                                            },
+                                            legend: { position: "none" },
+                                            bar : {groupWidth:'20'},
+                                            fontSize : '17',
+                                            annotations : {
+                                                  textStyle:{
+                                                  fontSize:17,
+                                                  color:'black'
+                                                  },
+                                                }, 
+                                            
+                                                                };
+            // acá empieza va lo incluido 
+            
+                var groupData = google.visualization.data.group(
+                    data,
+                    [{column: 0, modifier: function () {return 'total'}, type:'string'}],
+                    [{column: 1, aggregation: google.visualization.data.sum, type: 'number'}]
+                );
+
+                var formatPercent = new google.visualization.NumberFormat({
+                    pattern: '#,##0.0%'
+                });
+
+                var formatShort = new google.visualization.NumberFormat({
+                    pattern: '$#,##0'
+                });
+
+                var view = new google.visualization.DataView(data);
+                view.setColumns([0, 1, {
+                    calc: function (dt, row) {
+                    var amount =  formatShort.formatValue(dt.getValue(row, 1));
+                    var percent = formatPercent.formatValue(dt.getValue(row, 1) / groupData.getValue(0, 1));
+                    return amount + ' (' + percent + ')';
+                    },
+                    type: 'string',
+                    role: 'annotation'
+                }]);
+
+            // acá termina va lo incluido en stack OverflowEvent
+
+            var chart = new google.visualization.BarChart(document.getElementById('Monto_OTC_Bases_div'));
+            chart.draw(view, options);
+            }
+
+
+            // ========OverflowEvent======OverflowEvent
+
+
+            function Monto_TR_Bases() {
+                                            var data = google.visualization.arrayToDataTable([
+                                            ['Cliente', 'Generación',{role:'annotation'}],
+                                            
+                                            ['CB BANCHILE' , 8400.0000000000000000, 8400.0000000000000000],
+                                            
+                                            ['CB BANCOESTADO' , 8400.0000000000000000, 8400.0000000000000000],
+                                            
+                                            ['CB CONSORCIO' , 2670.0000000000000000, 2670.0000000000000000],
+                                            
+                                            ['AFP MODELO' , 2670.0000000000000000, 2670.0000000000000000],
+                                            
+                                            ['AFP AFC' , 1300.0000000000000000, 1300.0000000000000000],
+                                            
+                                            ['B SCOTIABANK TRAD' , 1300.0000000000000000, 1300.0000000000000000],
+                                            
+                                        ]);
+                                        var altoDelGrafico = data.getNumberOfRows()*40;
+                                        var altoDelLienzo = altoDelGrafico + 100;
+                                        var options = {
+                                            title: 'MONTOS TRANSADOS TR BASES',
+                                            titleTextStyle:{
+                                                fontSize: 20,
+                                            },
+                                            width: '650',
+                                            height:altoDelLienzo,
+                                            chartArea: {
+                                                width: '50%',
+                                                height:altoDelGrafico,
+                                                left : '33%',
+                                                },
+                                            hAxis: {
+                                            title: 'Monto',
+                                            minValue: 0,
+                                            maxValue : data.getColumnRange(1).max*1.5,
+                                            },
+                                            legend: { position: "none" },
+                                            bar : {groupWidth:'20'},
+                                            fontSize : '17',
+                                            annotations : {
+                                                  textStyle:{
+                                                  fontSize:17,
+                                                  color:'black'
+                                                  },
+                                                }, 
+                                            
+                                                                };
+            // acá empieza va lo incluido 
+            
+                var groupData = google.visualization.data.group(
+                    data,
+                    [{column: 0, modifier: function () {return 'total'}, type:'string'}],
+                    [{column: 1, aggregation: google.visualization.data.sum, type: 'number'}]
+                );
+
+                var formatPercent = new google.visualization.NumberFormat({
+                    pattern: '#,##0.0%'
+                });
+
+                var formatShort = new google.visualization.NumberFormat({
+                    pattern: '$#,##0'
+                });
+
+                var view = new google.visualization.DataView(data);
+                view.setColumns([0, 1, {
+                    calc: function (dt, row) {
+                    var amount =  formatShort.formatValue(dt.getValue(row, 1));
+                    var percent = formatPercent.formatValue(dt.getValue(row, 1) / groupData.getValue(0, 1));
+                    return amount + ' (' + percent + ')';
+                    },
+                    type: 'string',
+                    role: 'annotation'
+                }]);
+                var chart = new google.visualization.BarChart(document.getElementById('Monto_TR_Bases_div'));
+            chart.draw(view, options);
+            }
+
+             // ========OverflowEvent======OverflowEvent
+
+
+                function Monto_TR_Depos() {
+                                            var data = google.visualization.arrayToDataTable([
+                                            ['Cliente', 'Generación',{role:'annotation'}],
+                                            
+                                            ['FYNSA' , 22000.000000000000, 22000.000000000000],
+                                            
+                                            ['B ITAU BCE' , 10000.0000000000000000, 10000.0000000000000000],
+                                            
+                                            ['B SCOTIABANK TRAD' , 8000.0000000000000000, 8000.0000000000000000],
+                                            
+                                            ['FM CREDICORP' , 2000.0000000000000000, 2000.0000000000000000],
+                                            
+                                            ['FM SANTANDER' , 2000.0000000000000000, 2000.0000000000000000],
+                                            
+                                        ]);
+                                        var altoDelGrafico = data.getNumberOfRows()*40;
+                                        var altoDelLienzo = altoDelGrafico + 100;
+                                        var options = {
+                                            title: 'MONTOS TRANSADOS TR DEPÓSITOS',
+                                            titleTextStyle:{
+                                                fontSize: 20,
+                                            },
+                                            width: '650',
+                                            height:altoDelLienzo,
+                                            chartArea: {
+                                                width: '50%',
+                                                height:altoDelGrafico,
+                                                left : '33%',
+                                                },
+                                            hAxis: {
+                                            title: 'Monto',
+                                            minValue: 0,
+                                            maxValue : data.getColumnRange(1).max*1.5,
+                                            },
+                                            legend: { position: "none" },
+                                            bar : {groupWidth:'20'},
+                                            fontSize : '17',
+                                            annotations : {
+                                                  textStyle:{
+                                                  fontSize:17,
+                                                  color:'black'
+                                                  },
+                                                }, 
+                                            
+                                                                };
+            // acá empieza va lo incluido 
+            
+                var groupData = google.visualization.data.group(
+                    data,
+                    [{column: 0, modifier: function () {return 'total'}, type:'string'}],
+                    [{column: 1, aggregation: google.visualization.data.sum, type: 'number'}]
+                );
+
+                var formatPercent = new google.visualization.NumberFormat({
+                    pattern: '#,##0.0%'
+                });
+
+                var formatShort = new google.visualization.NumberFormat({
+                    pattern: '$#,##0'
+                });
+
+                var view = new google.visualization.DataView(data);
+                view.setColumns([0, 1, {
+                    calc: function (dt, row) {
+                    var amount =  formatShort.formatValue(dt.getValue(row, 1));
+                    var percent = formatPercent.formatValue(dt.getValue(row, 1) / groupData.getValue(0, 1));
+                    return amount + ' (' + percent + ')';
+                    },
+                    type: 'string',
+                    role: 'annotation'
+                }]);
+
+            // acá termina va lo incluido en stack OverflowEvent
+
+            var chart = new google.visualization.BarChart(document.getElementById('Monto_TR_Depos_div'));
+            chart.draw(view, options);
+            }
+            // ============================
+            // ============================
+            // ============================
+
+            function Monto_OTC_Depos() {
+                                            var data = google.visualization.arrayToDataTable([
+                                            ['Cliente', 'Generación',{role:'annotation'}],
+                                            
+                                            ['FYNSA' , 2000.0000000000000000, 2000.0000000000000000],
+                                            
+                                            ['B SCOTIABANK TRAD' , 2000.0000000000000000, 2000.0000000000000000],
+                                            
+                                        ]);
+                                        var altoDelGrafico = data.getNumberOfRows()*40;
+                                        var altoDelLienzo = altoDelGrafico + 100;
+                                        var options = {
+                                            title: 'MONTOS TRANSADOS OTC DEPÓSITOS',
+                                            titleTextStyle:{
+                                                fontSize: 20,
+                                            },
+                                            width: '650',
+                                            height:altoDelLienzo,
+                                            chartArea: {
+                                                width: '50%',
+                                                height:altoDelGrafico,
+                                                left : '33%',
+                                                },
+                                            hAxis: {
+                                            title: 'Monto',
+                                            minValue: 0,
+                                            maxValue : data.getColumnRange(1).max*1.5,
+                                            },
+                                            legend: { position: "none" },
+                                            bar : {groupWidth:'20'},
+                                            fontSize : '17',
+                                            annotations : {
+                                                  textStyle:{
+                                                  fontSize:17,
+                                                  color:'black'
+                                                  },
+                                                }, 
+                                            
+                                                                };
+            // acá empieza va lo incluido 
+            
+                var groupData = google.visualization.data.group(
+                    data,
+                    [{column: 0, modifier: function () {return 'total'}, type:'string'}],
+                    [{column: 1, aggregation: google.visualization.data.sum, type: 'number'}]
+                );
+
+                var formatPercent = new google.visualization.NumberFormat({
+                    pattern: '#,##0.0%'
+                });
+
+                var formatShort = new google.visualization.NumberFormat({
+                     pattern: '$#,##0'
+
+                     
+                });
+
+                var view = new google.visualization.DataView(data);
+                view.setColumns([0, 1, {
+                    calc: function (dt, row) {
+                    var amount =  formatShort.formatValue(dt.getValue(row, 1));
+                    var percent = formatPercent.formatValue(dt.getValue(row, 1) / groupData.getValue(0, 1));
+                    return amount + ' (' + percent + ')';
+                    },
+                    type: 'string',
+                    role: 'annotation'
+                }]);
+
+            // acá termina va lo incluido en stack OverflowEvent
+
+            var chart = new google.visualization.BarChart(document.getElementById('Monto_OTC_Depos_div'));
+            chart.draw(view, options);
+            }
+
+            // =======================
+            // =======================
+            // ======================= Aća se generan las seires de tiempo
+
+            function SerieGeneraciones() {
+                                            var data = new google.visualization.arrayToDataTable([
+                                            ['Fecha', 'Generación'],
+                                            
+                                            [new Date('2020-12-01') , 1479954],
+                                            
+                                            [new Date('2020-12-02') , 330000],
+                                            
+                                            [new Date('2020-12-03') , 991671],
+                                            
+                                            [new Date('2020-12-04') , 267000],
+                                            
+                                        ]);
+                                        var options = {
+                                                        title: 'GENERACIÓN DIARIA',
+                                                        titleTextStyle:{
+                                                            fontSize: 20,
+                                                                  },
+                                                        legend: { position: 'bottom' },
+                                                        width: '100%',
+                                                        height: 600,
+                                                        pointSize: 3,
+                                                        hAxis:{
+                                                            format:'dd/MM/YY',
+                                                            slantedText:'true',
+                                                                                       
+                                                        },
+                                                        trendlines:{
+                                                            0:{
+                                                            type:'linear',
+                                                            color:'green',
+                                                            linewith:0.5,
+                                                            opacity:0.3,
+                                                            pointVisible:'false',
+                                                            }
+                                                            },
+                                                        chartArea:{
+                                                            left:'10%',top:'10%',width:'100%',height:'70%',
+                                                        },
+                                                        curveType:'function',
+                                                        };
+                                            
+                                                              
+              
+
+            var chart = new google.visualization.LineChart(document.getElementById('Serie_Generacion_div'));
+            chart.draw(data, options);
+            }
+
+            // =======================
+            // ======================= 
+
+            function SerieGeneracionesApiladas() {
+                                            var data = google.visualization.arrayToDataTable([
+                                            ['Fecha','Generación bases', 'Generación depos','Provisión bases','Provisión depósitos'],
+                                            
+                                            [new Date('2020-12-01'),0,1479954,0,0],
+                                            
+                                            [new Date('2020-12-02'),0,0,330000,0],
+                                            
+                                            [new Date('2020-12-03'),0,120158,871513,0],
+                                            
+                                            [new Date('2020-12-04'),0,0,267000,0],
+                                            
+                                        ]);
+                                        var options = {
+                                                        title: 'GENERACIÓN DIARIA POR CATEGORÍA',
+                                                        titleTextStyle:{
+                                                                           fontSize: 20,
+                                                                        },
+                                                        legend: { position: 'bottom' },
+                                                        width: '100%',
+                                                        height: 600,
+                                                        isStacked: 'true',
+                                                        hAxis:{
+                                                            format:'dd/MM/YY',
+                                                            slantedText:'true',
+                                                           },
+                                                        colors:['#D6EAF8','#E64A19','#3498DB','#FF8A65'],
+                                                        chartArea:{
+                                                            left:'10%',top:'10%',width:'100%',height:'70%',
+                                                        },
+                                                        };
+                                            
+                                                              
+              
+
+            var chart = new google.visualization.ColumnChart(document.getElementById('Serie_Generacion_apilada_div'));
+            chart.draw(data, options);
+            }
+            // =========================================0
+            // ==========================================
+            function ProvidPorDepos() {
+                                            var data = google.visualization.arrayToDataTable([
+                                            ['Cliente', 'Generación',{role:'annotation'}],
+                                            
+                                        ]);
+                                        var altoDelGrafico = data.getNumberOfRows()*40;
+                                        var altoDelLienzo = altoDelGrafico + 100;
+                                        var options = {
+                                            colors:['#FF9900'],
+                                            title: 'PROVISIONES POR DEPÓSITOS',
+                                            titleTextStyle:{
+                                                fontSize: 20,
+                                            },
+                                            width: '650',
+                                            height:altoDelLienzo,
+                                            chartArea: {
+                                                width: '50%',
+                                                height:altoDelGrafico,
+                                                left : '33%',
+                                                },
+                                            hAxis: {
+                                            title: 'Generación',
+                                            minValue: 0,
+                                            },
+                                            legend: { position: "none" },
+                                            bar : {groupWidth:'20'},
+                                            fontSize : '17',
+                                            annotations : {
+                                                  textStyle:{
+                                                  fontSize:17,
+                                                  color:'black'
+                                                  },
+                                                }, 
+                                            
+                                                                };
+            // acá empieza va lo incluido en stack OverflowEvent
+            
+                var groupData = google.visualization.data.group(
+                    data,
+                    [{column: 0, modifier: function () {return 'total'}, type:'string'}],
+                    [{column: 1, aggregation: google.visualization.data.sum, type: 'number'}]
+                );
+
+                var formatPercent = new google.visualization.NumberFormat({
+                    pattern: '#,##0.0%'
+                });
+
+                var formatShort = new google.visualization.NumberFormat({
+                    pattern: '$#,##0'
+                });
+
+                var view = new google.visualization.DataView(data);
+                view.setColumns([0, 1, {
+                    calc: function (dt, row) {
+                    var amount =  formatShort.formatValue(dt.getValue(row, 1));
+                    var percent = formatPercent.formatValue(dt.getValue(row, 1) / groupData.getValue(0, 1));
+                    return amount + ' (' + percent + ')';
+                    },
+                    type: 'string',
+                    role: 'annotation'
+                }]);
+                var chart = new google.visualization.BarChart(document.getElementById('ProDepos_div'));
+            chart.draw(view, options);
+            }
+
+// =================================
+// ===================================
+
+
+function SerieMontos() {
+                                            var data = google.visualization.arrayToDataTable([
+                                            ['Fecha', 'TR BASE', 'TR DEPO', 'OTC BASE', 'OTC DEPO'],
+                                            
+                                            [new Date('2020/12/01') , 0,18000000000,0,2000000000],
+                                            
+                                            [new Date('2020/12/02') , 1300000000,0,1000000000,0],
+                                            
+                                            [new Date('2020/12/03') , 8400000000,4000000000,0,0],
+                                            
+                                            [new Date('2020/12/04') , 2670000000,0,0,0],
+                                            // ['2020-12-01', 0,18000000000,0,2000000000],
+                                            
+                                            // ['2020-12-02', 1300000000,0,1000000000,0],
+                                            
+                                            // ['2020-12-03', 8400000000,4000000000,0,0],
+                                            
+                                            // ['2020-12-04', 2670000000,0,0,0],
+                                            
+                                        ]);
+
+                                        var options = {
+                                                        title: 'MONTOS TRANSADOS POR CATEGORÍA',
+                                                        titleTextStyle:{
+                                                               fontSize: 20,
+                                                                  },
+                                                        legend: { position: 'bottom' },
+                                                        width: '100%',
+                                                        height: 600,
+                                                        isStacked: 'true',
+                                                        hAxis:{
+                                                            format:'dd/MM/YYYY',
+                                                            slantedText:'true',
+                                                            // showTextEvery:3,
+                                                            // viewWindowMode:'pretty',
+                                                            // viewWindow:{min:data.getColumnRange(0).min},
+                                                            ticks:[new Date('2020/12/01'),new Date('2020/12/02'),new Date('2020/12/03'),new Date('2020/12/04')]
+                                                                                                                                  
+                                                        },
+                                                        colors:['#76D7C4','#1ABC9C','#E59866','#D35400'],
+                                                        chartArea:{
+                                                            left:'10%',top:'10%',width:'80%',height:'70%',
+                                                        },
+                                
+                                                        };
+                                            
+                                                              
+              
+
+            var chart = new google.visualization.ColumnChart(document.getElementById('Serie_Montos_div'));
+            chart.draw(data, options);
+            }
+
+            // =======================
+            // ======================= 
+
+            
+             // ======================= Serie Cobranzas
+
+             function SerieCobranzas() {
+                                            var data = google.visualization.arrayToDataTable([
+                                            ['Fecha', 'ida y vuelta','Facturación','Provision','Por Cobrar'],
+                                            
+                                            [new Date('2019-08-09'),0,0,258000,258000],
+                                            
+                                            [new Date('2019-08-13'),0,0,574000,574000],
+                                            
+                                            [new Date('2019-08-14'),0,0,653000,653000],
+                                            
+                                            [new Date('2019-08-19'),0,0,1490000,1490000],
+                                            
+                                            [new Date('2019-08-20'),0,0,1490000,1490000],
+                                            
+                                            [new Date('2019-08-21'),0,0,2090000,2090000],
+                                            
+                                            [new Date('2019-08-23'),0,0,2566500,2566500],
+                                            
+                                            [new Date('2019-08-27'),0,0,2645500,2645500],
+                                            
+                                            [new Date('2019-08-28'),0,0,4226250,4226250],
+                                            
+                                            [new Date('2019-08-29'),0,0,4644750,4644750],
+                                            
+                                            [new Date('2019-08-30'),0,0,5844750,5844750],
+                                            
+                                            [new Date('2019-09-02'),0,0,6244750,6244750],
+                                            
+                                            [new Date('2019-09-03'),0,0,7460750,7460750],
+                                            
+                                            [new Date('2019-09-04'),0,0,9518750,9518750],
+                                            
+                                            [new Date('2019-09-05'),0,0,9718750,9718750],
+                                            
+                                            [new Date('2019-09-06'),0,0,9918750,9918750],
+                                            
+                                            [new Date('2019-09-09'),0,0,10737250,10737250],
+                                            
+                                            [new Date('2019-09-10'),0,0,12200450,12200450],
+                                            
+                                            [new Date('2019-09-11'),0,0,12200450,12200450],
+                                            
+                                            [new Date('2019-09-12'),0,0,13595450,13595450],
+                                            
+                                            [new Date('2019-09-13'),0,0,13595450,13595450],
+                                            
+                                            [new Date('2019-09-16'),0,0,13832450,13832450],
+                                            
+                                            [new Date('2019-09-17'),0,0,14112693,14112693],
+                                            
+                                            [new Date('2019-09-23'),0,0,14203543,14203543],
+                                            
+                                            [new Date('2019-09-24'),0,0,14361543,14361543],
+                                            
+                                            [new Date('2019-09-25'),0,0,14361543,14361543],
+                                            
+                                            [new Date('2019-09-26'),0,0,14361543,14361543],
+                                            
+                                            [new Date('2019-09-30'),0,0,14661543,14661543],
+                                            
+                                            [new Date('2019-10-01'),0,0,14940543,14940543],
+                                            
+                                            [new Date('2019-10-02'),0,0,15217043,15217043],
+                                            
+                                            [new Date('2019-10-03'),0,0,15296043,15296043],
+                                            
+                                            [new Date('2019-10-04'),0,0,15714543,15714543],
+                                            
+                                            [new Date('2019-10-07'),0,0,16674543,16674543],
+                                            
+                                            [new Date('2019-10-08'),0,0,16814043,16814043],
+                                            
+                                            [new Date('2019-10-09'),0,0,17580293,17580293],
+                                            
+                                            [new Date('2019-10-10'),0,0,17859293,17859293],
+                                            
+                                            [new Date('2019-10-11'),0,0,17938293,17938293],
+                                            
+                                            [new Date('2019-10-14'),1831156,0,18017293,16186137],
+                                            
+                                            [new Date('2019-10-15'),1831156,0,18417293,16586137],
+                                            
+                                            [new Date('2019-10-16'),1831156,0,18817293,16986137],
+                                            
+                                            [new Date('2019-10-17'),1831156,0,18917293,17086137],
+                                            
+                                            [new Date('2019-10-18'),1831156,0,18917293,17086137],
+                                            
+                                            [new Date('2019-10-22'),1831156,0,19796293,17965137],
+                                            
+                                            [new Date('2019-10-23'),1831156,0,20696293,18865137],
+                                            
+                                            [new Date('2019-10-24'),1831156,0,20996293,19165137],
+                                            
+                                            [new Date('2019-10-25'),1831156,0,21614793,19783637],
+                                            
+                                            [new Date('2019-10-28'),1831156,0,21614793,19783637],
+                                            
+                                            [new Date('2019-10-29'),2118265,0,21914793,19796528],
+                                            
+                                            [new Date('2019-10-30'),2118265,0,21914793,19796528],
+                                            
+                                            [new Date('2019-11-02'),2118265,0,21914793,19796528],
+                                            
+                                            [new Date('2019-11-04'),2118265,0,22814793,20696528],
+                                            
+                                            [new Date('2019-11-05'),2118265,0,23289793,21171528],
+                                            
+                                            [new Date('2019-11-06'),2118265,0,24218793,22100528],
+                                            
+                                            [new Date('2019-11-07'),3666302,0,25837293,22170991],
+                                            
+                                            [new Date('2019-11-08'),3666302,1150000,26297293,21480991],
+                                            
+                                            [new Date('2019-11-11'),3666302,1150000,28937293,24120991],
+                                            
+                                            [new Date('2019-11-12'),3666302,1150000,30632973,25816671],
+                                            
+                                            [new Date('2019-11-13'),3666302,3700000,30902973,23536671],
+                                            
+                                            [new Date('2019-11-14'),3666302,3700000,30902973,23536671],
+                                            
+                                            [new Date('2019-11-15'),3666302,3700000,33305010,25938708],
+                                            
+                                            [new Date('2019-11-18'),3666302,3700000,33905010,26538708],
+                                            
+                                            [new Date('2019-11-19'),3666302,3700000,33905010,26538708],
+                                            
+                                            [new Date('2019-11-20'),3666302,3700000,33905010,26538708],
+                                            
+                                            [new Date('2019-11-21'),3666302,3700000,34186504,26820202],
+                                            
+                                            [new Date('2019-11-22'),3666302,3700000,34477150,27110848],
+                                            
+                                            [new Date('2019-11-25'),3666302,3700000,34522479,27156177],
+                                            
+                                            [new Date('2019-11-26'),3666302,3700000,36871405,29505103],
+                                            
+                                            [new Date('2019-11-27'),3666302,3700000,37571405,30205103],
+                                            
+                                            [new Date('2019-11-28'),3666302,3700000,37571405,30205103],
+                                            
+                                            [new Date('2019-11-29'),3666302,6316667,38132949,28149980],
+                                            
+                                            [new Date('2019-12-02'),3666302,6316667,38232949,28249980],
+                                            
+                                            [new Date('2019-12-03'),3666302,6316667,38332949,28349980],
+                                            
+                                            [new Date('2019-12-04'),3666302,6316667,38332949,28349980],
+                                            
+                                            [new Date('2019-12-05'),3666302,6316667,38932949,28949980],
+                                            
+                                            [new Date('2019-12-06'),3666302,8703334,39632949,27263313],
+                                            
+                                            [new Date('2019-12-09'),8973519,8703334,42741449,25064596],
+                                            
+                                            [new Date('2019-12-10'),8973519,8703334,44655988,26979135],
+                                            
+                                            [new Date('2019-12-11'),8973519,8703334,44755988,27079135],
+                                            
+                                            [new Date('2019-12-12'),8973519,8703334,45321840,27644987],
+                                            
+                                            [new Date('2019-12-13'),8973519,8703334,45479840,27802987],
+                                            
+                                            [new Date('2019-12-16'),8973519,8703334,45550940,27874087],
+                                            
+                                            [new Date('2019-12-17'),8973519,8703334,46450940,28774087],
+                                            
+                                            [new Date('2019-12-18'),8973519,8703334,46450940,28774087],
+                                            
+                                            [new Date('2019-12-19'),8973519,8703334,47729940,30053087],
+                                            
+                                            [new Date('2019-12-20'),8973519,8703334,47887940,30211087],
+                                            
+                                            [new Date('2019-12-23'),8973519,8703334,48285440,30608587],
+                                            
+                                            [new Date('2019-12-24'),16381611,8703334,48364440,23279495],
+                                            
+                                            [new Date('2019-12-26'),16503130,8703334,49764440,24557976],
+                                            
+                                            [new Date('2019-12-27'),18768903,8703334,50539728,23067491],
+                                            
+                                            [new Date('2019-12-30'),18768903,8703334,50839728,23367491],
+                                            
+                                            [new Date('2020-01-02'),18768903,8703334,52065099,24592862],
+                                            
+                                            [new Date('2020-01-03'),18768903,8703334,53522094,26049857],
+                                            
+                                            [new Date('2020-01-06'),18768903,8703334,53522094,26049857],
+                                            
+                                            [new Date('2020-01-07'),18768903,13184200,56368334,24415231],
+                                            
+                                            [new Date('2020-01-08'),18768903,13684200,58340334,25887231],
+                                            
+                                            [new Date('2020-01-09'),20772296,13684200,59476834,25020338],
+                                            
+                                            [new Date('2020-01-10'),20772296,13684200,60331834,25875338],
+                                            
+                                            [new Date('2020-01-13'),20772296,13684200,60689834,26233338],
+                                            
+                                            [new Date('2020-01-15'),20772296,13684200,61105239,26648743],
+                                            
+                                            [new Date('2020-01-16'),20772296,13684200,64172484,29715988],
+                                            
+                                            [new Date('2020-01-17'),20772296,13684200,64219884,29763388],
+                                            
+                                            [new Date('2020-01-20'),20772296,13684200,64987384,30530888],
+                                            
+                                            [new Date('2020-01-21'),20772296,13684200,65237384,30780888],
+                                            
+                                            [new Date('2020-01-22'),20772296,13684200,66133634,31677138],
+                                            
+                                            [new Date('2020-01-23'),20772296,13684200,67233634,32777138],
+                                            
+                                            [new Date('2020-01-24'),20772296,13684200,68756967,34300471],
+                                            
+                                            [new Date('2020-01-27'),20772296,13684200,68756967,34300471],
+                                            
+                                            [new Date('2020-01-28'),20772296,13684200,72183769,37727273],
+                                            
+                                            [new Date('2020-01-29'),20772296,13684200,74352769,39896273],
+                                            
+                                            [new Date('2020-01-30'),20772296,13684200,84604769,50148273],
+                                            
+                                            [new Date('2020-02-03'),20772296,13684200,85004769,50548273],
+                                            
+                                            [new Date('2020-02-04'),20772296,13684200,87579769,53123273],
+                                            
+                                            [new Date('2020-02-05'),20772296,13684200,87619769,53163273],
+                                            
+                                            [new Date('2020-02-06'),20772296,20170321,88149769,47207152],
+                                            
+                                            [new Date('2020-02-07'),20772296,21965321,88209769,45472152],
+                                            
+                                            [new Date('2020-02-10'),20772296,21965321,89414469,46676852],
+                                            
+                                            [new Date('2020-02-11'),20772296,21695321,90556669,48089052],
+                                            
+                                            [new Date('2020-02-12'),20772296,21695321,90635669,48168052],
+                                            
+                                            [new Date('2020-02-13'),20772296,21695321,91206769,48739152],
+                                            
+                                            [new Date('2020-02-14'),20772296,21695321,91491936,49024319],
+                                            
+                                            [new Date('2020-02-17'),20772296,21695321,91610436,49142819],
+                                            
+                                            [new Date('2020-02-18'),20772296,21695321,92028936,49561319],
+                                            
+                                            [new Date('2020-02-19'),20772296,21695321,92265936,49798319],
+                                            
+                                            [new Date('2020-02-20'),24142168,21695321,92655032,46817543],
+                                            
+                                            [new Date('2020-02-21'),24142168,21695321,92773532,46936043],
+                                            
+                                            [new Date('2020-02-24'),24142168,21695321,93116364,47278875],
+                                            
+                                            [new Date('2020-02-25'),24142168,21695321,94971164,49133675],
+                                            
+                                            [new Date('2020-02-26'),24142168,21695321,97032664,51195175],
+                                            
+                                            [new Date('2020-02-27'),24142168,21182321,97365997,52041508],
+                                            
+                                            [new Date('2020-02-28'),24142168,21182321,97815997,52491508],
+                                            
+                                            [new Date('2020-03-02'),24142168,21182321,99713497,54389008],
+                                            
+                                            [new Date('2020-03-04'),24142168,21182321,101088070,55763581],
+                                            
+                                            [new Date('2020-03-05'),24142168,21182321,102088070,56763581],
+                                            
+                                            [new Date('2020-03-06'),24142168,21182321,105023987,59699498],
+                                            
+                                            [new Date('2020-03-09'),26144203,21182321,105423987,58097463],
+                                            
+                                            [new Date('2020-03-10'),26144203,28540664,105502987,50818120],
+                                            
+                                            [new Date('2020-03-11'),26144203,28540664,106058227,51373360],
+                                            
+                                            [new Date('2020-03-12'),26144203,28540664,114777142,60092275],
+                                            
+                                            [new Date('2020-03-13'),26144203,28540664,115977142,61292275],
+                                            
+                                            [new Date('2020-03-16'),26144203,28540664,115977142,61292275],
+                                            
+                                            [new Date('2020-03-17'),26144203,28540664,115977142,61292275],
+                                            
+                                            [new Date('2020-03-18'),26144203,28540664,116352062,61667195],
+                                            
+                                            [new Date('2020-03-19'),26144203,28540664,116518729,61833862],
+                                            
+                                            [new Date('2020-03-20'),26144203,28540664,116685396,62000529],
+                                            
+                                            [new Date('2020-03-23'),26144203,28540664,116685396,62000529],
+                                            
+                                            [new Date('2020-03-24'),26144203,28540664,118385396,63700529],
+                                            
+                                            [new Date('2020-03-25'),26144203,28540664,119987919,65303052],
+                                            
+                                            [new Date('2020-03-26'),26144203,28540664,125897163,71212296],
+                                            
+                                            [new Date('2020-03-27'),26144203,28540664,127446779,72761912],
+                                            
+                                            [new Date('2020-03-31'),26144203,28540664,128034036,73349169],
+                                            
+                                            [new Date('2020-04-02'),26144203,28540664,133019036,78334169],
+                                            
+                                            [new Date('2020-04-03'),26144203,28540664,137862078,83177211],
+                                            
+                                            [new Date('2020-04-06'),28256476,28540664,144162078,87364938],
+                                            
+                                            [new Date('2020-04-07'),29461300,43414620,145827078,72951158],
+                                            
+                                            [new Date('2020-04-09'),29461300,43414620,146870578,73994658],
+                                            
+                                            [new Date('2020-04-13'),29461300,43414620,147156998,74281078],
+                                            
+                                            [new Date('2020-04-14'),29461300,43414620,148006998,75131078],
+                                            
+                                            [new Date('2020-04-15'),30516436,43414620,148506998,74575942],
+                                            
+                                            [new Date('2020-04-16'),30516436,43414620,150006998,76075942],
+                                            
+                                            [new Date('2020-04-17'),30516436,43414620,151264472,77333416],
+                                            
+                                            [new Date('2020-04-20'),31422176,43414620,152511352,77674556],
+                                            
+                                            [new Date('2020-04-21'),31422176,43414620,153579852,78743056],
+                                            
+                                            [new Date('2020-04-22'),34140778,43414620,156179852,78624454],
+                                            
+                                            [new Date('2020-04-23'),35347825,43414620,156479852,77717407],
+                                            
+                                            [new Date('2020-04-28'),38973350,43414620,157079852,74691882],
+                                            
+                                            [new Date('2020-04-30'),38973350,43414620,157596484,75208514],
+                                            
+                                            [new Date('2020-05-04'),38973350,43414620,157596484,75208514],
+                                            
+                                            [new Date('2020-05-05'),38973350,43414620,158692534,76304564],
+                                            
+                                            [new Date('2020-05-06'),38973350,43414620,159592534,77204564],
+                                            
+                                            [new Date('2020-05-07'),38973350,49980172,160942370,71988848],
+                                            
+                                            [new Date('2020-05-08'),38973350,49980172,160942370,71988848],
+                                            
+                                            [new Date('2020-05-11'),38973350,49980172,163042370,74088848],
+                                            
+                                            [new Date('2020-05-12'),38973350,49980172,163342370,74388848],
+                                            
+                                            [new Date('2020-05-13'),38973350,49980172,164442370,75488848],
+                                            
+                                            [new Date('2020-05-14'),40178627,49980172,165242370,75083571],
+                                            
+                                            [new Date('2020-05-15'),41416790,49980172,166162370,74765408],
+                                            
+                                            [new Date('2020-05-18'),41416790,49980172,166490810,75093848],
+                                            
+                                            [new Date('2020-05-19'),41416790,49980172,166990810,75593848],
+                                            
+                                            [new Date('2020-05-20'),41416790,49980172,167440810,76043848],
+                                            
+                                            [new Date('2020-05-22'),50237123,49980172,167720810,67503515],
+                                            
+                                            [new Date('2020-05-26'),50237123,49980172,168029977,67812682],
+                                            
+                                            [new Date('2020-05-27'),50237123,49980172,169308977,69091682],
+                                            
+                                            [new Date('2020-05-28'),50237123,49980172,170354591,70137296],
+                                            
+                                            [new Date('2020-05-29'),51349542,49980172,171554591,70224877],
+                                            
+                                            [new Date('2020-06-01'),51349542,49980172,172128911,70799197],
+                                            
+                                            [new Date('2020-06-02'),51349542,49980172,172128911,70799197],
+                                            
+                                            [new Date('2020-06-04'),52646149,49980172,172990407,70364086],
+                                            
+                                            [new Date('2020-06-05'),52646149,55552003,172990407,64792255],
+                                            
+                                            [new Date('2020-06-08'),52646149,55552003,174942407,66744255],
+                                            
+                                            [new Date('2020-06-09'),52646149,55552003,174942407,66744255],
+                                            
+                                            [new Date('2020-06-10'),52675656,55552003,174942407,66714748],
+                                            
+                                            [new Date('2020-06-11'),52675656,55552003,177732407,69504748],
+                                            
+                                            [new Date('2020-06-12'),52675656,55552003,178919543,70691884],
+                                            
+                                            [new Date('2020-06-17'),52675656,55552003,180119543,71891884],
+                                            
+                                            [new Date('2020-06-18'),52675656,55552003,180876543,72648884],
+                                            
+                                            [new Date('2020-06-19'),52675656,55552003,181206543,72978884],
+                                            
+                                            [new Date('2020-06-22'),52675656,55552003,182006543,73778884],
+                                            
+                                            [new Date('2020-06-23'),52675656,55552003,182306543,74078884],
+                                            
+                                            [new Date('2020-06-24'),52675656,55552003,182306543,74078884],
+                                            
+                                            [new Date('2020-06-25'),52675656,55552003,182306543,74078884],
+                                            
+                                            [new Date('2020-06-26'),52675656,55552003,183093543,74865884],
+                                            
+                                            [new Date('2020-07-01'),52675656,55552003,183093543,74865884],
+                                            
+                                            [new Date('2020-07-02'),52675656,55552003,183093543,74865884],
+                                            
+                                            [new Date('2020-07-03'),52675656,58982047,183093543,71435840],
+                                            
+                                            [new Date('2020-07-06'),52675656,58982047,183093543,71435840],
+                                            
+                                            [new Date('2020-07-07'),52675656,58982047,183533043,71875340],
+                                            
+                                            [new Date('2020-07-08'),52675656,58982047,183533043,71875340],
+                                            
+                                            [new Date('2020-07-09'),52675656,58982047,183833043,72175340],
+                                            
+                                            [new Date('2020-07-10'),52675656,58982047,183933043,72275340],
+                                            
+                                            [new Date('2020-07-13'),52675656,58982047,183933043,72275340],
+                                            
+                                            [new Date('2020-07-14'),52675656,58982047,184219875,72562172],
+                                            
+                                            [new Date('2020-07-15'),52675656,58982047,184219875,72562172],
+                                            
+                                            [new Date('2020-07-17'),52675656,58982047,184389875,72732172],
+                                            
+                                            [new Date('2020-07-20'),52675656,58982047,184389875,72732172],
+                                            
+                                            [new Date('2020-07-21'),52675656,58982047,184479875,72822172],
+                                            
+                                            [new Date('2020-07-22'),59060702,58982047,186279875,68237126],
+                                            
+                                            [new Date('2020-07-23'),59060702,58982047,187379875,69337126],
+                                            
+                                            [new Date('2020-07-24'),59060702,58982047,188066623,70023874],
+                                            
+                                            [new Date('2020-07-27'),59060702,58982047,188066623,70023874],
+                                            
+                                            [new Date('2020-07-28'),59060702,58982047,188066623,70023874],
+                                            
+                                            [new Date('2020-07-29'),59060702,58982047,188114023,70071274],
+                                            
+                                            [new Date('2020-07-30'),59060702,58982047,188228696,70185947],
+                                            
+                                            [new Date('2020-07-31'),59060702,58982047,189267033,71224284],
+                                            
+                                            [new Date('2020-08-04'),59264114,58982047,189567033,71320872],
+                                            
+                                            [new Date('2020-08-05'),59264114,58982047,190253661,72007500],
+                                            
+                                            [new Date('2020-08-06'),60484850,58982047,190796970,71330073],
+                                            
+                                            [new Date('2020-08-07'),62698067,61240094,191908820,67970659],
+                                            
+                                            [new Date('2020-08-11'),62698067,61240094,191908820,67970659],
+                                            
+                                            [new Date('2020-08-12'),62698067,61330094,192308820,68280659],
+                                            
+                                            [new Date('2020-08-13'),62698067,61330094,192508820,68480659],
+                                            
+                                            [new Date('2020-08-14'),62698067,61330094,193206320,69178159],
+                                            
+                                            [new Date('2020-08-17'),62698067,61330094,193899652,69871491],
+                                            
+                                            [new Date('2020-08-18'),64168199,61330094,194537322,69039029],
+                                            
+                                            [new Date('2020-08-19'),65915785,61330094,194587322,67341443],
+                                            
+                                            [new Date('2020-08-20'),65915785,61330094,194658995,67413116],
+                                            
+                                            [new Date('2020-08-21'),65915785,61330094,196822665,69576786],
+                                            
+                                            [new Date('2020-08-24'),65915785,61330094,196966029,69720150],
+                                            
+                                            [new Date('2020-08-25'),65915785,61330094,196989729,69743850],
+                                            
+                                            [new Date('2020-08-26'),65915785,61330094,196989729,69743850],
+                                            
+                                            [new Date('2020-08-27'),65915785,61330094,198936535,71690656],
+                                            
+                                            [new Date('2020-08-28'),65915785,61330094,201441535,74195656],
+                                            
+                                            [new Date('2020-08-31'),65915785,61330094,201678535,74432656],
+                                            
+                                            [new Date('2020-09-01'),65915785,61330094,203078535,75832656],
+                                            
+                                            [new Date('2020-09-02'),65915785,61330094,203078535,75832656],
+                                            
+                                            [new Date('2020-09-03'),66916009,61330094,203618035,75371932],
+                                            
+                                            [new Date('2020-09-04'),66916009,61330094,203618035,75371932],
+                                            
+                                            [new Date('2020-09-07'),66916009,67675383,203618035,69026643],
+                                            
+                                            [new Date('2020-09-08'),66916009,67675383,203618035,69026643],
+                                            
+                                            [new Date('2020-09-09'),66916009,67675383,203618035,69026643],
+                                            
+                                            [new Date('2020-09-10'),66916009,67675383,204437035,69845643],
+                                            
+                                            [new Date('2020-09-11'),66916009,67675383,204737035,70145643],
+                                            
+                                            [new Date('2020-09-14'),66916009,67675383,205007035,70415643],
+                                            
+                                            [new Date('2020-09-15'),66916009,67675383,205066285,70474893],
+                                            
+                                            [new Date('2020-09-16'),66916009,67675383,205066285,70474893],
+                                            
+                                            [new Date('2020-09-17'),66916009,67675383,205066285,70474893],
+                                            
+                                            [new Date('2020-09-22'),66916009,67675383,206000935,71409543],
+                                            
+                                            [new Date('2020-09-24'),66916009,67675383,206000935,71409543],
+                                            
+                                            [new Date('2020-09-25'),67979049,67675383,206100935,70446503],
+                                            
+                                            [new Date('2020-09-28'),69006111,67675383,206100935,69419441],
+                                            
+                                            [new Date('2020-09-29'),69006111,67675383,206100935,69419441],
+                                            
+                                            [new Date('2020-09-30'),69006111,67675383,206100935,69419441],
+                                            
+                                            [new Date('2020-10-01'),69006111,67675383,206300935,69619441],
+                                            
+                                            [new Date('2020-10-02'),69006111,67675383,206560859,69879365],
+                                            
+                                            [new Date('2020-10-05'),69735694,67675383,206560859,69149782],
+                                            
+                                            [new Date('2020-10-06'),69735694,71044074,206560859,65781091],
+                                            
+                                            [new Date('2020-10-07'),69735694,71044074,206560859,65781091],
+                                            
+                                            [new Date('2020-10-08'),69735694,71044074,211163449,70383681],
+                                            
+                                            [new Date('2020-10-09'),69735694,71044074,212312109,71532341],
+                                            
+                                            [new Date('2020-10-13'),70112031,71044074,212312109,71156004],
+                                            
+                                            [new Date('2020-10-14'),70112031,71044074,212712109,71556004],
+                                            
+                                            [new Date('2020-10-15'),70112031,71044074,212712109,71556004],
+                                            
+                                            [new Date('2020-10-16'),70112031,71044074,212730109,71574004],
+                                            
+                                            [new Date('2020-10-19'),70112031,71044074,212830109,71674004],
+                                            
+                                            [new Date('2020-10-20'),70112031,71044074,212930109,71774004],
+                                            
+                                            [new Date('2020-10-21'),70112031,71044074,212930109,71774004],
+                                            
+                                            [new Date('2020-10-26'),70112031,71044074,212930109,71774004],
+                                            
+                                            [new Date('2020-10-27'),70112031,71044074,212930109,71774004],
+                                            
+                                            [new Date('2020-10-28'),70112031,75644074,212930109,67174004],
+                                            
+                                            [new Date('2020-10-29'),70112031,75644074,212930109,67174004],
+                                            
+                                            [new Date('2020-10-30'),70112031,75644074,213217109,67461004],
+                                            
+                                            [new Date('2020-11-02'),70112031,75644074,213217109,67461004],
+                                            
+                                            [new Date('2020-11-03'),70112031,75644074,213844950,68088845],
+                                            
+                                            [new Date('2020-11-04'),70565165,75644074,214144950,67935711],
+                                            
+                                            [new Date('2020-11-05'),70766580,75644074,214344950,67934296],
+                                            
+                                            [new Date('2020-11-06'),71366676,77401568,214844950,66076706],
+                                            
+                                            [new Date('2020-11-10'),71366676,77401568,214844950,66076706],
+                                            
+                                            [new Date('2020-11-12'),71366676,77401568,217467672,68699428],
+                                            
+                                            [new Date('2020-11-13'),71366676,77401568,218913454,70145210],
+                                            
+                                            [new Date('2020-11-16'),71366676,77401568,219058133,70289889],
+                                            
+                                            [new Date('2020-11-17'),71366676,77401568,219258133,70489889],
+                                            
+                                            [new Date('2020-11-19'),71366676,77401568,219558133,70789889],
+                                            
+                                            [new Date('2020-11-20'),71366676,77401568,220283133,71514889],
+                                            
+                                            [new Date('2020-11-23'),71366676,77401568,220283133,71514889],
+                                            
+                                            [new Date('2020-11-24'),71366676,77401568,221207875,72439631],
+                                            
+                                            [new Date('2020-11-25'),71366676,77401568,223727288,74959044],
+                                            
+                                            [new Date('2020-11-27'),71366676,77401568,224163641,75395397],
+                                            
+                                            [new Date('2020-12-01'),72846630,77401568,224163641,73915443],
+                                            
+                                            [new Date('2020-12-02'),72846630,77401568,224493641,74245443],
+                                            
+                                            [new Date('2020-12-03'),72846630,77401568,225365154,75116956],
+                                            
+                                            [new Date('2020-12-04'),72846630,77401568,225632154,75383956],
+                                            
+                                        ]);
+                                        var options = {
+                                                        title: 'COBRANZAS ACUMULADAS DIARIA',
+                                                        titleTextStyle:{
+                                                                fontSize: 20,
+                                                                 },
+                                                        legend: { position: 'bottom' },
+                                                        width: '100%',
+                                                        height: 600,
+                                                        pointSize: 2,                                                                                       
+                                                        hAxis:{
+                                                            format:'dd/MM/YY',
+                                                            slantedText:'true',
+                                                            gridlines:{
+                                                                color: '#333', 
+                                                                },
+                                                                                                                                                   
+                                                        },
+                                                        series: {
+                                                                2: {
+                                                                    color:'#FD8113',
+                                                                    targetAxisIndex:0,
+                                                                },
+                                                                1: {targetAxisIndex:1},
+                                                                3: {targetAxisIndex:1},
+                                                                0: {targetAxisIndex:1},
+                                                                
+                                                                },
+                                                        vAxes: {
+                                                                0: {
+                                                                title:'Provision total (nos deben)',
+                                                                textStyle: {color: '#FD8113'}
+                                                                },
+                                                                1: {
+                                                                title:'Plata',
+                                                                textStyle: {color: 'green'}
+                                                                },
+                                                                
+                                                                
+                                                              },
+                                                        hAxes:{
+                                                            ticks: [new Date(2019,10,17)],
+                                                        },
+                                                        explorer: { actions: ['dragToZoom', 'rightClickToReset'] },
+                                                        chartArea:{
+                                                            left:'10%',top:'10%',width:'80%',height:'70%',
+                                                        },
+                                                                
+                                                        };
+                                            
+                                                              
+              
+
+            var chart = new google.visualization.LineChart(document.getElementById('Serie_cobranzas_div'));
+            chart.draw(data, options);
+            }
+
+
+// ==============================================
+
+
+
+            function SerieGeneracionesMensualApiladas() {
+                                            var data = new google.visualization.DataTable();
+                                            data.addColumn('date','Mes');
+                                            data.addColumn('number','Generacion Bases');
+                                            data.addColumn('number','Generacion Depósitos');
+                                            data.addColumn({type:'number',role:'annotation'});
+                                            data.addColumn('number','80% de la generación');
+                                            data.addColumn('number','clientes activos');
+                                            
+                                            data.addRows([
+                                            
+                                            [new Date('2019-08-01'),5844750,0,5844750,3,6 ],
+                                            
+                                            [new Date('2019-09-01'),8816793,8066883,16883676,5,12 ],
+                                            
+                                            [new Date('2019-10-01'),7253250,2310821,9564071,7,17 ],
+                                            
+                                            [new Date('2019-11-01'),16218156,15909180,32127336,9,22 ],
+                                            
+                                            [new Date('2019-12-01'),12706779,14293378,27000157,9,21 ],
+                                            
+                                            [new Date('2020-01-01'),33765041,8055285,41820326,7,18 ],
+                                            
+                                            [new Date('2020-02-01'),13211228,24428581,37639809,8,18 ],
+                                            
+                                            [new Date('2020-03-01'),30218039,11900364,42118403,8,18 ],
+                                            
+                                            [new Date('2020-04-01'),29562448,3064875,32627323,6,15 ],
+                                            
+                                            [new Date('2020-05-01'),13958107,11278104,25236211,11,24 ],
+                                            
+                                            [new Date('2020-06-01'),10748952,15540077,26289029,9,26 ],
+                                            
+                                            [new Date('2020-07-01'),6473490,21236520,27710010,14,33 ],
+                                            
+                                            [new Date('2020-08-01'),12411502,11345392,23756894,10,25 ],
+                                            
+                                            [new Date('2020-09-01'),5998214,10467312,16465526,11,26 ],
+                                            
+                                            [new Date('2020-10-01'),9052550,12179229,21231779,8,26 ],
+                                            
+                                            [new Date('2020-11-01'),11004411,17533266,28537677,11,28 ],
+                                            
+                                        ]);
+                                        var options = {
+                                                        title: 'GENERACIÓN MENSUAL',
+                                                        titleTextStyle:{
+                                                                           fontSize: 20,
+                                                                        },
+                                                        legend: { position: 'bottom' },
+                                                        width: '100%',
+                                                        height: 650,
+                                                        pointSize: 2,
+                                                        isStacked: 'true',
+                                                        hAxis:{
+                                                            format:'dd/MM/YY',
+                                                            slantedText:'true',
+                                                           },
+                                                        
+
+                                                        colors:['#3498DB','#E64A19'],
+                                                        annotations :{
+                                                            alwaysOutside : true,
+                                                            textStyle:{
+                                                                color:'black',
+                                                                fontSize : 17,
+                                                            }
+
+                                                        },
+                                                        series:{
+                                                            0:{type:'bars',targetAxisIndex:0},
+                                                            1:{type:'bars',targetAxisIndex:0},
+                                                            2:{type:'line',targetAxisIndex:1,color:'#77dd77'},
+                                                            3:{type:'line',targetAxisIndex:1,color:'#E0BBE4'},
+                                                            
+
+                                                        },
+                                                        vAxes:{
+                                                            0:{title:'monto'}, 
+                                                            1:{title:'clientes', maxValue:30}
+                                                        },
+                                                        chartArea:{
+                                                            left:'10%',top:'10%',width:'80%',height:'80%',
+                                                        },
+
+
+                                                        };
+                                            
+                                                              
+              
+
+            var chart = new google.visualization.ColumnChart(document.getElementById('Serie_Mensual_Generacion_apilada_div'));
+            chart.draw(data, options);
+            };
+
+
+            function SerieConteo(){
+                var data = new google.visualization.DataTable();
+                data.addColumn('date','dia');
+                data.addColumn('number','operaciones con generación');
+                data.addColumn('number','operaciones total');
+                data.addRows([
+                    
+                    [new Date('2020-12-04'),1,1],
+                    
+                    [new Date('2020-12-03'),2,4],
+                    
+                    [new Date('2020-12-02'),3,3],
+                    
+                    [new Date('2020-12-01'),1,5],
+                    
+                      ]);
+                      var options = {
+                                                        title: ' CUENTA DE OPERACIONES TOTAL Y CON GENERACIÓN',
+                                                        titleTextStyle:{
+                                                                fontSize: 20,
+                                                                 },
+                                                        legend: { position: 'bottom' },
+                                                        width: '100%',
+                                                        height: 600,
+                                                        hAxis:{
+                                                            format:'dd/MM/YY',
+                                                            slantedText:'true',
+                                                                                                                                                                                 
+                                                            },
+                                                        explorer: { actions: ['dragToZoom', 'rightClickToReset'] },
+                                                         vAxis:{viewWindow :{max:'auto'}},                                                                                             
+                                                         trendlines: {
+                                                                    0: {
+                                                                    type: 'linear',
+                                                                    color: 'blue',
+                                                                    lineWidth: 3,
+                                                                    opacity: 0.3,
+                                                                    
+                                                                    },
+                                                                    1: {
+                                                                    type: 'linear',
+                                                                    color: 'red',
+                                                                    lineWidth: 3,
+                                                                    opacity: 0.3,
+                                                                    
+                                                                    }
+                                                                },
+                                                                chartArea:{
+                                                            left:'10%',top:'10%',width:'80%',height:'70%',
+                                                        },
+                                                        curveType:'function',    
+                                                        };
+
+                var chart = new google.visualization.LineChart(document.getElementById('Serie_conteo_div'));
+                chart.draw(data, options);
+
+            }
+            function GeneracionConsolidadaTabla(){
+              var data = new google.visualization.DataTable();
+              data.addColumn('number','Ranking');
+              data.addColumn('string','Nombre');
+              data.addColumn('number','Generación por DAP');
+              data.addColumn('number','Generación por Bases');
+              data.addColumn('number','Provisión por DAP');
+              data.addColumn('number','Provisión por Bases');
+              data.addColumn('number','TOTAL');
+              data.addColumn('number','Porcentaje');
+              data.addColumn('number','Porcentaje Acumulado');
+              data.addRows([
+              
+              [1,'B SCOTIABANK TRAD',739977,0,0,230000,969977,31.61,31.61],
+              
+              [2,'CB BANCOESTADO',0,0,0,871513,871513,28.40,60.01],
+              
+              [3,'B ITAU BCE',739977,0,0,0,739977,24.11,84.12],
+              
+              [4,'CB CONSORCIO',0,0,0,267000,267000,8.70,92.82],
+              
+              [5,'B FALABELLA TRAD',0,0,0,100000,100000,3.26,96.08],
+              
+              [6,'FM CREDICORP',60079,0,0,0,60079,1.96,100.00],
+              
+              [7,'FM SANTANDER',60079,0,0,0,60079,1.96,100.00],
+              
+              ]);
+            var tabla = new google.visualization.Table(document.getElementById('generacionconsolidadatabla_div'));
+              var datos_tabla_opciones = {
+                  width:'100%',
+                alternatingRowStyle:false,
+                cssClassNames:{
+                            headerRow:'letragrande',
+                            tableRow:'letragrande',
+                      },
+            };
+              tabla.draw(data,datos_tabla_opciones);
+
+            }
+
+            function BasesMasGeneracionTabla(){
+              var data = new google.visualization.DataTable();
+              data.addColumn('string','Base');
+              data.addColumn('number','Generación');
+              data.addColumn('number','Porcentaje');
+              data.addColumn('number','Porcentaje Acumulado');
+              data.addRows([
+              
+                ['BTU000325',871513,59.35,59.35],
+                
+                ['BTP0450326',267000,18.18,77.53],
+                
+                ['BTP0250325',200000,13.62,91.15],
+                
+                ['BTP0281033',130000,8.85,100.00],
+                
+              ]);
+                             
+                
+              var datos_tabla_opciones = {
+                alternatingRowStyle:false,
+                cssClassNames:{
+                            headerRow:'letragrande',
+                            tableRow:'letragrande',
+                      },
+            };
+             var tabla = new google.visualization.Table(document.getElementById('basesmasgeneraciontabla_div'))
+             tabla.draw(data,datos_tabla_opciones);            
+            }
+
+
+            function DAPMasGeneracionTabla(){
+                var data = new google.visualization.DataTable();
+                data.addColumn('string','DAP');
+                data.addColumn('number','Generación');
+                data.addColumn('number','Porcentaje');
+                data.addColumn('number','Porcentaje Acumulado');
+                data.addRows([
+              
+                ['FNITA',1479954,92.49,92.49],
+                
+                ['FNINT',120158,7.51,100.00],
+                
+              ]);
+              var datos_tabla_opciones = {
+                alternatingRowStyle:false,
+                cssClassNames:{
+                            headerRow:'letragrande',
+                            tableRow:'letragrande',
+                      },
+            };
+            var tabla = new google.visualization.Table(document.getElementById('dapmasgeneraciontabla_div'));
+              tabla.draw(data,datos_tabla_opciones);
+
+
+            }
+
+            function CobranzasTabla(){
+                var data = new google.visualization.DataTable();
+                data.addColumn('string','cliente');
+                data.addColumn('number','Provisión');
+                data.addColumn('number','Ida y vuelta');
+                data.addColumn('number','Facturas');
+                data.addColumn('number','Saldo');
+                data.addColumn('string','Factura');
+                data.addRows([
+                    
+                    ['B BCI',4161998,0,0,4161998,'False'],
+                    
+                    ['B BCI INV',3820000,0,0,0,'False'],
+                    
+                    ['B BCI TRAD',341998,0,0,0,'False'],
+                    
+                    ['B BTG',12111920,0,12111920,0,'True'],
+                    
+                    ['B CHILE',12934076,0,11994471,939605,'True'],
+                    
+                    ['B CHILE BCE',517050,0,0,0,'False'],
+                    
+                    ['B CHILE TRAD',12417026,0,0,0,'False'],
+                    
+                    ['B CONSORCIO',40411078,0,38861846,1549232,'True'],
+                    
+                    ['B CONSORCIO BCE',3470553,0,0,0,'False'],
+                    
+                    ['B CONSORCIO TRAD',36940525,0,0,0,'False'],
+                    
+                    ['B ESTADO',28145474,-8242951,0,19902523,'False'],
+                    
+                    ['B ESTADO BCE',19493394,0,0,0,'False'],
+                    
+                    ['B ESTADO TRAD',8652080,-8242951,0,0,'False'],
+                    
+                    ['B FALABELLA',28810321,-20498171,0,8312150,'False'],
+                    
+                    ['B FALABELLA BCE',13110000,-5468911,0,0,'False'],
+                    
+                    ['B FALABELLA TRAD',15700321,-15029260,0,0,'False'],
+                    
+                    ['B HSBC BCE',100000,0,0,100000,'False'],
+                    
+                    ['B SANTANDER',35946412,-17941360,0,18005052,'False'],
+                    
+                    ['B SANTANDER TRAD',35946412,-17941360,0,0,'False'],
+                    
+                    ['B SCOTIABANK',34439514,-26164148,0,8275366,'False'],
+                    
+                    ['B SCOTIABANK TRAD',34439514,-26164148,0,0,'False'],
+                    
+                    ['B SECURITY',102130,0,0,102130,'False'],
+                    
+                    ['CB BANCOESTADO',2890926,0,0,2890926,'False'],
+                    
+                    ['CB BCI',2843592,0,0,2843592,'False'],
+                    
+                    ['CB CONSORCIO',7806212,0,7104367,701845,'True'],
+                    
+                    ['CB CREDICORP',7228964,0,7228964,0,'True'],
+                    
+                    ['CB EUROAMERICA',200000,0,0,200000,'False'],
+                    
+                    ['CB ITAU',145451,0,0,145451,'False'],
+                    
+                    ['CB LARRAIN VIAL',489089,0,100000,389089,'True'],
+                    
+                    ['CDS CONSORCIO',4002590,0,0,4002590,'False'],
+                    
+                    ['CDS EUROAMERICA',2181529,0,0,2181529,'False'],
+                    
+                    ['FM FYNSA',295058,0,0,295058,'False'],
+                    
+                    ['FM LARRAIN VIAL',141276,0,0,141276,'False'],
+                    
+                    ['FM SANTANDER',144544,0,0,144544,'False'],
+                    
+                    ['FM SECURITY',100000,0,0,100000,'False'],
+                    
+                ]);
+                var datos_tabla_opciones = {
+                alternatingRowStyle:false,
+                cssClassNames:{
+                            headerRow:'letragrande',
+                            tableRow:'letragrande',
+                      },
+                      };
+                
+                      var options_grafico = {
+                                            title: 'Deuda por cliente',
+                                            is3D : 'true', 
+                                            width: '80%',
+                                            height:800,
+                                            chartArea: {width: '100%',height:'50%'},
+                                            legend:{position:'labeled',textStyle: {color: 'blue', fontSize: 16}},
+                                            pieSliceText:'value-and-percentage',                                            
+                                            pieSliceTextStyle:{
+                                                color:'black',
+                                                fontSize:14,
+
+                                            },
+                                                                };
+                var tabla_cobranzas_view = google.visualization.data.group(data,[0],[{'column':4,'aggregation':google.visualization.data.sum, 'type':'number'}]);
+                var torta_deuda = new google.visualization.PieChart(document.getElementById('torta_deuda_div'));
+                var tabla = new google.visualization.Table(document.getElementById('cobranzastabla_div'));
+                tabla.draw(data,datos_tabla_opciones);
+                torta_deuda.draw(tabla_cobranzas_view,options_grafico);
+
+            }
+            function IdayvueltaTabla(){
+                var data = new google.visualization.DataTable();
+                data.addColumn('date','Fecha');
+                data.addColumn('string','Buy');
+                data.addColumn('string','Seller');
+                data.addColumn('number','Buyer Clp');
+                data.addColumn('number','Seller Clp');
+                
+                data.addRows([
+                
+                [new Date('2020-12-01'),'B SCOTIABANK TRAD','FYNSA',-1479954,0],
+                
+                ]);
+                var tabla = new google.visualization.Table(document.getElementById('idayvueltatabla_div'));
+                var datos_tabla_opciones = {
+                alternatingRowStyle:false,
+                cssClassNames:{
+                            headerRow:'letragrande',
+                            tableRow:'letragrande',
+                      },
+            };
+                tabla.draw(data,datos_tabla_opciones);
+            };
+            function FacturasTabla(){
+                var data = new google.visualization.DataTable();
+                data.addColumn('date','Fecha Emisión');
+                data.addColumn('number','Folio Factura');
+                data.addColumn('string','Cliente');
+                data.addColumn('number','Monto Total');
+                data.addRows([
+                
+                ]);
+                var tabla = new google.visualization.Table(document.getElementById('facturastabla_div'));
+                var datos_tabla_opciones = {
+                                    alternatingRowStyle:false,
+                                    cssClassNames:{
+                                                headerRow:'letragrande',
+                                                tableRow:'letragrande',
+                                        },
+                            };
+                tabla.draw(data,datos_tabla_opciones);
+            };
+
+           
+</script>
+    
+</body>
+</html>

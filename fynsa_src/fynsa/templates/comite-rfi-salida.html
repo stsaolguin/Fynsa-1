@@ -326,16 +326,15 @@ function rfi_generacion() {
     function CategoriaPaisCrosstab(){
         var data = new google.visualization.arrayToDataTable({{ cross | safe }});
         var options ={
+          
           isStacked:true,
           height:600,
           width:'100%',
         };
+        options.title = "Generación por cliente y categoria"
         var cat_pais = new google.visualization.ColumnChart(document.getElementById('cat_pais_div'));
         cat_pais.draw(data,options);
     };
-
-    
-
 </script>
 
 {% endblock %}

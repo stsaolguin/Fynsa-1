@@ -2747,3 +2747,14 @@ order by cliente_trader asc;
 
 --Update FROM "BASES_bases" set trader_seller='' where trader_seller='';
 select distinct(trader_buy) FROM "BASES_bases" order by trader_buy asc
+
+=============
+generacion mensual rfi. 
+
+SELECT to_char(date_trunc('month', fecha),'MM-YYYY') AS mes, sum(ingreso_mesa) as mensual
+     FROM "RFI_rfi_beta"
+ GROUP BY mes
+ order by mes desc
+
+=====
+
