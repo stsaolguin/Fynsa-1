@@ -1,7 +1,7 @@
 {% extends "index.html" %}
 
 {% block contenido %}
-<div class="container">
+<div class="container mb-4">
     <div class="row mb-3">
     <h3>Comité Equipo Tasa Derivados</h3>
     </div>
@@ -60,6 +60,67 @@
                     </form>
         
             
+            </div>
+        </div>
+        <div class="row my-3">
+            <div class="h3">Montos Transados Mensual por institución</div>
+        </div>
+        <div class="row">
+            <div class="d-flex justify-content-center">
+            
+                    <form action="{% url 'monto_mensual_cliente' %}" method="GET">
+                        {% csrf_token %}
+                        <div class="form-inline ">
+                            <label class="mx-1" for="SeleccionAgno">Seleccione el año</label> 
+                            <select class="form-control mx-1" name="selectorAgnoMonto" id="SeleccionAgno">
+                                <option value="2019">2019</option>
+                                <option value="2020">2020</option>
+                                <option value="2021" disabled>2021</option>
+                            </select>
+                       
+                        
+                            <label class="mx-1" for="TipoProducto">Seleccione el producto</label> 
+                            <select class="form-control mx-1" name="selectorProductoMonto" id="TipoProducto">
+                                <option value="b">Bases</option>
+                                <option value="d">Depósitos</option>
+                                
+                            </select>
+                            <input type="submit" class="btn btn-success mx-1" value="Descargar"> 
+                        </div>
+                     
+                    </form>
+            </div>
+        </div>
+        
+        <div class="row my-3">
+            <div class="h3">Generación Mensual por institución</div>
+        </div>
+
+
+        <div class="row">
+            <div class="d-flex justify-content-center">
+            
+                    <form action="{% url 'gen_mensual_cliente' %}" method="GET">
+                        {% csrf_token %}
+                        <div class="form-inline ">
+                            <label class="mx-1" for="SeleccionAgno">Seleccione al año</label> 
+                            <select class="form-control mx-1" name="selectorAgnoGen" id="SeleccionAgno">
+                                <option value="2019">2019</option>
+                                <option value="2020">2020</option>
+                                <option value="2021" disabled>2021</option>
+                            </select>
+                       
+                        
+                            <label class="mx-1" for="TipoProducto">Seleccione el producto</label> 
+                            <select class="form-control mx-1" name="selectorProductoGen" id="TipoProducto">
+                                <option value="b">Bases</option>
+                                <option value="d">Depósitos</option>
+                                
+                            </select>
+                            <input type="submit" class="btn btn-success mx-1" value="Descargar"> 
+                        </div>
+                     
+                    </form>
             </div>
         </div>
  

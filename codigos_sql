@@ -2676,7 +2676,7 @@ IF sobrescribir is false THEN
 		IF EXISTS (SELECT * FROM "BASES_serie_generacion_mensual_por_cliente" where fecha=primer_dia::date) THEN
 			raise notice 'EXISTE LA FECHA';
 			DELETE FROM "BASES_serie_generacion_mensual_por_cliente" WHERE fecha=primer_dia;
-			INSERT INTO "BASES_serie_generacion_mensual_por_cliente"(cliente, gen_depo,gen_bases,prov_bases,prov_depos) select * from eq_der_generacion_total_consolidad(primer_dia::date,ultimo_dia::date) where total<>0;
+			INSERT INTO "BASES_serie_generacion_mensual_por_cliente"(cliente, gen_depo,gen_bases,prov_bases,prov_depos) select nombre,gen_depo,gen_bases,prov_bases,prov_depos from eq_der_generacion_total_consolidad(primer_dia::date,ultimo_dia::date) where total<>0;
 			UPDATE "BASES_serie_generacion_mensual_por_cliente" set fecha=primer_dia where fecha is NULL;
 			UPDATE "BASES_serie_generacion_mensual_por_cliente" set gen_depo=0 where gen_depo is NULL;
 			UPDATE "BASES_serie_generacion_mensual_por_cliente" set gen_bases=0 where gen_bases is NULL;
@@ -2685,7 +2685,7 @@ IF sobrescribir is false THEN
 			
 		ELSE
 			raise notice 'NO EXISTE LA FECHA, ciclo else';
-			INSERT INTO "BASES_serie_generacion_mensual_por_cliente"(cliente, gen_depo,gen_bases,prov_bases,prov_depos) select * from eq_der_generacion_total_consolidad(primer_dia::date,ultimo_dia::date) where total<>0;
+			INSERT INTO "BASES_serie_generacion_mensual_por_cliente"(cliente, gen_depo,gen_bases,prov_bases,prov_depos) select nombre,gen_depo,gen_bases,prov_bases,prov_depos from eq_der_generacion_total_consolidad(primer_dia::date,ultimo_dia::date) where total<>0;
 			UPDATE "BASES_serie_generacion_mensual_por_cliente" set fecha=primer_dia where fecha is NULL;
 			UPDATE "BASES_serie_generacion_mensual_por_cliente" set gen_depo=0 where gen_depo is NULL;
 			UPDATE "BASES_serie_generacion_mensual_por_cliente" set gen_bases=0 where gen_bases is NULL;

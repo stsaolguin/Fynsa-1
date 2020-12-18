@@ -169,7 +169,14 @@ select 1 as linea,*,sum(porcentaje) over (order by porcentaje desc) as porcentaj
     return response
 
 def ingreso_operaciones_views(request):
-
-
+    #esta es cotota
     return render(request,'bases-ingreso-operaciones.html',context={})
+
+def monto_mensual_cliente(request,selectorProductoMonto,selectorAgnoMonto):
+    print('selectorProductoMonto,selectorAgnoMonto',selectorProductoMonto,selectorAgnoMonto)
+    return HttpResponse("pasé")
+
+def gen_mensual_cliente(request,selectorProductoGen,selectorAgnoGen):
+    print('selectorProductoGen,selectorAgnoGen',selectorProductoGen,selectorAgnoGen)
+    return HttpResponse("pasé")
 

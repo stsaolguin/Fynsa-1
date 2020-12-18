@@ -20,7 +20,7 @@
     <div class="rfi_country_geo_torta"><div id="rfi_country_geo_torta"></div></div>
     <div class="rfi_country_torta_tabla"><div id="rfi_country_torta_tabla"></div></div>
     <div class="rfi_tabla_papeles"><div id="tabla_papeles_id"></div></div>
-    <div class="rfi_tabla_brk"><div id="tabla_brk_id"></div></div>
+    <div class="rfi_tabla_brk">Brokers:<div id="tabla_brk_id"></div></div>
 
     <div class="series">
           <div id="rfi_serie_spread"></div>
@@ -283,13 +283,16 @@ function rfi_generacion() {
       vista_spread.setColumns([0,1]);
       vista_nominales.setColumns([0,2]);
       vista_generacion.setColumns([0,3]);
+      option_spread = {title: 'Promedio Spread Diario.',width:'100%',height:550,legend:{position:'top',alignment:'end'},trendlines: {0:{type: 'polynomial',degree: 3,visibleInLegend: true,}}}
+      option_nominales = {title: 'Suma Nominales Diario.',width:'100%',height:550,legend:{position:'top',alignment:'end'},trendlines: {0:{type: 'polynomial',degree: 3,visibleInLegend: true,}}}
+      option_generacion = {hAxis:{format:'d/MM/y'},title: 'Generación Diaria.',colors:['red'],width:'100%',height:550,legend:{position:'top',alignment:'end'},trendlines: {0:{type: 'polynomial',degree: 3,visibleInLegend: true,}}}
 
       var chart_spread = new google.visualization.LineChart(document.getElementById('rfi_serie_spread'));
       var chart_nominales = new google.visualization.LineChart(document.getElementById('rfi_serie_nominales'));
       var chart_generacion = new google.visualization.LineChart(document.getElementById('rfi_serie_generacion'));
-      chart_spread.draw(vista_spread,{title: 'Promedio Spread Diario.',width:'100%',height:550,legend:{position:'top',alignment:'end'}});
-      chart_nominales.draw(vista_nominales,{title: 'Suma Nominales Diario.',width:'100%',height:550,legend:{position:'top',alignment:'end'}});
-      chart_generacion.draw(vista_generacion,{hAxis:{format:'d/MM/y'},title: 'Generación Diaria.',colors:['red'],width:'100%',height:550,legend:{position:'top',alignment:'end'}});
+      chart_spread.draw(vista_spread,option_spread);
+      chart_nominales.draw(vista_nominales,option_nominales);
+      chart_generacion.draw(vista_generacion,option_generacion);
       
     };
 

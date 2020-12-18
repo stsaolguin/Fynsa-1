@@ -65,11 +65,16 @@ UPDATE "BASES_bases" a set participante_2=rtrim(a.participante_2,' ');
 UPDATE "BASES_bases" set tipo_de_cambio=780 where tipo_de_cambio is null;
 UPDATE "BASES_bases" set valor_final=0 where valor_final is null;
 UPDATE "BASES_bases" set uf=0 where uf is null;
-update "BASES_bases" set seller='FM LARRAIN VIAL' WHERE seller='FM LARRAINVIAL'
-update "BASES_bases" set buyer='FM LARRAIN VIAL' WHERE buyer='FM LARRAINVIAL'
+update "BASES_bases" set seller='FM LARRAIN VIAL' WHERE seller='FM LARRAINVIAL';
+update "BASES_bases" set buy='FM LARRAIN VIAL' WHERE buy='FM LARRAINVIAL';
 UPDATE "BASES_bases" a set nemo=ltrim(nemo,' ');
 UPDATE "BASES_bases" a set nemo=rtrim(nemo,' ');
-update "BASES_bases" set concate=concat(fecha, fynsa, otc_tr, nemo, dias, monto, tipo_de_pago, buy, seller, trader_buy, trader_seller, tasa, valor_final, fee_buyer, fee_seller, fee_buyer_moneda, fee_seller_moneda, compra_depo, venta_depo, util_depo, valor_clp, fee_buyer_clp, fee_seller_clp, participante_1, participante_2) where concate=''
+update "BASES_bases" set institucion_trader_buyer=concat(buy,' - ',trader_buy) where institucion_trader_buyer is null;
+update "BASES_bases" set institucion_trader_seller=concat(seller,' - ',trader_seller) where institucion_trader_seller is null;
+update "BASES_bases" set institucion_trader_participante_1='' where institucion_trader_participante_1 is null;
+update "BASES_bases" set institucion_trader_participante_2='' where institucion_trader_participante_2 is null;
+update "BASES_bases" set concate=concat(fecha, fynsa, otc_tr, nemo, dias, monto, tipo_de_pago, buy, seller, trader_buy, trader_seller, tasa, valor_final, fee_buyer, fee_seller, fee_buyer_moneda, fee_seller_moneda, compra_depo, venta_depo, util_depo, valor_clp, fee_buyer_clp, fee_seller_clp, participante_1, participante_2) where concate='';
+
 
 
 

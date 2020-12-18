@@ -14,7 +14,6 @@ FROM '/home/gvera/Descargas/rfi_desde el 13_07.csv' CSV HEADER DELIMITER ';';
 
 Esta es para ver si hay operaciones entre brokers:
 
-select a.ingreso_mesa,a.comprador,a.vendedor,b.categoria,c.categoria from "RFI_rfi_beta" a 
 select a.fecha,a.papel,a.comprador,a.vendedor,a.spread_mesa,a.ingreso_mesa,b.categoria,c.categoria from "RFI_rfi_beta" a 
 JOIN "RFI_clientes_rfi" b ON a.comprador=b.fondo
 JOIN "RFI_clientes_rfi" c ON a.vendedor=c.fondo
