@@ -1,6 +1,7 @@
 ## Este archivo prepara la RFI pa subirla
 #from funcion_truncar import truncar
 import csv
+import sys
 
 def truncar(numero,decimales):
     
@@ -39,12 +40,15 @@ def truncar(numero,decimales):
         return numero_final
 #print(truncar(numero=numero_test,decimales=3))
 
+nombre_entrada = sys.argv[1]
+nombre_entrada = nombre_entrada.split('.')
+nombre_salida = nombre_entrada[0] + '-salida.csv' 
 
 
-archivo_entrada = open('/home/gvera/Descargas/nuevo_RFI.csv',mode='r',encoding='utf-8',newline='')
+archivo_entrada = open('/home/gvera/Descargas/{}'.format(sys.argv[1]),mode='r',encoding='utf-8',newline='')
 csv_entrada =csv.DictReader(archivo_entrada, delimiter=';')
 
-archivo_salida = open('/home/gvera/Descargas/nuevo_RFI-salida.csv',mode='w',encoding='utf-8',newline='')  
+archivo_salida = open('/home/gvera/Descargas/{}'.format(nombre_salida),mode='w',encoding='utf-8',newline='')  
 encabezados_salida = ['fecha', 'ejecutivo', 'papel', 'cusip', 'operacion', 'nominales', 'mesa', 'ejecutivo_precio', 'cliente_precio', 'ingreso_ejecutivo', 'ingreso_mesa', 'contraparte', 'spread_mesa', 'comprador', 'vendedor', 'country_of_risk', 'crncy']
 
 csv_salida =csv.DictWriter(archivo_salida, delimiter=';',fieldnames=encabezados_salida)
@@ -52,7 +56,7 @@ csv_salida.writeheader()
 
 
 
-import re 
+#import re 
 for s in csv_entrada:
     
     if s['country_of_risk']=='#N/A Invalid Security' or s['country_of_risk']=='#N/A Field Not Applicable' or s['country_of_risk']=='vencido' or s['country_of_risk']=='called' or s['country_of_risk']=='#N/D':

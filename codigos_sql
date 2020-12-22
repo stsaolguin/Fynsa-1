@@ -694,17 +694,17 @@ BEGIN
 		cliente:=r;
 		raise notice 'nombre %',r;
 		if $3='B' THEN
-			SELECT sum(valor_clp) into valor_p1_clp_aux from "BASES_bases" where buy=r and nemo ilike 'B%' and fecha BETWEEN $1 and $2;
+			SELECT sum(util_depo) into valor_p1_clp_aux from "BASES_bases" where participante_1=r and nemo ilike 'B%' and fecha BETWEEN $1 and $2;
 			IF valor_p1_clp_aux IS NULL THEN
 			valor_p1_clp_aux:=0;
 			END IF;
 			raise notice 'valor_p1_clp_aux %',valor_p1_clp_aux;
-			SELECT sum(valor_clp) into valor_p2_clp_aux from "BASES_bases" where seller=r and nemo ilike 'B%' and fecha BETWEEN $1 and $2;
+			SELECT sum(util_depo) into valor_p2_clp_aux from "BASES_bases" where participante_2=r and nemo ilike 'B%' and fecha BETWEEN $1 and $2;
 			raise notice 'valor_p2_clp_aux %',valor_p2_clp_aux;
 			IF valor_p2_clp_aux IS NULL THEN
 			valor_p2_clp_aux:=0;
 			END IF;
-			util_tasa:=(valor_p1_clp_aux+valor_p2_clp_aux)/2;
+			util_tasa:=trunc((valor_p1_clp_aux+valor_p2_clp_aux)/2,0);
 			raise notice 'util_tasa %',util_tasa;
 		END IF;
 		if $3='F' THEN
@@ -718,13 +718,14 @@ BEGIN
 			IF valor_p2_clp_aux IS NULL THEN
 			valor_p2_clp_aux:=0;
 			END IF;
-			util_tasa:=(valor_p1_clp_aux+valor_p2_clp_aux)/2;
+			util_tasa:=trunc((valor_p1_clp_aux+valor_p2_clp_aux)/2,0);
 			raise notice 'util_tasa %',util_tasa;
 		END IF;
 		
 	RETURN NEXT;	
 	END LOOP;
 END;
+
 $$ LANGUAGE 'plpgsql';
 
 
@@ -2757,4 +2758,105 @@ SELECT to_char(date_trunc('month', fecha),'MM-YYYY') AS mes, sum(ingreso_mesa) a
  order by mes desc
 
 =====
+
+CREATE OR REPLACE FUNCTION eqder_generacion_tasas_trader(fecha_inicial date,fecha_final date,basedepo text) RETURNS TABLE(cliente_trader text, util_tasa numeric)
+AS $$
+DECLARE
+valor_p1_clp_aux NUMERIC;
+valor_p2_clp_aux NUMERIC;
+r TEXT;
+BEGIN
+	FOR r IN SELECT institucion_trader from "BASES_cliente_trader"
+	LOOP
+		cliente_trader:=r;
+		
+		if $3='B' THEN
+			SELECT sum(util_depo) into valor_p1_clp_aux from "BASES_bases" where institucion_trader_buyer=r and util_depo>0 and nemo ilike 'B%' and fecha BETWEEN $1 and $2;
+			IF valor_p1_clp_aux IS NULL THEN
+			valor_p1_clp_aux:=0;
+			END IF;
+			
+			SELECT sum(util_depo) into valor_p2_clp_aux from "BASES_bases" where institucion_trader_seller=r and util_depo>0 and nemo ilike 'B%' and fecha BETWEEN $1 and $2;
+			
+			IF valor_p2_clp_aux IS NULL THEN
+			valor_p2_clp_aux:=0;
+			END IF;
+			util_tasa:=(valor_p1_clp_aux+valor_p2_clp_aux)/2;
+			
+		END IF;
+		if $3='F' THEN
+			SELECT sum(util_depo) into valor_p1_clp_aux from "BASES_bases" where institucion_trader_participante_1=r and util_depo>0 and nemo ilike 'F%' and fecha BETWEEN $1 and $2;
+			IF valor_p1_clp_aux IS NULL THEN
+			valor_p1_clp_aux:=0;
+			END IF;
+			
+			SELECT sum(util_depo) into valor_p2_clp_aux from "BASES_bases" where institucion_trader_participante_2=r and util_depo>0 and nemo ilike 'F%' and fecha BETWEEN $1 and $2;
+			
+			IF valor_p2_clp_aux IS NULL THEN
+			valor_p2_clp_aux:=0;
+			END IF;
+			util_tasa:=(valor_p1_clp_aux+valor_p2_clp_aux)/2;
+			
+		END IF;
+		
+	RETURN NEXT;	
+	END LOOP;
+END;
+$$ LANGUAGE 'plpgsql';
+
+
+select * from eqder_generacion_tasas_trader('2020-01-01','2020-12-15','B') order by util_tasa desc;
+
+============================
+
+CREATE OR REPLACE FUNCTION eqder_provisiones_trader(fecha_inicial date,fecha_final date, B_o_F text) RETURNS TABLE(cliente_trader text, provision numeric)
+AS $$
+DECLARE
+fee_buyer_clp_aux NUMERIC;
+fee_seller_clp_aux NUMERIC;
+r TEXT;
+BEGIN
+	
+	FOR r IN SELECT institucion_trader from "BASES_cliente_trader"
+	LOOP
+	
+		cliente_trader:=r;
+		
+		IF $3='B' THEN
+		SELECT sum(fee_buyer_clp) into fee_buyer_clp_aux from "BASES_bases" where institucion_trader_buyer=r and fee_buyer_clp>0 and fecha BETWEEN $1 and $2 and nemo ilike 'B%';
+		IF fee_buyer_clp_aux IS NULL THEN
+		fee_buyer_clp_aux:=0;
+		END IF;
+		
+		SELECT sum(fee_seller_clp) into fee_seller_clp_aux from "BASES_bases" where institucion_trader_seller=r and fee_seller_clp>0 and fecha BETWEEN $1 and $2 and nemo ilike 'B%';
+		
+		IF fee_seller_clp_aux IS NULL THEN
+		fee_seller_clp_aux:=0;
+		END IF;
+		provision:=fee_buyer_clp_aux+fee_seller_clp_aux;
+		
+		END IF;
+		IF $3='F' THEN
+		SELECT sum(fee_buyer_clp) into fee_buyer_clp_aux from "BASES_bases" where institucion_trader_participante_1=r and fee_buyer_clp>0 and fecha BETWEEN $1 and $2 and nemo ilike 'F%';
+		IF fee_buyer_clp_aux IS NULL THEN
+		fee_buyer_clp_aux:=0;
+		END IF;
+		
+		SELECT sum(fee_seller_clp) into fee_seller_clp_aux from "BASES_bases" where institucion_trader_participante_2=r and fee_seller_clp>0 and fecha BETWEEN $1 and $2 and nemo ilike 'F%';
+		
+		IF fee_seller_clp_aux IS NULL THEN
+		fee_seller_clp_aux:=0;
+		END IF;
+		provision:=fee_buyer_clp_aux+fee_seller_clp_aux;
+		
+		END IF;
+	RETURN NEXT;	
+	END LOOP;
+END;
+$$ LANGUAGE 'plpgsql';
+
+--SELECT * FROM eqder_provisiones_trader('2020-01-01','2020-12-15','B') order by provision desc;
+
+
+
 

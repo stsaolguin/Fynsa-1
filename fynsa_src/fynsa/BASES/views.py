@@ -168,15 +168,53 @@ select 1 as linea,*,sum(porcentaje) over (order by porcentaje desc) as porcentaj
     
     return response
 
+
 def ingreso_operaciones_views(request):
     #esta es cotota
     return render(request,'bases-ingreso-operaciones.html',context={})
 
-def monto_mensual_cliente(request,selectorProductoMonto,selectorAgnoMonto):
-    print('selectorProductoMonto,selectorAgnoMonto',selectorProductoMonto,selectorAgnoMonto)
-    return HttpResponse("pasé")
+def monto_mensual_cliente_views(request):
+    producto = request.GET.get('selectorProductoMonto')
+    agno = request.GET.get('selectorAgnoMonto')
+    montos = bases.objects.raw(''' select 1 as linea,* from eq_bases_montos_transados_mensual_cliente(false,%s,%s) order by cliente asc ''',[agno,producto])
+    salida=[]
+    response = HttpResponse(content_type='text/csv')
+    p = 'BASES' if producto =='b' else 'DEPOSITOS'
+    nombre_archivo = "Montos transados año {0} - {1} por cliente".format(agno,p)
+    response['Content-Disposition'] = 'attachment; filename={0}.csv'.format(nombre_archivo)
+    writer = csv.writer(response)
+    writer.writerow(['cliente','enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'])
+    for r in montos:
+        salida.append([r.cliente,r.enero,r.febrero,r.marzo,r.abril,r.mayo,r.junio,r.julio,r.agosto,r.septiembre,r.octubre,r.noviembre,r.diciembre])
+    writer.writerows(salida)
+    return response
 
-def gen_mensual_cliente(request,selectorProductoGen,selectorAgnoGen):
-    print('selectorProductoGen,selectorAgnoGen',selectorProductoGen,selectorAgnoGen)
-    return HttpResponse("pasé")
+def gen_mensual_cliente_views(request):
+    producto = request.GET.get('selectorProductoGen')
+    agno = request.GET.get('selectorAgnoGen')
+    generacion = bases.objects.raw(''' select 1 as linea,* from eq_bases_generacion_mensual_cliente(false,%s,%s) order by cliente asc ''',[agno,producto])
+    salida=[]
+    response = HttpResponse(content_type='text/csv')
+    p = 'BASES' if producto =='b' else 'DEPOSITOS'
+    nombre_archivo = "Montos transados año {0} - {1} por cliente".format(agno,p)
+    response['Content-Disposition'] = 'attachment; filename={0}.csv'.format(nombre_archivo)
+    writer = csv.writer(response)
+    writer.writerow(['cliente','enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'])
+    for r in generacion:
+        salida.append([r.cliente,r.gen_enero,r.gen_febrero,r.gen_marzo,r.gen_abril,r.gen_mayo,r.gen_junio,r.gen_julio,r.gen_agosto,r.gen_septiembre,r.gen_octubre,r.gen_noviembre,r.gen_diciembre])
+    writer.writerows(salida)
+    return response
 
+
+def salida_bases_institucion_trader(request):
+    fecha_inicial=request.GET.get('fecha_inicial')
+    fecha_final=request.GET.get('fecha_final')
+    datos={}
+    datos['fecha_inicial'] = fecha_inicial
+    datos['fecha_final'] = fecha_final
+    datos['bases_prov'] = bases.objects.raw(''' SELECT 1 as linea, * FROM eqder_provisiones_trader(%s,%s,'B') order by provision desc; ''',[fecha_inicial,fecha_final])
+    datos['depo_prov'] = bases.objects.raw(''' SELECT 1 as linea, * FROM eqder_provisiones_trader(%s,%s,'F') order by provision desc; ''',[fecha_inicial,fecha_final])
+    datos['base_tasa'] = bases.objects.raw(''' SELECT 1 as linea, * FROM eqder_generacion_tasas_trader(%s,%s,'B') order by util_tasa desc; ''',[fecha_inicial,fecha_final])
+    datos['depo_tasa'] = bases.objects.raw(''' SELECT 1 as linea, * FROM eqder_generacion_tasas_trader(%s,%s,'F') order by util_tasa desc; ''',[fecha_inicial,fecha_final])
+    return render(request,'salida-bases-institucion-trader.html',context=datos)         
+    
