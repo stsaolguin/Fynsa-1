@@ -1,28 +1,21 @@
 {% extends "index.html" %}
 
 {% block contenido %}
-<div class="row">
-<h1>Cargador</h1>
+<div class="container">
+    <div class="row">
+    <h1>Cargador</h1>
+    </div>
+        <div class="row">
+                <form action="{% url 'llegada_rfl_1' %}" method="POST" enctype="multipart/form-data">
+                    <div class="form-group">
+                    
+                    {% csrf_token %}
+                    {{ lva_1 }}
+                    
+                    </div>
+                    <button type="submit" class="btn btn-primary">cargar</button>
+                </form>
+        </div>
 </div>
-<div class="row">
-        <form>
-            <div class="custom-file my-1">
-                <input type="file" class="custom-file-input" id="customFile">
-                <label class="custom-file-label" for="customFile">Archivo Riskamérica</label>
-            </div>
-            <div class="custom-file my-1">
-                <input type="file" class="custom-file-input" id="customFile">
-                <label class="custom-file-label" for="customFile">Archivo LVA</label>
-            </div>
-            <button type="submit" class="btn btn-primary">cargar</button>
-        </form>
-</div>
-
-<div class="form-inline my-3">
-    <input type="number" class="form form-control mx-1">
-    <input type="number" class="form form-control mx-1">
-    <button type="submit" class="btn btn-danger mx-1">Generar</button>
-</div>
-
 
 {% endblock %}

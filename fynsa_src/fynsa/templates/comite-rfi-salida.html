@@ -20,14 +20,20 @@
     <div class="rfi_country_geo_torta"><div id="rfi_country_geo_torta"></div></div>
     <div class="rfi_country_torta_tabla"><div id="rfi_country_torta_tabla"></div></div>
     <div class="rfi_tabla_papeles"><div id="tabla_papeles_id"></div></div>
-    <div class="rfi_tabla_brk">Brokers:<div id="tabla_brk_id"></div></div>
+    <div class="rfi_tabla_brk">Brokers:<br><div id="tabla_brk_id"></div></div>
 
     <div class="series">
           <div id="rfi_serie_spread"></div>
           <div id="rfi_serie_nominales"></div>
           <div id="rfi_serie_generacion"></div> 
     </div>
-    <div class="cat_pais_div"><div id="cat_pais_div"></div></div>
+    <div class="cat_pais_div">
+      <div id="cat_pais_div"></div>
+    </div>
+   
+    <div class="metas_div">
+      <div id="metas_div"></div>
+    </div>
     
 </div>
 
@@ -42,6 +48,7 @@
         google.charts.setOnLoadCallback(TablaBrokers);
         google.charts.setOnLoadCallback(TablaPapeles);
         google.charts.setOnLoadCallback(CategoriaPaisCrosstab);
+        google.charts.setOnLoadCallback(Metas);
         
 
 function rfi_generacion() {
@@ -334,9 +341,32 @@ function rfi_generacion() {
           height:600,
           width:'100%',
         };
-        options.title = "Generación por cliente y categoria"
+        options.title = "Generación por cliente y categoria";
         var cat_pais = new google.visualization.ColumnChart(document.getElementById('cat_pais_div'));
         cat_pais.draw(data,options);
+    };
+    function Metas(){
+      var data = new google.visualization.DataTable();
+      data.addColumn('string','Mes');
+      data.addColumn('number','Generacion');
+      data.addColumn('number','Meta');
+      data.addRows([
+      {% for i in metas %}
+      ['{{ i.mensual | safe }}',{{ i.monto | safe }},120000],
+      {% endfor %}
+      ]);
+      var options ={
+          title :'Serie: Metas mensual',
+          height:600,
+          width:'100%',
+          seriesType:'bars',
+          series:{1:{type:'line'}},
+          
+      };
+     
+      var metas = new google.visualization.ComboChart(document.getElementById('metas_div'));
+      metas.draw(data,options);
+
     };
 </script>
 

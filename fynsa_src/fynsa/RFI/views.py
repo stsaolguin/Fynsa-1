@@ -66,7 +66,7 @@ SELECT * from eq_rfi_generacion(%s,%s) WHERE generacion_total<>0;SELECT 1 as lin
     #abajo se llama la funcion con el crosstab tipo json desde postgresql
     cross = rfi_beta.objects.raw(''' select 1 as linea, * from eq_rfi_generacion_crosstab_3() ''')  
     #acá le damos algo de formato
-    #cross_dic = cross.values_list()
+
     encabezados_query = comite.objects.distinct('pais').values_list('pais',flat=True)
     for r in cross:
         resultado = r.datos 
@@ -88,7 +88,7 @@ SELECT * from eq_rfi_generacion(%s,%s) WHERE generacion_total<>0;SELECT 1 as lin
         tabla.append(fila)
     
     datos['cross'] = tabla
-    
+    datos['metas']=rfi_beta.objects.raw(''' select 1 as linea, date_trunc('month',fecha)::date as mensual,sum(ingreso_mesa) as monto from "RFI_rfi_beta" group by mensual order by mensual asc; ''')
     return render(request,'comite-rfi-salida.html',datos)
     
 def rfi_comite_cliente(request,cliente):

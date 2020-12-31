@@ -27,7 +27,7 @@
     padding-left:30px ;
     display: grid;
     grid-template-columns: repeat(3,1fr);
-    grid-template-rows: auto auto 400px auto auto auto auto auto auto auto auto auto auto;
+    grid-template-rows: auto auto 400px auto auto auto auto auto auto auto auto auto auto auto;
 
     
 }
@@ -158,7 +158,10 @@
     grid-column:1/-1;
     grid-row: 13;
 }
-
+.contenedor > .metas_div{
+    grid-column:1/-1;
+    grid-row: 14;
+}
 
 /* ==========================================================
 ==========================================================
