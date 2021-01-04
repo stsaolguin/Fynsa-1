@@ -1,12 +1,24 @@
 from django.db import models
 from BASES.models import *
 
+class tr(models.Model):
+    instrumento = models.TextField()
+    tipo = models.TextField()
+    cantidad = models.IntegerField()
+    reajuste = models.TextField()
+    tir_media = models.DecimalField(max_digits=5,decimal_places=2)
+    duracion = models.DecimalField(max_digits=5,decimal_places=2)
+    rating = models.TextField()
+
+
 class risk(models.Model):
     nemo = models.TextField()
     tipo = models.TextField()
     riesgo = models.TextField()
-    duracion = models.DecimalField(max_digits=10, decimal_places=8)
-    tir = models.DecimalField(max_digits=4, decimal_places=2)
+    moneda = models.TextField()
+    monto_outstanding = models.BigIntegerField() #este monto debe ser <>0
+    duracion = models.DecimalField(max_digits=5, decimal_places=2)
+    tir = models.DecimalField(max_digits=5, decimal_places=2)
 
 class lva(models.Model):
     nemo = models.TextField()

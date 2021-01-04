@@ -1,0 +1,21 @@
+{% extends "index.html" %}
+
+{% block contenido %}
+<div class="container">
+    <div class="row">
+    <h1>Consultas Cintas</h1>
+    </div>
+        <div class="row">
+                <form action="#" method="POST" >
+                    <div class="form-group form-inline">
+                    
+                    {% csrf_token %}
+                    {{ formulario_consulta_cintas }}
+                    
+                    </div>
+                    <button type="submit" class="btn btn-primary">Generar</button>
+                </form>
+        </div>
+</div>
+
+{% endblock %}
