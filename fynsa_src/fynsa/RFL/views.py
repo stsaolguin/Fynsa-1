@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 from django.shortcuts import render
 from RFL.formularios_RFL import *
-import csv
+import csv,os,settings
 
 def comite_rfl(request):
     return render(request,'rfl.html',{})
@@ -17,13 +17,17 @@ def llegada_rfl_1(request):
         if formularios.is_valid():
             riskamerica = request.FILES['rsk']
             telerenta = request.FILES['tr']
-            print('riskamerica,telerenta',riskamerica,telerenta)
-            print('formulario valido')
-            
-            #archivo_abierto = open(telerenta,'r')
-            #leer_csv = csv.reader(archivo_abierto,delimiter=';')
-            #for r in leer_csv:
-            #    print(r)
+            #print('riskamerica,telerenta',riskamerica,telerenta)
+            #print('formulario valido')
+            print(dir(telerenta))
+            print(type(telerenta))
+            print(telerenta.name)
+            formularios.save()
+            #print('ruta de guardado',os.path.join(settings.MEDIA_ROOT,'cintas/',telerenta.name))
+            archivo_abierto = open(os.path.join(settings.BASE_DIR,'fynsa/cintas/',telerenta.name),'r')
+            leer_csv = csv.reader(archivo_abierto,delimiter=';')
+            for r in leer_csv:
+                print(r)
 
 
             return HttpResponse("Formulario Válido")

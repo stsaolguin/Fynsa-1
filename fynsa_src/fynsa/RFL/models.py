@@ -1,5 +1,6 @@
 from django.db import models
 from BASES.models import *
+import settings
 
 class tr(models.Model):
     instrumento = models.TextField()
@@ -61,6 +62,8 @@ class hd_aux(models.Model):
     monto = models.BigIntegerField(null=True,default=0)
     operador = models.TextField()
     
+class archivos_cintas(models.Model):
+    tr = models.FileField(upload_to='cintas/')
+    rsk = models.FileField(upload_to='cintas/')
 
 
-    

@@ -1,8 +1,13 @@
 from django import forms
+from RFL.models import archivos_cintas
 
-class lva_1(forms.Form):
-    tr = forms.FileField(label="Archivo Telerenta (formato RRES)",widget=forms.FileInput(attrs={'class':'form-control mx-2 my-3'}))
-    rsk = forms.FileField(label="Archivo Riskamérica (formato RESUME)",widget=forms.FileInput(attrs={'class':'form-control mx-2 my-3'}))
+class lva_1(forms.ModelForm):
+    class Meta:
+        model = archivos_cintas
+        fields =['tr','rsk']
+
+    #tr = forms.FileField(label="Archivo Telerenta (formato RRES)",widget=forms.FileInput(attrs={'class':'form-control mx-2 my-3'}))
+    #rsk = forms.FileField(label="Archivo Riskamérica (formato RESUME)",widget=forms.FileInput(attrs={'class':'form-control mx-2 my-3'}))
 
 
 categorias=[
