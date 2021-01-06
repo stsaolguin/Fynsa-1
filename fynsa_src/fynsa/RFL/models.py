@@ -5,11 +5,16 @@ import settings
 class tr(models.Model):
     instrumento = models.TextField()
     tipo = models.TextField()
-    cantidad = models.IntegerField()
+    cantidad = models.BigIntegerField()
     reajuste = models.TextField()
     tir_media = models.DecimalField(max_digits=5,decimal_places=2)
     duracion = models.DecimalField(max_digits=5,decimal_places=2)
     rating = models.TextField()
+
+    def save(self,*args,**kargs):
+        if reajuste=='$':
+            self.reajuste="CLP"
+        super().save(*args,**kargs)
 
 
 class risk(models.Model):
@@ -20,6 +25,14 @@ class risk(models.Model):
     monto_outstanding = models.BigIntegerField() #este monto debe ser <>0
     duracion = models.DecimalField(max_digits=5, decimal_places=2)
     tir = models.DecimalField(max_digits=5, decimal_places=2)
+
+    def save(self,*args,**kargs):
+        if float(self.tir) > float(100):
+            self.tir=100
+        if self.monto_outstanding=='':
+            self.monto_outstanding=0
+        super().save(*args,**kargs)
+
 
 class lva(models.Model):
     nemo = models.TextField()

@@ -3,7 +3,9 @@
 {% block contenido %}
 <div class="contenedor">
     <div id="Titulo_principal">Generación RFI entre el {{ fecha_inicial }} y el {{ fecha_final }}</div>
-    <div id="Titulo_secundario">Generación Total : USD {{ generacion_total | safe }}</div>
+    <div id="Titulo_secundario">Generación Total : USD {{ generacion_total | safe }}
+      <br><small>No incluye las operaciones entre brokers.</small>
+    </div>
     <div class="rfi_generacion_torta"><div id="rfi_generacion_torta"></div></div>
     <div class="rfi_generacion_torta_tabla"><div id="rfi_generacion_torta_tabla"></div></div>
     <div class="rfi_generacion"><div id="rfi_generacion"></div></div>
