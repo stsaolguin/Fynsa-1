@@ -12,7 +12,7 @@ class tr(models.Model):
     rating = models.TextField()
 
     def save(self,*args,**kargs):
-        if reajuste=='$':
+        if self.reajuste=='$':
             self.reajuste="CLP"
         super().save(*args,**kargs)
 

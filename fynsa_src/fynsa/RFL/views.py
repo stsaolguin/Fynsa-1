@@ -1,5 +1,5 @@
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from RFL.formularios_RFL import *
 from RFL.funciones_externas_RFL import truncar
 import io,csv
@@ -46,7 +46,7 @@ def llegada_rfl_1(request):
                 f.save()
             f_tr.close()
             f_rsk.close()
-            return HttpResponse('vamos')
+            return redirect('consulta_cintas')
         
         print('formulario NO valido')
     
@@ -65,10 +65,9 @@ def consulta_cintas_proceso(request):
     duracion_inicial = request.GET.get('duracion_inicial')
     duracion_final = request.GET.get('duracion_final')
     
-    print(categoria, 
-    rating, 
-    moneda, 
-    duracion_inicial, 
-    duracion_final)
-    return HttpResponse('pasamos')
+    print(categoria,rating,moneda,duracion_inicial,duracion_final)
+    consulta_tr = tr.objects.filter(tipo=categoria,reajuste=moneda,duracion__range=(duracion_inicial,duracion_final))
+    print(consulta_tr)
+
+    return redirect('consulta_cintas')
     
