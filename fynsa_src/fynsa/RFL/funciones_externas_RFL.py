@@ -31,7 +31,12 @@ def truncar(numero,decimales):
         numero_final=numero
         return numero_final
 
+def actualiza_riesgo():
+    for h in tr.objects.all():
+        tr.objects.update(riesgo=bonos.objects.get(instrumento=h.instrumento).rating)
+    return True or False
 
+    
 
 
     
