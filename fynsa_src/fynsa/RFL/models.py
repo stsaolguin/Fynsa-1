@@ -2,6 +2,7 @@ from django.db import models
 from BASES.models import *
 import settings
 
+
 class tr(models.Model):
     instrumento = models.TextField()
     tipo = models.TextField()
@@ -10,10 +11,12 @@ class tr(models.Model):
     tir_media = models.DecimalField(max_digits=5,decimal_places=2)
     duracion = models.DecimalField(max_digits=5,decimal_places=2)
     rating = models.TextField()
+    rol_tr = models.TextField(default="color:red")
 
     def save(self,*args,**kargs):
         if self.reajuste=='$':
             self.reajuste="CLP"
+        
         super().save(*args,**kargs)
 
 
@@ -25,6 +28,7 @@ class risk(models.Model):
     monto_outstanding = models.BigIntegerField() #este monto debe ser <>0
     duracion = models.DecimalField(max_digits=5, decimal_places=2)
     tir = models.DecimalField(max_digits=5, decimal_places=2)
+    rol_rsk = models.TextField(default="color:green")
 
     def save(self,*args,**kargs):
         if float(self.tir) > float(100):
@@ -78,5 +82,11 @@ class hd_aux(models.Model):
 class archivos_cintas(models.Model):
     tr = models.FileField(upload_to='cintas/')
     rsk = models.FileField(upload_to='cintas/')
+
+class bonos(models.Model):
+    ''' Este modelo se usa para sacar el riesgo de los bonos y usarlos en cintas '''
+    instrumento = models.TextField()
+    rating = models.TextField()
+
 
 

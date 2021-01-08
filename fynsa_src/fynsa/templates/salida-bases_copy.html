@@ -62,11 +62,11 @@
             <div id="Serie_cobranzas_div"></div>
         </div>
          <div class="idayvuelta_class">
-              <div class="titulo">Idas y Vuelta en el período {{ fecha_inicial }} y {{ fecha_final }}  : {{ idayvueltas_total.total_idavuelta }}</div>
+              <div class="titulo">Idas y Vuelta en el período {{ fecha_inicial }} y {{ fecha_final }}  :<br> {{ idayvueltas_total.total_idavuelta }}</div>
               <div id="idayvueltatabla_div"></div>
         </div>
         <div class="cobranzas_class">
-            <div class="titulo">Por Cobrar desde el Big Bang! : $ {{ saldo_calle.calle }}</div>
+            <div class="titulo">Por Cobrar desde el Big Bang! :<br> $ {{ saldo_calle.calle }}</div>
             <div id="cobranzastabla_div"></div>
             <div id="torta_deuda_div"></div>
             
@@ -816,6 +816,7 @@
                                             {% endfor %}
                                         ]);
                                         var options = {
+                                                        curveType:'function',
                                                         title: 'GENERACIÓN DIARIA',
                                                         titleTextStyle:{
                                                             fontSize: 20,
@@ -1144,6 +1145,7 @@ function SerieMontos() {
                     {% endfor %}
                       ]);
                       var options = {
+                                                        curveType:'function',
                                                         title: 'CONTEO DE OPERACIONES CON Y SIN GENERACIÓN',
                                                         titleTextStyle:{
                                                                 fontSize: 20,
@@ -1192,15 +1194,15 @@ function SerieMontos() {
             }
             function GeneracionConsolidadaTabla(){
               var data = new google.visualization.DataTable();
-              data.addColumn('number','Ranking');
+              data.addColumn('number','Rank');
               data.addColumn('string','Nombre');
-              data.addColumn('number','Generación por DAP');
-              data.addColumn('number','Generación por Bases');
-              data.addColumn('number','Provisión por DAP');
-              data.addColumn('number','Provisión por Bases');
+              data.addColumn('number','Gen. DAP');
+              data.addColumn('number','Gen. Bases');
+              data.addColumn('number','Prov. DAP');
+              data.addColumn('number','Prov. Bases');
               data.addColumn('number','TOTAL');
-              data.addColumn('number','Porcentaje');
-              data.addColumn('number','Porcentaje Acumulado');
+              data.addColumn('number','%');
+              data.addColumn('number','% Acum.');
               data.addRows([
               {% for r in generaciones_consolidadas %}
               [{{ r.ranking | safe }},'{{ r.nombre | safe}}',{{ r.gen_depo|safe }},{{ r.gen_bases|safe }},{{ r.prov_depos|safe }},{{ r.prov_bases|safe }},{{ r.total | safe }},{{ r.porcentaje | safe }},{{ r.porcentaje_acumulado | safe }}],
@@ -1233,6 +1235,7 @@ function SerieMontos() {
                              
                 
               var datos_tabla_opciones = {
+                  showRowNumber:true,
                 alternatingRowStyle:false,
                 cssClassNames:{
                             headerRow:'letragrande',
@@ -1256,6 +1259,7 @@ function SerieMontos() {
                 {% endfor %}
               ]);
               var datos_tabla_opciones = {
+                  showRowNumber:true,
                 alternatingRowStyle:false,
                 cssClassNames:{
                             headerRow:'letragrande',
@@ -1325,6 +1329,7 @@ function SerieMontos() {
                 ]);
                 var tabla = new google.visualization.Table(document.getElementById('idayvueltatabla_div'));
                 var datos_tabla_opciones = {
+                    showRowNumber:true,
                 alternatingRowStyle:false,
                 cssClassNames:{
                             headerRow:'letragrande',
@@ -1346,6 +1351,7 @@ function SerieMontos() {
                 ]);
                 var tabla = new google.visualization.Table(document.getElementById('facturastabla_div'));
                 var datos_tabla_opciones = {
+                                    showRowNumber:true,
                                     alternatingRowStyle:false,
                                     cssClassNames:{
                                                 headerRow:'letragrande',

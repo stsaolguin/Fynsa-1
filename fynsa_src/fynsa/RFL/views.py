@@ -5,6 +5,7 @@ from RFL.funciones_externas_RFL import truncar
 import io,csv
 from RFL.models import tr,risk
 
+
 def comite_rfl(request):
     return render(request,'rfl.html',{})
 
@@ -47,7 +48,6 @@ def llegada_rfl_1(request):
             f_tr.close()
             f_rsk.close()
             return redirect('consulta_cintas')
-        
         print('formulario NO valido')
     
     return HttpResponse("Conectado")
@@ -65,9 +65,13 @@ def consulta_cintas_proceso(request):
     duracion_inicial = request.GET.get('duracion_inicial')
     duracion_final = request.GET.get('duracion_final')
     
-    print(categoria,rating,moneda,duracion_inicial,duracion_final)
-    consulta_tr = tr.objects.filter(tipo=categoria,reajuste=moneda,duracion__range=(duracion_inicial,duracion_final))
-    print(consulta_tr)
+    #Falta pensar en alguna forma de rellenar los ratings de riesgo
 
-    return redirect('consulta_cintas')
+    print(categoria,rating,moneda,duracion_inicial,duracion_final)
+    consulta_tr = tr.objects.filter(tipo=categoria,reajuste=moneda,duracion__range=(duracion_inicial,duracion_final)).values('instrumento','tir_media','duracion','rol_tr') or None
+    consulta_rsk = risk.objects.filter(tipo = categoria,moneda = moneda,monto_outstanding__gt=0,duracion__range=(duracion_inicial,duracion_final)).values('nemo','tir','duracion','rol_rsk') or None
+
+    consulta_unida = consulta_tr.union(consulta_rsk, all=True)
+
+    return render(request,'rfl-arbitraje-consultas-salida.html',{'c':consulta_unida})
     
