@@ -1,0 +1,30 @@
+1.-borrar de los datos la columna clientes
+fecha,ejecutivo,papel,cusip,operacion,nominales,mesa,ejecutivo_precio,cliente_precio,ingreso_ejecutivo,ingreso_mesa,contraparte,spread_mesa,comprador,vendedor,country_of_risk,crncy
+2.- borrar las tres ultimas, dejarlo hasta crncy
+3.- cambiar los '; ' por ';' tanto para el espacio a la derecha como a la izquierda 
+4.- cambiar los puntos por nada
+5.- cambiar las ',' por '.' en especial por los decimales. El algoritmo en python también hace el cambio de ',' por '.'.
+6.- Correr el scrip en python que la formatea y la deja lista para subir : 
+
+6.2.- utilizar el script python3 /home/gvera/Fynsa/fynsa_src/fynsa/BASES/para_prepara_rfi.py agregando el nombre del archivo al final
+7.- subir la RFI que sale de ese script
+
+COPY "RFI_rfi_beta"(fecha, ejecutivo, papel, cusip, operacion, nominales, mesa, ejecutivo_precio, cliente_precio, ingreso_ejecutivo, ingreso_mesa, contraparte, spread_mesa, comprador, vendedor, country_of_risk, crncy) 
+FROM '/home/gvera/Descargas/rfi_desde el 13_07.csv' CSV HEADER DELIMITER ';';
+
+Esta es para ver si hay operaciones entre brokers:
+
+select a.fecha,a.papel,a.comprador,a.vendedor,a.spread_mesa,a.ingreso_mesa,b.categoria,c.categoria from "RFI_rfi_beta" a 
+JOIN "RFI_clientes_rfi" b ON a.comprador=b.fondo
+JOIN "RFI_clientes_rfi" c ON a.vendedor=c.fondo
+where fecha between '2020-12-01' and '2020-12-07' and (
+	(b.categoria='DLR' and c.categoria='BKR')
+or (b.categoria='BKR' and c.categoria='DLR')
+or (b.categoria='BKR' and c.categoria='BKR')
+or (b.categoria='DLR' and c.categoria='DLR')
+)
+
+ver si hay clientes nuevos. Hay que hacer lo mismo por el lado comprador
+select comprador from "RFI_rfi_beta" where comprador not in (select fondo from "RFI_clientes_rfi");
+select vendedor from "RFI_rfi_beta" where vendedor not in (select fondo from "RFI_clientes_rfi")
+ 
