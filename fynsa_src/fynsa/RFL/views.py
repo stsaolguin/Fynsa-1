@@ -24,6 +24,9 @@ def llegada_rfl_1(request):
             f_rsk = io.TextIOWrapper(riskamerica.file)
             csv_tr = csv.DictReader(f_tr,delimiter=";")
             csv_rsk = csv.DictReader(f_rsk,delimiter=";")
+            if 'Cantidad' not in csv_tr.fieldnames:
+                csv_tr.fieldnames = ["Instrumento","Tipo","N° Negocios","Cantidad","Reaj.","Monto $","Precio Mayor","Precio Menor","Precio Medio","TIR Mayor","TIR Menor","TIR Media","Duration","Precio Cierre","Fecha de Cierre"]
+
             
             for r in csv_tr:
                 a = r['Cantidad']
