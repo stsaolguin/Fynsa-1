@@ -68,7 +68,7 @@
         <div class="row">
             <div class="d-flex justify-content-center">
             
-                    <form action="{% url 'monto_mensual_cliente' %}" method="GET">
+                    <form action="{% url 'monto_mensual_cliente' %}" method="GET" target="_blank">
                         {% csrf_token %}
                         <div class="form-inline ">
                             <label class="mx-1" for="SeleccionAgno">Seleccione el año</label> 
@@ -100,7 +100,7 @@
         <div class="row">
             <div class="d-flex justify-content-center">
             
-                    <form action="{% url 'gen_mensual_cliente' %}" method="GET">
+                    <form action="{% url 'gen_mensual_cliente' %}" method="GET" target="_blank">
                         {% csrf_token %}
                         <div class="form-inline ">
                             <label class="mx-1" for="SeleccionAgno">Seleccione al año</label> 
@@ -130,7 +130,7 @@
         <div class="row">
             <div class="d-flex justify-content-center">
             
-                    <form action="{% url 'salida_bases_institucion_trader' %}" method="GET">
+                    <form action="{% url 'salida_bases_institucion_trader' %}" method="GET" target="_blank">
 
                         <div class="form-inline">
                             {% csrf_token %}

@@ -1,20 +1,20 @@
 {% extends "index.html" %}
 
 {% block contenido %}
-<div class="contenedor_bases">
-    <div class="row">
-        <div class="titulo_principal">Generaciones entre {{ fecha_inicial }} y {{ fecha_final }}.  </div>
-    </div>
-    <div class="row">
+<div class="contenedor_bases_institucion_trader">
+    
+        <div class="titulo_principal_institucion_trader">Generaciones entre {{ fecha_inicial }} y {{ fecha_final }}.  </div>
+ 
+    <div class="grafico1">
         <div id="div_1"></div>
     </div>
-    <div class="row">
+    <div class="grafico2">
         <div id="div_2"></div>
     </div>
-    <div class="row">
+    <div class="grafico3">
         <div id="div_3"></div>
     </div>
-    <div class="row">
+    <div class="grafico4">
         <div id="div_4"></div>
     </div>
 </div>
@@ -49,24 +49,18 @@ function generaciones_por_trader(){
     var chart = new google.visualization.BarChart(document.getElementById('div_3'));
     var chart = new google.visualization.BarChart(document.getElementById('div_4'));
     var options = {
-                                            
-                                            titleTextStyle:{
-                                                fontSize: 20,
+                     titleTextStyle:{
+                                               fontSize: 20,
                                             },
-                                            width: '650',
-                                            height:'100%',
-                                            chartArea: {
-                                                width: '50%',
-                                                height:'100%',
-                                                left : '33%',
-                                                },
+                                            width: 650,
+                                            height:1000,
                                             hAxis: {
                                             title: 'Monto',
                                             minValue: 0,
                                             
                                             },
                                             legend: { position: "none" },
-                                            bar : {groupWidth:'20'},
+                                            
                                             fontSize : '17',
                                             annotations : {
                                                   textStyle:{

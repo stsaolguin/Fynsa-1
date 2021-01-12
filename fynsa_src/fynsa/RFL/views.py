@@ -18,6 +18,8 @@ def llegada_rfl_1(request):
     if request.method=='POST':
         formularios = lva_1_2(request.POST,request.FILES)
         if formularios.is_valid():
+            risk.objects.all().delete()
+            tr.objects.all().delete()            
             riskamerica = request.FILES['rsk']
             telerenta = request.FILES['tr']
             f_tr = io.TextIOWrapper(telerenta.file)

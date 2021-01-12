@@ -2,7 +2,6 @@ from django.http import HttpResponse
 from django.utils.dateparse import parse_date
 from django.shortcuts import render,redirect
 from django.core import serializers
-
 from BASES.models import bases,facturas_bases
 from .formularios_bases import *
 import csv
@@ -23,9 +22,7 @@ def procesa_ingreso_bases(request):
         formulario_ingreso_bases=f_bases(request.POST)
         if formulario_ingreso_bases.is_valid():
             formulario_ingreso_bases.save()
-            print('Formulario Válido')
             return redirect('bases')
-        print('Formulario NO válido')
         return render(request,'ingreso-bases.html',{'formulario_ingreso_bases':formulario_ingreso_bases})         
 
 def salida_bases(request):
