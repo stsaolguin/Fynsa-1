@@ -1,7 +1,8 @@
 from django.http import HttpResponse
 from django.shortcuts import render,redirect
+from django.core.exceptions import ObjectDoesNotExist
 from RFL.formularios_RFL import *
-from RFL.funciones_externas_RFL import truncar
+from RFL.funciones_externas_RFL import truncar,actualiza_riesgo
 import io,csv
 from RFL.models import tr,risk
 
@@ -10,12 +11,12 @@ def comite_rfl(request):
     return render(request,'rfl.html',{})
 
 def arbitraje_rfl(request):
-    fomulario_subida = lva_1()
+    fomulario_subida = lva_1_2()
     return render(request,'rfl-arbitraje.html',{'lva_1':fomulario_subida})
 
 def llegada_rfl_1(request):
     if request.method=='POST':
-        formularios = lva_1(request.POST,request.FILES)
+        formularios = lva_1_2(request.POST,request.FILES)
         if formularios.is_valid():
             riskamerica = request.FILES['rsk']
             telerenta = request.FILES['tr']
@@ -47,6 +48,7 @@ def llegada_rfl_1(request):
                 f.save()
             f_tr.close()
             f_rsk.close()
+            actualiza_riesgo()
             return redirect('consulta_cintas')
         print('formulario NO valido')
     
@@ -58,20 +60,37 @@ def consulta_cintas(request):
 
 
 def consulta_cintas_proceso(request):
-    
+    datos = {}
     categoria = request.GET.get('categoria')
     rating = request.GET.get('rating')
     moneda = request.GET.get('moneda')
     duracion_inicial = request.GET.get('duracion_inicial')
     duracion_final = request.GET.get('duracion_final')
+    texto = "Bonos {} en {} {} duración entre {} y {}".format(categoria,moneda,rating,duracion_inicial,duracion_final)
+    datos['titulo'] = texto 
     
     #Falta pensar en alguna forma de rellenar los ratings de riesgo
 
     print(categoria,rating,moneda,duracion_inicial,duracion_final)
-    consulta_tr = tr.objects.filter(tipo=categoria,reajuste=moneda,duracion__range=(duracion_inicial,duracion_final)).values('instrumento','tir_media','duracion','rol_tr') or None
-    consulta_rsk = risk.objects.filter(tipo = categoria,moneda = moneda,monto_outstanding__gt=0,duracion__range=(duracion_inicial,duracion_final)).values('nemo','tir','duracion','rol_rsk') or None
+    consulta_tr = tr.objects.filter(tipo=categoria,rating=rating, reajuste=moneda,duracion__range=(duracion_inicial,duracion_final)).values('instrumento','tir_media','duracion','rol_tr')
+    consulta_rsk = risk.objects.filter(tipo = categoria,riesgo = rating,moneda = moneda,monto_outstanding__gt=0,duracion__range=(duracion_inicial,duracion_final)).values('nemo','tir','duracion','rol_rsk')
+    datos['c'] = consulta_tr.union(consulta_rsk, all=True)
+    if consulta_rsk.exists() and consulta_tr.exists():
+        return render(request,'rfl-arbitraje-consultas-salida.html',context=datos)
+    elif consulta_rsk.exists() and consulta_tr.exists()==False:
+        texto = texto + '.No hay resultado en Telerrenta.'
+        datos['titulo'] = texto
+        return render(request,'rfl-arbitraje-consultas-salida.html',context=datos)
+    elif consulta_rsk.exists()==False and consulta_tr.exists():
+        texto = texto + '. No hay resultado en Riskamérica.'
+        datos['titulo'] = texto
+        return render(request,'rfl-arbitraje-consultas-salida.html',context=datos)
+    else:
+        texto = texto + '. No hay resultado ni en Riskamérica ni en Telerrenta.'
+        datos['titulo'] = texto
+        return render(request,'rfl-arbitraje-consultas-salida.html',context=datos)
 
-    consulta_unida = consulta_tr.union(consulta_rsk, all=True)
 
-    return render(request,'rfl-arbitraje-consultas-salida.html',{'c':consulta_unida})
+
+
     

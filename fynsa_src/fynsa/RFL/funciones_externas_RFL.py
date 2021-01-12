@@ -1,5 +1,5 @@
 from RFL.models import tr,risk,bonos
-from django.db.models import OuterRef,Subquery
+from django.core.exceptions import ObjectDoesNotExist
 
 
 def truncar(numero,decimales):
@@ -32,9 +32,18 @@ def truncar(numero,decimales):
         return numero_final
 
 def actualiza_riesgo():
+    
     for h in tr.objects.all():
-        tr.objects.update(riesgo=bonos.objects.get(instrumento=h.instrumento).rating)
-    return True or False
+        try:
+            
+            riesgo_bono = bonos.objects.get(instrumento=h.instrumento)
+            objeto = tr.objects.filter(instrumento=h.instrumento)
+            objeto.update(rating = riesgo_bono.rating)
+        except bonos.DoesNotExist:
+            print('Bono no encontrado : {}'.format(h.instrumento))
+            pass        
+
+    return True
 
     
 

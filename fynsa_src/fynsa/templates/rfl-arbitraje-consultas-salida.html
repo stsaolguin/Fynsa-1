@@ -14,9 +14,10 @@
         data.addColumn('number','Tir');
         data.addColumn({'tipe':'string','role':'tooltip'});
         data.addColumn({'tipe':'string','role':'style'});
+        data.addColumn({'tipe':'string','role':'annotation'});
         data.addRows([
         {% for r in c %}
-        [{{ r.duracion | safe }},{{ r.tir_media | safe }},'{{ r.instrumento | safe }}, tir:{{ r.tir_media | safe }}, dur:{{ r.duracion | safe }}','{{ r.rol_tr | safe }}' ],
+        [{{ r.duracion | safe }},{{ r.tir_media | safe }},'{{ r.instrumento | safe }}, tir:{{ r.tir_media | safe }}, dur:{{ r.duracion | safe }}','{{ r.rol_tr | safe }}','{{ r.instrumento | safe }}' ],
         {% endfor %}
         ]);
 
@@ -27,6 +28,10 @@
           vAxis: {title: 'Tir'},
           explorer:{actions: ['dragToZoom', 'rightClickToReset']},
           legend:{position: 'bottom', textStyle: {color: 'blue', fontSize: 16}},
+          annotations: {
+            textStyle:
+            {fontSize: 13}
+            },
         };
 
         var chart = new google.visualization.ScatterChart(document.getElementById('chart_div'));
@@ -36,7 +41,11 @@
     </script>
   </head>
   <body>
-    
+    <h2>{{ titulo }}</h2>
+    <h3>Verde : Riskamérica, Rojo : Telerrenta</h3>
+    <h4>Diariamente se borran los datos, el dato de ayer no se puede recuperar</h4>
+    <h4>Monto</h4>
+    <h4>Algo más o calle para siempre.</h4>
     <div id="chart_div" style="width: 1200px; height: 800px;"></div>
   </body>
 </html>

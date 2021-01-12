@@ -1,19 +1,15 @@
 from django import forms
 from RFL.models import archivos_cintas
 
-class lva_1(forms.ModelForm):
-    class Meta:
-        model = archivos_cintas
-        fields =['tr','rsk']
-
-    #tr = forms.FileField(label="Archivo Telerenta (formato RRES)",widget=forms.FileInput(attrs={'class':'form-control mx-2 my-3'}))
-    #rsk = forms.FileField(label="Archivo Riskamérica (formato RESUME)",widget=forms.FileInput(attrs={'class':'form-control mx-2 my-3'}))
+class lva_1_2(forms.Form):
+    tr = forms.FileField(label="Archivo Telerenta (formato RRES), UTF-8 separado por punto y coma",widget=forms.FileInput(attrs={'class':'form-control mx-2 my-3'}))
+    rsk = forms.FileField(label="Archivo Riskamérica (formato RESUME), UTF-8 separado por punto y coma",widget=forms.FileInput(attrs={'class':'form-control mx-2 my-3'}))
 
 
 categorias=[
     ('BB','Bonos Bancarios'),
     ('BE','Bonos Empresa'),
-    ('BU','Bonos Subordinaods'),
+    ('BU','Bonos Subordinados'),
     ('BS','Bonos Securitizados')
     ]
 moneda = [('UF','UF'),('CLP','CLP')]
