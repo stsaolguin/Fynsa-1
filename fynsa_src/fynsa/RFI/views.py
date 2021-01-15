@@ -89,6 +89,12 @@ SELECT * from eq_rfi_generacion(%s,%s) WHERE generacion_total<>0;SELECT 1 as lin
     
     datos['cross'] = tabla
     datos['metas']=rfi_beta.objects.raw(''' select 1 as linea, date_trunc('month',fecha)::date as mensual,sum(ingreso_mesa) as monto from "RFI_rfi_beta" group by mensual order by mensual asc; ''')
+    datos['generacion_mensual'] = rfi_beta.objects.raw('''select 1 as linea,* FROM crosstab('select date_part(''month'',fecha) as mes,date_part(''YEAR'',fecha) as agno,sum(ingreso_mesa)
+from "RFI_rfi_beta"
+group by mes,agno
+order by mes,agno','select m from generate_series(2014,2022) m')
+as ct(mes numeric, "2014" numeric, "2015" numeric,"2016" numeric,"2017" numeric,"2018" numeric,"2019" numeric,
+	  "2020" numeric,"2021" numeric,"2022" numeric) ''')
     return render(request,'comite-rfi-salida.html',datos)
     
 def rfi_comite_cliente(request,cliente):

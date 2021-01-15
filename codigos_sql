@@ -2858,5 +2858,7 @@ $$ LANGUAGE 'plpgsql';
 --SELECT * FROM eqder_provisiones_trader('2020-01-01','2020-12-15','B') order by provision desc;
 
 
-
+back up de la base de datos
+pg_dump --inserts -a -d fynsa_db > fynsa_db_1_a_inserts.txt
+podría llevar -c tambien para limpiar toda la base de datos
 

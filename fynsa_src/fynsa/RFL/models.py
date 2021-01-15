@@ -87,6 +87,7 @@ class bonos(models.Model):
     ''' Este modelo se usa para sacar el riesgo de los bonos y usarlos en cintas '''
     instrumento = models.TextField()
     rating = models.TextField()
+    tipo = models.TextField(default='')
 
 
 

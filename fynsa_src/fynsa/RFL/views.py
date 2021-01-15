@@ -18,14 +18,14 @@ def llegada_rfl_1(request):
     if request.method=='POST':
         formularios = lva_1_2(request.POST,request.FILES)
         if formularios.is_valid():
-            risk.objects.all().delete()
-            tr.objects.all().delete()            
             riskamerica = request.FILES['rsk']
             telerenta = request.FILES['tr']
-            f_tr = io.TextIOWrapper(telerenta.file)
-            f_rsk = io.TextIOWrapper(riskamerica.file)
-            csv_tr = csv.DictReader(f_tr,delimiter=";")
-            csv_rsk = csv.DictReader(f_rsk,delimiter=";")
+            f_tr = io.TextIOWrapper(telerenta.file, encoding='utf-8-sig')
+            f_rsk = io.TextIOWrapper(riskamerica.file,encoding='utf-8-sig')
+            csv_tr = csv.DictReader(f_tr,delimiter=";",dialect='excel')
+            csv_rsk = csv.DictReader(f_rsk,delimiter=";",dialect='excel')
+            risk.objects.all().delete()
+            tr.objects.all().delete()       
             if 'Cantidad' not in csv_tr.fieldnames:
                 csv_tr.fieldnames = ["Instrumento","Tipo","N° Negocios","Cantidad","Reaj.","Monto $","Precio Mayor","Precio Menor","Precio Medio","TIR Mayor","TIR Menor","TIR Media","Duration","Precio Cierre","Fecha de Cierre"]
 

@@ -44,7 +44,19 @@ def actualiza_riesgo():
             pass        
 
     return True
+    
+def actualiza_tipo():
+    
+    for h in tr.objects.all():
+        try:            
+            riesgo_bono = bonos.objects.get(tipo=h.instrumento)
+            objeto = tr.objects.filter(tipo=h.instrumento)
+            objeto.update(tipo = riesgo_bono.tipo)
+        except bonos.DoesNotExist:
+            print('Bono no encontrado : {}'.format(h.instrumento))
+            pass        
 
+    return True
     
 
 
