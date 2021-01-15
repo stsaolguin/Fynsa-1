@@ -2,7 +2,7 @@ from django.http import HttpResponse
 from django.shortcuts import render,redirect
 from django.core.exceptions import ObjectDoesNotExist
 from RFL.formularios_RFL import *
-from RFL.funciones_externas_RFL import truncar,actualiza_riesgo
+from RFL.funciones_externas_RFL import truncar,actualiza_riesgo,actualiza_tipo
 import io,csv
 from RFL.models import tr,risk
 
@@ -54,6 +54,7 @@ def llegada_rfl_1(request):
             f_tr.close()
             f_rsk.close()
             actualiza_riesgo()
+            actualiza_tipo()
             return redirect('consulta_cintas')
         print('formulario NO valido')
     
