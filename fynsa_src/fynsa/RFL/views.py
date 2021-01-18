@@ -3,7 +3,7 @@ from django.shortcuts import render,redirect
 from django.core.exceptions import ObjectDoesNotExist
 from RFL.formularios_RFL import *
 from RFL.funciones_externas_RFL import truncar,actualiza_riesgo,actualiza_tipo
-import io,csv
+import io,csv,re
 from RFL.models import tr,risk
 
 
@@ -49,6 +49,9 @@ def llegada_rfl_1(request):
                 duracion = truncar(s['Duración'],2)
                 tir = truncar(s['Tir Ult. Val.'],2)
                 #print(nemo,tipo,riesgo,moneda,monto_outstanding,duracion,tir)
+                if 'E+' in monto_outstanding:
+                    y = re.sub(r":\d*,?\d+E\+\d+;",";100;",monto_outstanding)
+                    monto_outstanding = y
                 f = risk(nemo=nemo,tipo=tipo,riesgo=riesgo,moneda=moneda,monto_outstanding=monto_outstanding,duracion=duracion,tir=tir)
                 f.save()
             f_tr.close()
