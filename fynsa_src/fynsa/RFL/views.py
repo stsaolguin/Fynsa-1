@@ -50,7 +50,7 @@ def llegada_rfl_1(request):
                 tir = truncar(s['Tir Ult. Val.'],2)
                 #print(nemo,tipo,riesgo,moneda,monto_outstanding,duracion,tir)
                 if 'E+' in monto_outstanding:
-                    y = re.sub(r":\d*,?\d+E\+\d+;",";100;",monto_outstanding)
+                    y = re.sub(r"\d*,?\d+E\+\d+","100",monto_outstanding)
                     monto_outstanding = y
                 f = risk(nemo=nemo,tipo=tipo,riesgo=riesgo,moneda=moneda,monto_outstanding=monto_outstanding,duracion=duracion,tir=tir)
                 f.save()
