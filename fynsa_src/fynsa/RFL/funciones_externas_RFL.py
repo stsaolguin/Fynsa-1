@@ -32,7 +32,6 @@ def truncar(numero,decimales):
         return numero_final
 
 def actualiza_riesgo():
-    
     for h in tr.objects.all():
         try:
             
@@ -46,7 +45,6 @@ def actualiza_riesgo():
     return True
     
 def actualiza_tipo():
-    
     for h in tr.objects.all():
         try:            
             riesgo_bono = bonos.objects.get(instrumento=h.instrumento)
@@ -57,7 +55,19 @@ def actualiza_tipo():
             pass        
 
     return True
-    
+
+def limpia_risk():
+    for h in tr.objects.all():
+        try:            
+            objeto = risk.objects.filter(nemo=h.instrumento)
+            objeto.delete()
+        except bonos.DoesNotExist:
+            print('Bono no encontrado : {}'.format(h.instrumento))
+            pass        
+
+    return True
+
+
 
 
     

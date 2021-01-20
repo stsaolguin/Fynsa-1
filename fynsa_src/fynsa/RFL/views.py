@@ -1,8 +1,9 @@
 from django.http import HttpResponse
 from django.shortcuts import render,redirect
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib import messages
 from RFL.formularios_RFL import *
-from RFL.funciones_externas_RFL import truncar,actualiza_riesgo,actualiza_tipo
+from RFL.funciones_externas_RFL import truncar,actualiza_riesgo,actualiza_tipo,limpia_risk
 import io,csv,re
 from RFL.models import tr,risk
 
@@ -12,7 +13,8 @@ def comite_rfl(request):
 
 def arbitraje_rfl(request):
     fomulario_subida = lva_1_2()
-    return render(request,'rfl-arbitraje.html',{'lva_1':fomulario_subida})
+    f_posiciones = formulario_posiciones()
+    return render(request,'rfl-arbitraje.html',{'lva_1':fomulario_subida,'formulario_posiciones':f_posiciones})
 
 def llegada_rfl_1(request):
     if request.method=='POST':
@@ -28,8 +30,6 @@ def llegada_rfl_1(request):
             tr.objects.all().delete()       
             if 'Cantidad' not in csv_tr.fieldnames:
                 csv_tr.fieldnames = ["Instrumento","Tipo","N° Negocios","Cantidad","Reaj.","Monto $","Precio Mayor","Precio Menor","Precio Medio","TIR Mayor","TIR Menor","TIR Media","Duration","Precio Cierre","Fecha de Cierre"]
-
-            
             for r in csv_tr:
                 a = r['Cantidad']
                 b = a.split(',')[0]
@@ -56,10 +56,13 @@ def llegada_rfl_1(request):
                 f.save()
             f_tr.close()
             f_rsk.close()
+            limpia_risk()
             actualiza_riesgo()
             actualiza_tipo()
             return redirect('consulta_cintas')
-        print('formulario NO valido')
+        else:
+            messages.error(request,'El archivo no es correcto,¿tiene formato utf-8 y separado por ; ? ')
+            return redirect('arbitraje_rfl')
     
     return HttpResponse("Conectado")
 
@@ -83,6 +86,8 @@ def consulta_cintas_proceso(request):
     print(categoria,rating,moneda,duracion_inicial,duracion_final)
     consulta_tr = tr.objects.filter(tipo=categoria,rating=rating, reajuste=moneda,duracion__range=(duracion_inicial,duracion_final)).values('instrumento','tir_media','duracion','rol_tr')
     consulta_rsk = risk.objects.filter(tipo = categoria,riesgo = rating,moneda = moneda,monto_outstanding__gt=0,duracion__range=(duracion_inicial,duracion_final)).values('nemo','tir','duracion','rol_rsk')
+    #acá creamos la consulta que saca de risk los que están en tr
+    
     datos['c'] = consulta_tr.union(consulta_rsk, all=True)
     if consulta_rsk.exists() and consulta_tr.exists():
         return render(request,'rfl-arbitraje-consultas-salida.html',context=datos)
@@ -100,6 +105,11 @@ def consulta_cintas_proceso(request):
         return render(request,'rfl-arbitraje-consultas-salida.html',context=datos)
 
 
+# def llegada_posiciones(request):
+#     if request.method=='POST':
+#         f=formulario_posiciones(request.POST,request.FILES)
+#         if f.is_valid():
+#             f_tr = io.TextIOWrapper(f.file, encoding='utf-8-sig')
 
 
     

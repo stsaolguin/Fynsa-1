@@ -1,10 +1,11 @@
 from django import forms
 from RFL.models import archivos_cintas
+import csv
 
 class lva_1_2(forms.Form):
     tr = forms.FileField(label="Archivo Telerenta (formato RRES), UTF-8 separado por punto y coma",widget=forms.FileInput(attrs={'class':'form-control mx-2 my-3'}))
     rsk = forms.FileField(label="Archivo Riskamérica (formato RESUME), UTF-8 separado por punto y coma",widget=forms.FileInput(attrs={'class':'form-control mx-2 my-3'}))
-
+    
 
 categorias=[
     ('BB','Bonos Bancarios'),
@@ -24,3 +25,5 @@ class formulario_consulta_cintas(forms.Form):
     duracion_final = forms.DecimalField(label="Duración final (000.00)",min_value=0,max_value=999.99,max_digits=5, decimal_places=2,widget=forms.NumberInput(attrs=atributo))
 
 
+class formulario_posiciones(forms.Form):
+    tr = forms.FileField(label="Archivo Posiciones institucionales, UTF-8 separado por punto y coma",widget=forms.FileInput(attrs={'class':'form-control mx-2 my-3'}))
