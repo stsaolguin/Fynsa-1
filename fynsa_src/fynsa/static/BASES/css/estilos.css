@@ -1,3 +1,7 @@
+/* estilos generales */
+.dropdown.menu > li > a:hover{
+    background-color: blueviolet;
+}
 
 
 .username{

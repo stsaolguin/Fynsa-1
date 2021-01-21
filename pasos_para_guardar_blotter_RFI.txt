@@ -22,9 +22,30 @@ where fecha between '2020-12-01' and '2020-12-07' and (
 or (b.categoria='BKR' and c.categoria='DLR')
 or (b.categoria='BKR' and c.categoria='BKR')
 or (b.categoria='DLR' and c.categoria='DLR')
-)
+);
+update "RFI_rfi_beta" set papel=replace(papel,'½','1/2');
+update "RFI_rfi_beta" set papel=replace(papel,'¾','3/4');
+update "RFI_rfi_beta" set papel=replace(papel,'⅞','7/8');
+update "RFI_rfi_beta" set papel=replace(papel,'⅜','3/8');
+update "RFI_rfi_beta" set papel=replace(papel,'¼','1/4');
+update "RFI_rfi_beta" set papel=replace(papel,'⅝','5/8');
+
 
 ver si hay clientes nuevos. Hay que hacer lo mismo por el lado comprador
 select comprador from "RFI_rfi_beta" where comprador not in (select fondo from "RFI_clientes_rfi");
-select vendedor from "RFI_rfi_beta" where vendedor not in (select fondo from "RFI_clientes_rfi")
+select vendedor from "RFI_rfi_beta" where vendedor not in (select fondo from "RFI_clientes_rfi");
+
+Expresiones regulares para guardar el blotter:
+replace('.','')
+replace(',','.')
+;\s+; por ;; borra los espacios entre ;
+;\s+ reemplaza por ; saca los espacios despues de ;
+\s+; lo mismo pero para el otro lado
+
+
+
+
+
+
+
  

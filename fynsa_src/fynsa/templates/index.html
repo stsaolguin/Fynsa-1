@@ -13,7 +13,6 @@
     <script src="{% static 'BASES/js/jquery-3.4.1.slim.min.js' %}"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="{% static 'BASES/js/js_bs4/bootstrap.min.js' %}"></script>
-    
     <title>Fynsa - Stats</title>
 
 </head>
@@ -21,7 +20,7 @@
                 <div class="jumbotron">
                    <hr class="my-4">
                     </div>
-                    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                    <nav class="navbar navbar-expand-lg navbar-light" style ="background-color:#B1DAFC;">
                         <div class="collapse navbar-collapse" id="navbarSupportedContent">
                                         <ul class="navbar-nav mr-auto">
                                                 {% if request.user|tiene_grupo:"BASES" %}
@@ -49,7 +48,7 @@
                                                         <div class="dropdown-menu" aria-labelledby="rfl_dropdown">
                                                                 <a class="dropdown-item" href="{% url 'arbitraje_rfl' %}">Cintas Cargador</a>
                                                                 <a class="dropdown-item" href="{% url 'consulta_cintas' %}">Cintas Consulta</a>
-                                                                <a class="dropdown-item" href="#">Comité - En desarrollo</a>
+                                                                <a class="dropdown-item disabled" href="#" >Comité - En desarrollo</a>
                                                                 
                                                         </div>
                                                 </li>
@@ -70,8 +69,9 @@
                                 
                         </div>
                         </nav>
-        
-        <div class="username">Hola, {{ user.first_name }} <br> </div> 
+        <div class="container mb-1">
+        <div class="d-flex flex-row-reverse username">Hola, {{ user.first_name }} <br> </div> 
+        </div>
                                
        
      {% block contenido %}{% endblock %}
