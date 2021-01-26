@@ -5,6 +5,9 @@
     <div class="row">
     <h1>Consultas Cintas</h1>
     </div>
+    <div class="row">
+             <div class="d-flex justify-content-end small mb-3" >Última actualización el dia {{ultima_subida.fecha}} por {{ultima_subida.usuario}} </div>
+    </div>
         <div class="row">
                 <form action="{% url 'consulta_cintas_proceso' %}" method="GET" target="_blank">
                     <div class="form-group form-inline">

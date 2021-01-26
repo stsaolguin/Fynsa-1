@@ -1,14 +1,18 @@
 {% extends "index.html" %}
 
+
 {% block contenido %}
 <div class="container">
     <div class="row">
-    <h1>Cargador</h1>
-    {% if mensaje %}
-        {% for m in mensaje%}
-            {{m}}
-        {% endfor %}
-    {% endif %}
+            <h1>Cargador</h1>
+            {% if mensaje %}
+                {% for m in mensaje%}
+                    {{m}}
+                {% endfor %}
+            {% endif %}
+    </div>
+    <div class="row">
+             <div class="d-flex justify-content-end small mb-3" >Última actualización el dia {{ ultima_subida.fecha }} por {{ultima_subida.usuario}} </div>
     </div>
         <div class="row">
         

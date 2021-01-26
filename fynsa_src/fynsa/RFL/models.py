@@ -89,5 +89,11 @@ class bonos(models.Model):
     rating = models.TextField()
     tipo = models.TextField(default='')
 
+class actividad(models.Model):
+    '''Este modelo es para poner fecha de ultima subida y timestamp '''
+    name = models.TextField()
+    accion = models.TextField()
+    usuario = models.TextField()
+    fecha = models.DateTimeField(auto_now=True)
 
 

@@ -4,6 +4,7 @@ from django.shortcuts import render,redirect
 from django.core import serializers
 from BASES.models import bases,facturas_bases
 from .formularios_bases import *
+from RFL.models import actividad
 import csv
 
 
@@ -85,7 +86,8 @@ order by fecha asc''',[fecha_inicial,fecha_final])
         #NO OPERARON Y GENERACION 0 HAY QUE REVISAR
         datos['no_operaron'] = bases.objects.raw(''' SELECT 1 as linea, nombre FROM "BASES_clientes" where factura=false and nombre not in (SELECT nombre FROM eq_der_generacion_total_consolidad(%s,%s) where total<>0) order by nombre asc ''',[fecha_inicial,fecha_final])        
         datos['facturas'] =facturas_bases.objects.filter(fecha_emision__gte=fecha_inicial)
-
+        timbre = actividad(name='BASES',accion='generacion_comite',usuario=request.user)
+        timbre.save()
         return render(request,'salida-bases_copy.html',context=datos)
 
     return render(request,'salida-bases.html',{})
@@ -143,6 +145,9 @@ order by fecha asc;''',[cliente,cliente,cliente,cliente,fecha_inicial,fecha_fina
         salida.append([r.fecha,r.otc_tr,r.nemo,r.monto,r.tipo_de_pago,r.buy,r.seller,r.trader_buy,r.trader_seller,r.fe_buyer_clp,r.fe_seller_clp])
     writer.writerows(salida)
 
+    timbre = actividad(name='BASES',accion='generacion_conciliaciones',usuario=request.user)
+    timbre.save()
+
     return response
 
 
@@ -162,6 +167,8 @@ select 1 as linea,*,sum(porcentaje) over (order by porcentaje desc) as porcentaj
     for r in consolidado:
         salida.append([r.nombre,r.gen_depo,r.gen_bases,r.prov_bases,r.prov_depos,r.total,r.porcentaje,r.porcentaje_acumulado])
     writer.writerows(salida)
+    timbre = actividad(name='BASES',accion='generacion_consolidada',usuario=request.user)
+    timbre.save()
     
     return response
 
@@ -184,6 +191,8 @@ def monto_mensual_cliente_views(request):
     for r in montos:
         salida.append([r.cliente,r.enero,r.febrero,r.marzo,r.abril,r.mayo,r.junio,r.julio,r.agosto,r.septiembre,r.octubre,r.noviembre,r.diciembre])
     writer.writerows(salida)
+    timbre = actividad(name='BASES',accion='generacion_montos_mensuales',usuario=request.user)
+    timbre.save()
     return response
 
 def gen_mensual_cliente_views(request):
@@ -200,6 +209,8 @@ def gen_mensual_cliente_views(request):
     for r in generacion:
         salida.append([r.cliente,r.gen_enero,r.gen_febrero,r.gen_marzo,r.gen_abril,r.gen_mayo,r.gen_junio,r.gen_julio,r.gen_agosto,r.gen_septiembre,r.gen_octubre,r.gen_noviembre,r.gen_diciembre])
     writer.writerows(salida)
+    timbre = actividad(name='BASES',accion='generacion_generaciones_mensuales',usuario=request.user)
+    timbre.save()
     return response
 
 
@@ -213,5 +224,7 @@ def salida_bases_institucion_trader(request):
     datos['depo_prov'] = bases.objects.raw(''' SELECT 1 as linea, * FROM eqder_provisiones_trader(%s,%s,'F') order by provision desc; ''',[fecha_inicial,fecha_final])
     datos['base_tasa'] = bases.objects.raw(''' SELECT 1 as linea, * FROM eqder_generacion_tasas_trader(%s,%s,'B') order by util_tasa desc; ''',[fecha_inicial,fecha_final])
     datos['depo_tasa'] = bases.objects.raw(''' SELECT 1 as linea, * FROM eqder_generacion_tasas_trader(%s,%s,'F') order by util_tasa desc; ''',[fecha_inicial,fecha_final])
+    timbre = actividad(name='BASES',accion='generacion_institucion_trader',usuario=request.user)
+    timbre.save()
     return render(request,'salida-bases-institucion-trader.html',context=datos)         
     

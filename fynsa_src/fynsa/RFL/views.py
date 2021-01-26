@@ -5,7 +5,7 @@ from django.contrib import messages
 from RFL.formularios_RFL import *
 from RFL.funciones_externas_RFL import truncar,actualiza_riesgo,actualiza_tipo,limpia_risk
 import io,csv,re
-from RFL.models import tr,risk
+from RFL.models import tr,risk,actividad
 
 
 def comite_rfl(request):
@@ -14,7 +14,8 @@ def comite_rfl(request):
 def arbitraje_rfl(request):
     fomulario_subida = lva_1_2()
     f_posiciones = formulario_posiciones()
-    return render(request,'rfl-arbitraje.html',{'lva_1':fomulario_subida,'formulario_posiciones':f_posiciones})
+    ultima_subida = actividad.objects.filter(accion='carga_de_datos').latest('fecha')
+    return render(request,'rfl-arbitraje.html',{'lva_1':fomulario_subida,'formulario_posiciones':f_posiciones,'ultima_subida':ultima_subida})
 
 def llegada_rfl_1(request):
     if request.method=='POST':
@@ -59,6 +60,8 @@ def llegada_rfl_1(request):
             limpia_risk()
             actualiza_riesgo()
             actualiza_tipo()
+            timbre = actividad(name='nombre_del_boton',accion='carga_de_datos',usuario=request.user)
+            timbre.save()
             return redirect('consulta_cintas')
         else:
             messages.error(request,'El archivo no es correcto,¿tiene formato utf-8 y separado por ; ? ')
@@ -68,7 +71,8 @@ def llegada_rfl_1(request):
 
 def consulta_cintas(request):
     f_consulta_cintas = formulario_consulta_cintas()
-    return render(request,'rfl-arbitraje-consultas.html',{'formulario_consulta_cintas':f_consulta_cintas})
+    ultima_subida = actividad.objects.filter(accion='carga_de_datos').latest('fecha')
+    return render(request,'rfl-arbitraje-consultas.html',{'formulario_consulta_cintas':f_consulta_cintas,'ultima_subida':ultima_subida})
 
 
 def consulta_cintas_proceso(request):
@@ -80,15 +84,14 @@ def consulta_cintas_proceso(request):
     duracion_final = request.GET.get('duracion_final')
     texto = "Bonos {} en {} {} duración entre {} y {}".format(categoria,moneda,rating,duracion_inicial,duracion_final)
     datos['titulo'] = texto 
-    
-    #Falta pensar en alguna forma de rellenar los ratings de riesgo
-
-    print(categoria,rating,moneda,duracion_inicial,duracion_final)
     consulta_tr = tr.objects.filter(tipo=categoria,rating=rating, reajuste=moneda,duracion__range=(duracion_inicial,duracion_final)).values('instrumento','tir_media','duracion','rol_tr')
     consulta_rsk = risk.objects.filter(tipo = categoria,riesgo = rating,moneda = moneda,monto_outstanding__gt=0,duracion__range=(duracion_inicial,duracion_final)).values('nemo','tir','duracion','rol_rsk')
     #acá creamos la consulta que saca de risk los que están en tr
     
     datos['c'] = consulta_tr.union(consulta_rsk, all=True)
+    ultima_subida = actividad.objects.filter(accion='carga_de_datos').latest('fecha')
+    timbre = actividad(name='RFL',accion='consulta_cintas',usuario=request.user)
+    timbre.save()
     if consulta_rsk.exists() and consulta_tr.exists():
         return render(request,'rfl-arbitraje-consultas-salida.html',context=datos)
     elif consulta_rsk.exists() and consulta_tr.exists()==False:

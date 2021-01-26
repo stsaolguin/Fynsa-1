@@ -6,7 +6,7 @@ import csv
 class lva_1_2(forms.Form):
     tr = forms.FileField(label="Archivo Telerenta (formato RRES), UTF-8 separado por punto y coma",widget=forms.FileInput(attrs={'class':'form-control mx-2 my-3'}))
     rsk = forms.FileField(label="Archivo Riskamérica (formato RESUME), UTF-8 separado por punto y coma",widget=forms.FileInput(attrs={'class':'form-control mx-2 my-3'}))
-    
+    #validar si los archivos son csv utf8 y tienen los campos correctos
 
 categorias=[
     ('BB','Bonos Bancarios'),
@@ -25,11 +25,6 @@ class formulario_consulta_cintas(forms.Form):
     duracion_inicial = forms.DecimalField(label="Duración inicial (000.00)",min_value=0,max_value=999.99,max_digits=5, decimal_places=2,widget=forms.NumberInput(attrs=atributo))
     duracion_final = forms.DecimalField(label="Duración final (000.00)",min_value=0,max_value=999.99,max_digits=5, decimal_places=2,widget=forms.NumberInput(attrs=atributo))
 
-    def clean_duracion_inicial(self):
-        d_inicial = self.cleaned_data['duracion_inicial']
-        d_final = self.cleaned_data['duracion_final']
-        if d_inicial >= d_final:
-            raise ValidationError("La duración inicial no puede ser mayor que la duración final!!")
-
+    
 class formulario_posiciones(forms.Form):
     tr = forms.FileField(label="Archivo Posiciones institucionales, UTF-8 separado por punto y coma",widget=forms.FileInput(attrs={'class':'form-control mx-2 my-3'}))
