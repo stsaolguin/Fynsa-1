@@ -34,7 +34,7 @@ def rfi_comite_proceso(request):
     suma_finales = 0
     suma_brokers = 0
     suma_banco_brokers = 0
-    generacion_total = 0
+    #generacion_total = 0
     fechas = request.GET.copy()
     fecha_inicial = parse_date(fechas['fecha_inicial'])
     fecha_final = parse_date(fechas['fecha_final'])
@@ -53,8 +53,11 @@ SELECT * from eq_rfi_generacion(%s,%s) WHERE generacion_total<>0;SELECT 1 as lin
     datos['generacion_finales'] = suma_finales
     datos['generacion_brokers'] = suma_brokers
     datos['generacion_bancos_brokers'] = suma_banco_brokers
-    datos['generacion_total'] = suma_finales + suma_brokers + suma_banco_brokers
-
+    
+    generacion_total = rfi_beta.objects.raw('''select 1 as linea, sum(ingreso_mesa) as total from "RFI_rfi_beta" where fecha between %s and %s ''',[fecha_inicial,fecha_final])
+    
+    for z in generacion_total:
+        datos['generacion_total'] = z.total
     datos['cntry_of_risk'] = rfi_beta.objects.raw(''' select 1 as linea,country_of_risk as pais, count(papel) as conteo,sum(ingreso_mesa) as generacion from "RFI_rfi_beta" where fecha between %s and %s group by 2 order by generacion desc''',[fecha_inicial,fecha_final])
     datos['series'] = rfi_beta.objects.raw(''' select 1 as linea, fecha, round(avg(spread_mesa),2) as spread, sum(nominales) as nominales, sum(ingreso_mesa) as generacion  from "RFI_rfi_beta" where fecha between %s and %s group by fecha order by fecha desc ''',[fecha_inicial,fecha_final])
     datos['generacion_categoria'] = rfi_beta.objects.raw(''' select 1 as linea,categoria,count(categoria) as conteo,sum(generacion_total) as generacion from "RFI_rfi_generacion_comite_temporal" where generacion_total<>0 group by categoria ''',[fecha_inicial,fecha_final])
@@ -66,7 +69,15 @@ SELECT * from eq_rfi_generacion(%s,%s) WHERE generacion_total<>0;SELECT 1 as lin
     #abajo se llama la funcion con el crosstab tipo json desde postgresql
     cross = rfi_beta.objects.raw(''' select 1 as linea, * from eq_rfi_generacion_crosstab_3() ''')  
     #acá le damos algo de formato
-
+    datos['operaciones_entre_brks'] = rfi_beta.objects.raw('''select 1 as linea,a.fecha,a.papel,a.comprador,a.vendedor,a.spread_mesa,a.ingreso_mesa,b.categoria,c.categoria from "RFI_rfi_beta" a 
+JOIN "RFI_clientes_rfi" b ON a.comprador=b.fondo
+JOIN "RFI_clientes_rfi" c ON a.vendedor=c.fondo
+where fecha between %s and %s and (
+	(b.categoria='DLR' and c.categoria='BKR')
+or (b.categoria='BKR' and c.categoria='DLR')
+or (b.categoria='BKR' and c.categoria='BKR')
+or (b.categoria='DLR' and c.categoria='DLR')
+); ''',[fecha_inicial,fecha_final])
     encabezados_query = comite.objects.distinct('pais').values_list('pais',flat=True)
     for r in cross:
         resultado = r.datos 

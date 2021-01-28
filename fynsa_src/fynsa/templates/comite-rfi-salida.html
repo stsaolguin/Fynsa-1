@@ -3,13 +3,17 @@
 {% block contenido %}
 <div class="contenedor">
     <div id="Titulo_principal">Generación RFI entre el {{ fecha_inicial }} y el {{ fecha_final }}</div>
-    <div id="Titulo_secundario">Generación Total : USD {{ generacion_total | safe }}
-      <br><small>No incluye las operaciones entre brokers.</small>
+    <div id="Titulo_secundario">Generación Total : USD {{ generacion_total }}
+          
     </div>
     <div class="rfi_generacion_torta"><div id="rfi_generacion_torta"></div></div>
     <div class="rfi_generacion_torta_tabla"><div id="rfi_generacion_torta_tabla"></div></div>
     <div class="rfi_generacion"><div id="rfi_generacion"></div></div>
     <div class="rfi_generacion_tabla"><div id="rfi_generacion_tabla"></div></div>
+    <div class="generacion_brks">
+          <div class="h4">Generacion entre brokers o dealers</div>
+          <div id="rfi_generacion_brks"></div>
+    </div>
 
     <div class="rfi_generacion_categoria_donut"><div id="rfi_generacion_categoria_donut"></div></div>
     <div class="rfi_generacion_categoria_tabla_donut"><div id="rfi_generacion_categoria_tabla_donut"></div></div>
@@ -21,8 +25,11 @@
     <div class="rfi_country_torta"><div id="rfi_country_torta"></div></div>
     <div class="rfi_country_geo_torta"><div id="rfi_country_geo_torta"></div></div>
     <div class="rfi_country_torta_tabla"><div id="rfi_country_torta_tabla"></div></div>
-    <div class="rfi_tabla_papeles"><div id="tabla_papeles_id"></div></div>
-    <div class="rfi_tabla_brk">Brokers:<br><div id="tabla_brk_id"></div></div>
+    <div class="rfi_tabla_papeles">
+        <div class="h4">Los papeles con mejor generación son:</div>
+        <div id="tabla_papeles_id"></div>
+    </div>
+    <div class="rfi_tabla_brk"><div class='h4'>Montos intermediados por dealers y/o Brks</div><div id="tabla_brk_id"></div></div>
 
     <div class="series">
           <div id="rfi_serie_spread"></div>
@@ -55,6 +62,7 @@
         google.charts.setOnLoadCallback(TablaPapeles);
         google.charts.setOnLoadCallback(CategoriaPaisCrosstab);
         google.charts.setOnLoadCallback(Metas);
+        google.charts.setOnLoadCallback(generacion_brks);
         
 
 function rfi_generacion() {
@@ -216,29 +224,50 @@ function rfi_generacion() {
         ['Generación Brokers',{{ generacion_brokers | safe }}],
         ['Generación Banco Brokers',{{ generacion_bancos_brokers | safe }}],
       ]);
-      var options = {
-          title:"Generación por tipo de cliente.",
-          titleTextStyle:{fontSize:20},
-          height:400,
-          chartArea : {
-            left:20, top:100, width:'100%', height:'100%',
-            },
-            pieSliceText:'value-and-percentage',
-          colors :['#FF0D0D','#708BB1','#69B34C'],
+      var numeros = data.getDistinctValues(1);
+        for (i=0; i<numeros.length; i++){
+            if (numeros[i] < 0 ){
+                var options = {
+                                title:"Generación por tipo de cliente.",
+                                titleTextStyle:{fontSize:20},
+                                height:400,
+                                chartArea : {
+                                    //backgroundColor:'red',
+                                    width:'60%'},
+                                colors :['gold','silver','red'],
+                                bar : {groupWidth : '20%'},
+                                
+                                };
+                var chart = new google.visualization.ColumnChart(document.getElementById('rfi_generacion_torta'));
+                break;
+            } else {
+                var options = {
+                                title:"Generación por tipo de cliente.",
+                                titleTextStyle:{fontSize:20},
+                                height:400,
+                                chartArea : {
+                                    left:20, top:100, width:'100%', height:'100%',
+                                    },
+                                    pieSliceText:'value-and-percentage',
+                                colors :['#FF0D0D','#708BB1','#69B34C'],
+
+                                };
+                var chart = new google.visualization.PieChart(document.getElementById('rfi_generacion_torta'));
+            
 
         };
+        };
         var options_tabla={
-          sortAscending:false,
-        sortColumn:1,
-        }
-      var chart = new google.visualization.PieChart(document.getElementById('rfi_generacion_torta'));
+                    sortAscending:false,
+                    sortColumn:1,
+                    }
+      
       var tabla = new google.visualization.Table(document.getElementById('rfi_generacion_torta_tabla'));
       chart.draw(data,options);
       tabla.draw(data,options_tabla);
 
-
     };
-
+      
     function rfi_countryofrisk_torta(){
       var data = new google.visualization.DataTable();
       data.addColumn('string','Country of Risk');
@@ -372,6 +401,28 @@ function rfi_generacion() {
      
       var metas = new google.visualization.ComboChart(document.getElementById('metas_div'));
       metas.draw(data,options);
+
+    };
+
+    function generacion_brks(){
+      var data = new google.visualization.DataTable();
+      data.addColumn('string','fecha');
+      data.addColumn('string','papel');
+      data.addColumn('string','comprador');
+      data.addColumn('string','vendedor');
+      data.addColumn('string','spread mesa');
+      data.addColumn('string','ingreso mesa');
+      data.addColumn('string','categoria');
+      data.addColumn('string','categoria');
+      data.addRows([
+      {% for r in operaciones_entre_brks %}
+      [' {{ r.fecha | safe }} ', ' {{ r.papel | safe }} ', '{{ r.comprador | safe }} ', '{{ r.vendedor | safe }} ', '{{ r.spread_mesa | safe }}', '{{ r.ingreso_mesa | safe }}','{{ r.categoria | safe }} ','{{ r.categoria | safe }} '],
+      {% endfor %}
+      ]);
+      
+      var gen_brk = new google.visualization.Table(document.getElementById('rfi_generacion_brks'));
+      gen_brk.draw(data);
+
 
     };
   
