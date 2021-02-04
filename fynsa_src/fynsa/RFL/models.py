@@ -56,7 +56,7 @@ class hd(models.Model):
     operador = models.ForeignKey(operador,on_delete=models.CASCADE,null=True)
 
 class posiciones(models.Model):
-    fuente_del_instrumento = models.TextField(choices=[('AFP','AFP'),('FFMM','FFMM'),('FIP','FIP'),('FNR','FNR'),('FYNSA','FYNSA'),('SEG_G','SEG_G'),('SEG_V','SEG_V')])
+    fuente_del_instrumento = models.TextField()
     institucion = models.TextField()
     nemotecnico = models.TextField()
     valor_nominal = models.BigIntegerField()
@@ -65,7 +65,7 @@ class posiciones(models.Model):
     maturity = models.DateField()
     tipo_instrumento = models.TextField()
     crncy = models.TextField()
-    fecha_subida=models.DateField(default='0')
+    fecha_subida=models.DateField(auto_now=True)
 
 class clientes_rfl(models.Model):
     cliente = models.TextField()
