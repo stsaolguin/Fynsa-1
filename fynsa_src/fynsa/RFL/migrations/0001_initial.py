@@ -64,7 +64,7 @@ class Migration(migrations.Migration):
                 ('maturity', models.DateField()),
                 ('tipo_instrumento', models.TextField()),
                 ('crncy', models.TextField()),
-                ('fecha_subida', models.DateField(default='0')),
+                ('fecha_subida', models.DateField()),
             ],
         ),
         migrations.CreateModel(
