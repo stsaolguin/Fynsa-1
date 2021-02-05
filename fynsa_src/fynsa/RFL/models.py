@@ -56,16 +56,16 @@ class hd(models.Model):
     operador = models.ForeignKey(operador,on_delete=models.CASCADE,null=True)
 
 class posiciones(models.Model):
-    fuente_del_instrumento = models.TextField()
-    institucion = models.TextField()
-    nemotecnico = models.TextField()
-    valor_nominal = models.BigIntegerField()
-    marca = models.DecimalField(max_digits=4,decimal_places=2)
-    dur_rskam = models.DecimalField(max_digits=5,decimal_places=3)
-    maturity = models.DateField()
-    tipo_instrumento = models.TextField()
-    crncy = models.TextField()
-    fecha_subida=models.DateField(auto_now=True)
+    fuente_del_instrumento = models.TextField(null=True,blank=True)
+    institucion = models.TextField(null=True,blank=True)
+    nemotecnico = models.TextField(null=True,blank=True)
+    valor_nominal = models.BigIntegerField(null=True,blank=True)
+    marca = models.DecimalField(max_digits=4,decimal_places=2,null=True,blank=True)
+    dur_rskam = models.DecimalField(max_digits=5,decimal_places=3,null=True,blank=True)
+    maturity = models.DateField(null=True,blank=True)
+    tipo_instrumento = models.TextField(null=True,blank=True)
+    crncy = models.TextField(null=True,blank=True)
+    fecha_subida=models.DateField(auto_now=True,null=True,blank=True)
 
 class clientes_rfl(models.Model):
     cliente = models.TextField()
