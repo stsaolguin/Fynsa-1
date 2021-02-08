@@ -7,6 +7,7 @@ from RFL.funciones_externas_RFL import truncar,actualiza_riesgo,actualiza_tipo,l
 import io,csv,re
 from RFL.models import tr,risk,actividad,posiciones
 from django.utils.dateparse import parse_date
+from django.db.models import Sum
 
 
 def comite_rfl(request):
@@ -117,50 +118,59 @@ def llegada_posiciones(request):
             texto = p.read()
             #texto = texto.replace('#N/A','')
             texto = re.sub('\s?;\s?',';',texto)
-            texto = texto.replace('N/A','')
-            texto = re.sub('#N\/A\s[a-zA-Z]+[\s\/][a-zA-Z]+','',texto)
-            texto = re.sub('#N/.','',texto)
-            texto = re.sub('#\s\w+\s\w+','',texto)
+            #texto = texto.replace('N/A','null')
+            texto = texto.replace(';-;',';null;')
+            texto = re.sub('#N\/A\s[a-zA-Z]+[\s\/][a-zA-Z]+','null',texto)
+            texto = re.sub('#N/.','null',texto)
+            texto = re.sub('#\s\w+\s\w+','null',texto)
+            texto = re.sub('#¿\D+\?','null',texto)
             texto = re.sub('(;\d+)\.','\\1',texto)
             texto = re.sub('(;\d+)\.','\\1',texto)
             texto = re.sub('(;\d+)\.','\\1',texto)
             texto = re.sub('(;\d+)\.','\\1',texto)
             texto = texto.replace(',','.')
             texto = re.sub(';-\.',';-0.',texto)
+            texto = re.sub(';\.',';0.',texto)
+            texto = texto.replace(';N/A;',';null;')
+            texto = re.sub(';\s*-\s*;',';null;',texto)
             p_csv = csv.DictReader(io.StringIO(texto),delimiter=";",dialect='excel')
             #encabezados = ['fuente_del_instrumento','institucion','nemotecnico','valor_nominal','marca','dur_rskam', 'maturity','tipo_instrumento','crncy','fecha_subida']
             encabezados = ['fuente_del_instrumento','institucion','nemotecnico','valor_nominal','marca','dur_rskam','plazo','clasificacion','country_of_risk','security_name','maturity','tir_de_compra','tipo_instrumento','dur_mid_semmi_ann','crncy','bb_composite']
             p_csv.fieldnames = encabezados
             next(p_csv)
             for r in p_csv:
-                print(r)
-                fuente = r['fuente_del_instrumento']
-                inst = r['institucion']
-                nemo = r['nemotecnico']
-                nominales = truncar(r['valor_nominal'],0)
-                marcaje = truncar(r['marca'],2)
-                dur = truncar(r['dur_rskam'],2)
-                matu = parse_date(r['maturity'])
-                tipo = r['tipo_instrumento']
-                moneda =  r['crncy']
-                pos_objeto=posiciones(fuente_del_instrumento = fuente,institucion = inst ,nemotecnico = nemo,valor_nominal = nominales, marca = marcaje,dur_rskam =dur ,maturity = matu,tipo_instrumento = tipo ,crncy = moneda)
-                pos_objeto.save()
-                
-
-
-                                        
-                
+                try:
+                    #print(r)
+                    fuente = r['fuente_del_instrumento']
+                    inst = r['institucion']
+                    nemo = r['nemotecnico']
+                    nominales = 0 if r['valor_nominal']=='null' else truncar(r['valor_nominal'],0)
+                    marcaje = 00.00 if r['marca']=='null' or float(r['marca'])>99.99  else truncar(r['marca'],2)
+                    
+                    #acá van un if para la marca
+                    dur = 00.000 if r['dur_rskam']=='null' else truncar(r['dur_rskam'],3)
+                    matu = parse_date(r['maturity'])
+                    tipo = r['tipo_instrumento']
+                    moneda =  r['crncy']
+                    pos_objeto=posiciones(fuente_del_instrumento = fuente,institucion = inst ,nemotecnico = nemo,valor_nominal = nominales, marca = marcaje,dur_rskam =dur ,maturity = matu,tipo_instrumento = tipo ,crncy = moneda)
+                    pos_objeto.save()
+                except ValidationError:
+                    print('ValidationError',r)
+                    
+                except ValueError:
+                    print('ValueError',r)
+                    
             p.close()
-            
-            
+            return redirect('consulta_cintas')
 
-            return HttpResponse('PASAMOS!')
+def consulta_cintas_proceso_grafico(request,bono):
+    datos = {}
+    datos['tenedores'] = posiciones.objects.filter(nemotecnico = bono).values('fuente_del_instrumento','institucion').annotate(monto_total=Sum('valor_nominal')).order_by('fuente_del_instrumento','institucion')
+    datos['bono'] = bono
+    return render(request,'rfl-arbitraje-consultas-salida-grafico.html',context=datos)
 
 
-#     if request.method=='POST':
-#         f=formulario_posiciones(request.POST,request.FILES)
-#         if f.is_valid():
-#             f_tr = io.TextIOWrapper(f.file, encoding='utf-8-sig')
+
 
 
     

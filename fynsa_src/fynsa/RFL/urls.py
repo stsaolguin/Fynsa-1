@@ -9,4 +9,5 @@ urlpatterns = [
     path('arbitraje/llegada-posiciones', views.llegada_posiciones, name='llegada_posiciones'),
     path('arbitraje/cintas', views.consulta_cintas, name='consulta_cintas'),
     path('arbitraje/cintas/consulta', views.consulta_cintas_proceso, name='consulta_cintas_proceso'),
+    path('arbitraje/cintas/consulta/<str:bono>', views.consulta_cintas_proceso_grafico, name='consulta_cintas_proceso_grafico'),
     ]
