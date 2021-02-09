@@ -63,6 +63,7 @@ def llegada_rfl_1(request):
             actualiza_tipo()
             timbre = actividad(name='nombre_del_boton',accion='carga_de_datos',usuario=request.user)
             timbre.save()
+            messages.info(request,'Cargado exitosamente!')
             return redirect('consulta_cintas')
         else:
             messages.error(request,'El archivo no es correcto,¿tiene formato utf-8 y separado por ; ? ')
@@ -161,8 +162,9 @@ def llegada_posiciones(request):
                     
                 except ValueError:
                     print('ValueError',r)
-                    
+            
             p.close()
+            posiciones.objects.filter(institucion='na').delete()
             return redirect('consulta_cintas')
 
 def consulta_cintas_proceso_grafico(request,bono):
