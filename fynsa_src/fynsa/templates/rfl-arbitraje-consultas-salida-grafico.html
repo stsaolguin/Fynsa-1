@@ -1,0 +1,33 @@
+{% extends 'index.html' %}
+
+{% block contenido %}
+<div class="container">
+<div class="col-lg-12">
+    <div class="row">
+        <div class="display-4">Quién tiene el {{ bono }}?</div>
+    </div>
+</div>
+<div class="row">
+    <p>El Monto corresponde a la suma total de los nominales por institución</p>
+</div>
+<table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Origen</th>
+                <th scope="col">Institucion</th>
+                <th scope="col">SUMA del Monto</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for f in tenedores %}
+        <tr>
+            <td>{{ f.fuente_del_instrumento }} </td>
+            <td>{{ f.institucion }} </td>
+            <td>{{ f.monto_total }} </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+</table>
+
+</div>
+{% endblock contenido%}

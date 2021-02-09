@@ -1,0 +1,7 @@
+formatea posiciones:
+reemplazar('','')
+
+' ' por ' ' reemplazar el caracter extraño por espacios en blancos normales
+\s?;\s? por ;
+'#N/D' por nada
+#N\/A\s[a-zA-Z]+[\s\/][a-zA-Z]+ por nada

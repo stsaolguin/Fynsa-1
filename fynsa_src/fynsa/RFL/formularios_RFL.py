@@ -27,4 +27,4 @@ class formulario_consulta_cintas(forms.Form):
 
     
 class formulario_posiciones(forms.Form):
-    tr = forms.FileField(label="Archivo Posiciones institucionales, UTF-8 separado por punto y coma",widget=forms.FileInput(attrs={'class':'form-control mx-2 my-3'}))
+    pos = forms.FileField(label="Archivo Posiciones institucionales, UTF-8 separado por punto y coma",widget=forms.FileInput(attrs={'class':'form-control mx-2 my-3'}))

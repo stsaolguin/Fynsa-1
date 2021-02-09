@@ -2,6 +2,13 @@
 
 {% block contenido %}
 <div class="container">
+    <div class="row">   
+                        {% if messages %}
+                            {% for m in messages%}
+                                    {{m}}
+                            {% endfor %}
+                        {% endif %}
+    </div>
     <div class="row">
     <h1>Consultas Cintas</h1>
     </div>
