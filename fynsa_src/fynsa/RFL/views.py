@@ -113,6 +113,7 @@ def llegada_posiciones(request):
     if request.method=='POST':
         f_posiciones = formulario_posiciones(request.POST,request.FILES)
         if f_posiciones.is_valid():
+
             archivo_posiciones = request.FILES['pos']
             p = io.TextIOWrapper(archivo_posiciones.file, encoding='utf-8-sig')
             texto = p.read()
@@ -138,6 +139,7 @@ def llegada_posiciones(request):
             encabezados = ['fuente_del_instrumento','institucion','nemotecnico','valor_nominal','marca','dur_rskam','plazo','clasificacion','country_of_risk','security_name','maturity','tir_de_compra','tipo_instrumento','dur_mid_semmi_ann','crncy','bb_composite']
             p_csv.fieldnames = encabezados
             next(p_csv)
+            posiciones.objects.delete()
             for r in p_csv:
                 try:
                     #print(r)
