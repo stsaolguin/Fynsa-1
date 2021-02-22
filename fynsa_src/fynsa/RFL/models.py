@@ -44,8 +44,8 @@ class lva(models.Model):
     unidad_reaj = models.CharField(max_length=3)
     precio = models.DecimalField(max_digits=8, decimal_places=5)
     plazo_economico = models.IntegerField()
-    tir_val = models.DecimalField(max_digits=6, decimal_places=4)
-    tir_transa = models.DecimalField(max_digits=4,decimal_places=3)
+    tir_val = models.DecimalField(max_digits=7, decimal_places=4)
+    tir_transa = models.DecimalField(max_digits=6,decimal_places=3)
     categoria = models.CharField(max_length=2)
     
 # aca iría los mdelos de arbitraje y la hd.
