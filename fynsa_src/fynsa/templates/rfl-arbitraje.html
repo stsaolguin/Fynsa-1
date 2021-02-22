@@ -17,16 +17,28 @@
              <div class="d-flex justify-content-end small mb-3" >Última actualización el dia {{ ultima_subida.fecha }} por {{ultima_subida.usuario}} </div>
     </div>
         <div class="row">
-        
-                <form action="{% url 'llegada_rfl_1' %}" method="POST" enctype="multipart/form-data">
+                <div class="col-lg-6">
+                    <form action="{% url 'llegada_rfl_1' %}" method="POST" enctype="multipart/form-data">
+                        <div class="form-group">
+                        
+                        {% csrf_token %}
+                        {{ lva_1 }}
+                        
+                        </div>
+                        <button type="submit" class="btn btn-primary">cargar</button>
+                    </form>
+                </div>
+            <div class="col-lg-6">
+                <form action="{% url 'llegada_lva' %}" method="POST" enctype="multipart/form-data">
                     <div class="form-group">
                     
                     {% csrf_token %}
-                    {{ lva_1 }}
+                    {{ fomulario_lva }}
                     
                     </div>
                     <button type="submit" class="btn btn-primary">cargar</button>
                 </form>
+            </div>
         </div>
         <div class="row mt-3">
             <div class="alert alert-info">
@@ -41,6 +53,7 @@
                 </form>
             </div>
         </div>
+        
        
 </div>
 

@@ -5,7 +5,7 @@ from django.contrib import messages
 from RFL.formularios_RFL import *
 from RFL.funciones_externas_RFL import truncar,actualiza_riesgo,actualiza_tipo,limpia_risk
 import io,csv,re
-from RFL.models import tr,risk,actividad,posiciones
+from RFL.models import tr,risk,actividad,posiciones,lva
 from django.utils.dateparse import parse_date
 from django.db.models import Sum
 
@@ -16,8 +16,9 @@ def comite_rfl(request):
 def arbitraje_rfl(request):
     fomulario_subida = lva_1_2()
     f_posiciones = formulario_posiciones()
+    f_lva = formulario_lva()
     ultima_subida = actividad.objects.filter(accion='carga_de_datos').latest('fecha')
-    return render(request,'rfl-arbitraje.html',{'lva_1':fomulario_subida,'formulario_posiciones':f_posiciones,'ultima_subida':ultima_subida})
+    return render(request,'rfl-arbitraje.html',{'lva_1':fomulario_subida,'formulario_posiciones':f_posiciones,'ultima_subida':ultima_subida,'fomulario_lva':f_lva})
 
 def llegada_rfl_1(request):
     if request.method=='POST':
@@ -173,7 +174,28 @@ def consulta_cintas_proceso_grafico(request,bono):
     datos['bono'] = bono
     return render(request,'rfl-arbitraje-consultas-salida-grafico.html',context=datos)
 
+def llegada_lva(request):
+    if request.method=='POST':
+        f = formulario_lva(request.POST,request.FILES)
+        if f.is_valid():
+            archivo_lva = request.FILES['lva']
+            p = io.TextIOWrapper(archivo_lva.file, encoding='utf-8-sig')
+            texto = p.read()
+            texto = texto.replace(',','.')
+            lva_csv = csv.DictReader(io.StringIO(texto),delimiter=";",dialect='excel')
+            encabezados = ["nemo", "tipo", "unidad_reaj", "precio", "plazo_economico", "tir_val", "tir_transa", "categoria"]
+            lva_csv.fieldnames = encabezados
+            next(lva_csv)
+            lva.objects.all().delete()
+            for r in lva_csv:
+                print(r)
+                a = lva(nemo = r['nemo'],tipo = r['tipo'],unidad_reaj = r['unidad_reaj'],precio = truncar(r['precio'],5),plazo_economico = r['plazo_economico'],tir_val = truncar(r['tir_val'],4),tir_transa = truncar(r['tir_transa'],3),categoria = r['categoria'])         
+                a.save()
 
+            
+
+
+    return  HttpResponse(texto)
 
 
 

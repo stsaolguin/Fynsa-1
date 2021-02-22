@@ -28,3 +28,6 @@ class formulario_consulta_cintas(forms.Form):
     
 class formulario_posiciones(forms.Form):
     pos = forms.FileField(label="Archivo Posiciones institucionales, UTF-8 separado por punto y coma",widget=forms.FileInput(attrs={'class':'form-control mx-2 my-3'}))
+
+class formulario_lva(forms.Form):
+    lva = forms.FileField(label="Archivo LVA, UTF-8 separado por punto y coma (CSV UTF-8)",widget=forms.FileInput(attrs={'class':'form-control mx-2 my-3'}))
