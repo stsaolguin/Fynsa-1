@@ -10,12 +10,12 @@
 <div class="row">
     <p>El Monto corresponde a la suma total de los nominales por institución</p>
 </div>
-<table class="table">
+<table class="table" id="tabla_salida">
         <thead>
             <tr>
-                <th scope="col">Origen</th>
-                <th scope="col">Institucion</th>
-                <th scope="col">SUMA del Monto</th>
+                <th scope="col" id="0">Origen</th>
+                <th scope="col" id="1">Institucion</th>
+                <th scope="col" id="2">SUMA del Monto</th>
             </tr>
         </thead>
         <tbody>
@@ -30,4 +30,43 @@
 </table>
 
 </div>
+
+    <script>
+        // var t = document.getElementById("tabla_salida");
+        // var f = t.rows;
+        var origen = document.getElementById("0");
+        var institucion = document.getElementById("1");
+        var monto = document.getElementById("2");
+        
+
+        function OrdenarTablas(){
+            var n = event.target.id;
+            var tabla = document.getElementById("tabla_salida");
+            var fila = tabla.rows;
+            if(n=='2'){
+                var x = fila[1].getElementsByTagName("td")[n];
+                var y = fila[1 + 1].getElementsByTagName("td")[n];
+                var x_num = Number.isInteger(x.innerHTML)
+                console.log(x.innerHTML)
+                console.log(y.innerHTML)
+                console.log(x_num)
+
+            } else {
+            for(i = 1;i < fila.length - 1; i++ ){
+                
+                var x = fila[i].getElementsByTagName("td")[n];
+                var y = fila[i + 1].getElementsByTagName("td")[n];
+                
+                if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()){
+                    fila[i].parentNode.insertBefore(fila[i + 1],fila[i]);
+                    }
+              }
+            };
+
+        }; 
+        origen.addEventListener("click",OrdenarTablas);
+        institucion.addEventListener("click",OrdenarTablas);
+        monto.addEventListener("click",OrdenarTablas);
+
+    </script>
 {% endblock contenido%}

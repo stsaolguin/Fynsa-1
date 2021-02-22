@@ -220,10 +220,10 @@ def salida_bases_institucion_trader(request):
     datos={}
     datos['fecha_inicial'] = fecha_inicial
     datos['fecha_final'] = fecha_final
-    datos['bases_prov'] = bases.objects.raw(''' SELECT 1 as linea, * FROM eqder_provisiones_trader(%s,%s,'B') order by provision desc; ''',[fecha_inicial,fecha_final])
-    datos['depo_prov'] = bases.objects.raw(''' SELECT 1 as linea, * FROM eqder_provisiones_trader(%s,%s,'F') order by provision desc; ''',[fecha_inicial,fecha_final])
-    datos['base_tasa'] = bases.objects.raw(''' SELECT 1 as linea, * FROM eqder_generacion_tasas_trader(%s,%s,'B') order by util_tasa desc; ''',[fecha_inicial,fecha_final])
-    datos['depo_tasa'] = bases.objects.raw(''' SELECT 1 as linea, * FROM eqder_generacion_tasas_trader(%s,%s,'F') order by util_tasa desc; ''',[fecha_inicial,fecha_final])
+    datos['bases_prov'] = bases.objects.raw(''' SELECT 1 as linea, * FROM eqder_provisiones_trader(%s,%s,'B') where provision<>0 order by provision desc; ''',[fecha_inicial,fecha_final])
+    datos['depo_prov'] = bases.objects.raw(''' SELECT 1 as linea, * FROM eqder_provisiones_trader(%s,%s,'F') where provision<>0 order by provision desc; ''',[fecha_inicial,fecha_final])
+    datos['base_tasa'] = bases.objects.raw(''' SELECT 1 as linea, * FROM eqder_generacion_tasas_trader(%s,%s,'B') where util_tasa<>0 order by util_tasa desc; ''',[fecha_inicial,fecha_final])
+    datos['depo_tasa'] = bases.objects.raw(''' SELECT 1 as linea, * FROM eqder_generacion_tasas_trader(%s,%s,'F') where util_tasa<>0 order by util_tasa desc; ''',[fecha_inicial,fecha_final])
     timbre = actividad(name='BASES',accion='generacion_institucion_trader',usuario=request.user)
     timbre.save()
     return render(request,'salida-bases-institucion-trader.html',context=datos)         

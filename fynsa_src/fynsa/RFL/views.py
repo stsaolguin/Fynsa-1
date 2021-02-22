@@ -61,7 +61,7 @@ def llegada_rfl_1(request):
             limpia_risk()
             actualiza_riesgo()
             actualiza_tipo()
-            timbre = actividad(name='nombre_del_boton',accion='carga_de_datos',usuario=request.user)
+            timbre = actividad(name='RFL',accion='carga_de_datos',usuario=request.user)
             timbre.save()
             messages.info(request,'Cargado exitosamente!')
             return redirect('consulta_cintas')
@@ -140,7 +140,7 @@ def llegada_posiciones(request):
             encabezados = ['fuente_del_instrumento','institucion','nemotecnico','valor_nominal','marca','dur_rskam','plazo','clasificacion','country_of_risk','security_name','maturity','tir_de_compra','tipo_instrumento','dur_mid_semmi_ann','crncy','bb_composite']
             p_csv.fieldnames = encabezados
             next(p_csv)
-            posiciones.objects.delete()
+            posiciones.objects.all().delete()
             for r in p_csv:
                 try:
                     #print(r)
@@ -169,7 +169,7 @@ def llegada_posiciones(request):
 
 def consulta_cintas_proceso_grafico(request,bono):
     datos = {}
-    datos['tenedores'] = posiciones.objects.filter(nemotecnico = bono).values('fuente_del_instrumento','institucion').annotate(monto_total=Sum('valor_nominal')).order_by('fuente_del_instrumento','institucion')
+    datos['tenedores'] = posiciones.objects.filter(nemotecnico = bono).values('fuente_del_instrumento','institucion').annotate(monto_total=Sum('valor_nominal')).order_by('-monto_total')
     datos['bono'] = bono
     return render(request,'rfl-arbitraje-consultas-salida-grafico.html',context=datos)
 

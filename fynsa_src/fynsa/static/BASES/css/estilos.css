@@ -442,8 +442,8 @@
     text-align: center;
     font-size: 30px;
 
-
-}
+} 
+/* 
 .grafico1 {
     grid-column: 1;
     grid-row: 2;
@@ -460,4 +460,4 @@
 .grafico4 {
     grid-column: 2;
     grid-row: 3;
-}
+} */

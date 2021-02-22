@@ -2781,7 +2781,7 @@ BEGIN
 			IF valor_p2_clp_aux IS NULL THEN
 			valor_p2_clp_aux:=0;
 			END IF;
-			util_tasa:=(valor_p1_clp_aux+valor_p2_clp_aux)/2;
+			util_tasa:=round((valor_p1_clp_aux+valor_p2_clp_aux)/2,0);
 			
 		END IF;
 		if $3='F' THEN
@@ -2795,7 +2795,7 @@ BEGIN
 			IF valor_p2_clp_aux IS NULL THEN
 			valor_p2_clp_aux:=0;
 			END IF;
-			util_tasa:=(valor_p1_clp_aux+valor_p2_clp_aux)/2;
+			util_tasa:=round((valor_p1_clp_aux+valor_p2_clp_aux)/2,0);
 			
 		END IF;
 		

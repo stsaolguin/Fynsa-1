@@ -59,13 +59,13 @@ SELECT * from eq_rfi_generacion(%s,%s) WHERE generacion_total<>0;SELECT 1 as lin
     for z in generacion_total:
         datos['generacion_total'] = z.total
     datos['cntry_of_risk'] = rfi_beta.objects.raw(''' select 1 as linea,country_of_risk as pais, count(papel) as conteo,sum(ingreso_mesa) as generacion from "RFI_rfi_beta" where fecha between %s and %s group by 2 order by generacion desc''',[fecha_inicial,fecha_final])
-    datos['series'] = rfi_beta.objects.raw(''' select 1 as linea, fecha, round(avg(spread_mesa),2) as spread, sum(nominales) as nominales, sum(ingreso_mesa) as generacion  from "RFI_rfi_beta" where fecha between %s and %s group by fecha order by fecha desc ''',[fecha_inicial,fecha_final])
+    datos['series'] = rfi_beta.objects.raw(''' select 1 as linea, fecha, round(avg(spread_mesa),2) as spread, sum(abs(nominales)) as nominales, sum(ingreso_mesa) as generacion  from "RFI_rfi_beta" where fecha between %s and %s group by fecha order by fecha desc ''',[fecha_inicial,fecha_final])
     datos['generacion_categoria'] = rfi_beta.objects.raw(''' select 1 as linea,categoria,count(categoria) as conteo,sum(generacion_total) as generacion from "RFI_rfi_generacion_comite_temporal" where generacion_total<>0 group by categoria ''',[fecha_inicial,fecha_final])
     datos['generacion_pais'] = rfi_beta.objects.raw(''' select 1 as linea,pais,count(pais) as conteo,sum(generacion_total) as generacion from "RFI_rfi_generacion_comite_temporal" where generacion_total<>0 group by pais ''',[fecha_inicial,fecha_final])
     
     datos['actividad_brokers'] = rfi_beta.objects.raw(''' select 1 as linea, * from eq_rfi_actividad_brokers(%s,%s) where monto<>0 order by monto desc ''',[fecha_inicial,fecha_final])
     #papeles
-    datos['papeles'] = rfi_beta.objects.raw(''' select 1 as linea,papel,sum(ingreso_mesa) as ingreso_mesa,count(papel) as conteo,round(avg(spread_mesa),2) as spread_mesa_promedio,sum(nominales) as nominales from "RFI_rfi_beta" where fecha between %s and %s group by papel order by ingreso_mesa desc ''',[fecha_inicial,fecha_final])
+    datos['papeles'] = rfi_beta.objects.raw(''' select 1 as linea,papel,sum(ingreso_mesa) as ingreso_mesa,count(papel) as conteo,round(avg(spread_mesa),2) as spread_mesa_promedio,sum(abs(nominales)) as nominales from "RFI_rfi_beta" where fecha between %s and %s group by papel order by ingreso_mesa desc ''',[fecha_inicial,fecha_final])
     #abajo se llama la funcion con el crosstab tipo json desde postgresql
     cross = rfi_beta.objects.raw(''' select 1 as linea, * from eq_rfi_generacion_crosstab_3() ''')  
     #acá le damos algo de formato
