@@ -84,7 +84,8 @@ order by fecha asc''',[fecha_inicial,fecha_final])
         datos['instrumentos_depos'] = bases.objects.raw('''select 1 as linea,* from eq_der_instrumentos_depos(%s,%s) where gen<>0 ''',[fecha_inicial,fecha_final])        
         datos['conteo'] = bases.objects.raw(''' SELECT 1 as linea,* from eq_der_conteo_operaciones(%s,%s)''',[fecha_inicial,fecha_final])        
         #NO OPERARON Y GENERACION 0 HAY QUE REVISAR
-        datos['no_operaron'] = bases.objects.raw(''' SELECT 1 as linea, nombre FROM "BASES_clientes" where factura=false and nombre not in (SELECT nombre FROM eq_der_generacion_total_consolidad(%s,%s) where total<>0) order by nombre asc ''',[fecha_inicial,fecha_final])        
+        #datos['no_operaron'] = bases.objects.raw(''' SELECT 1 as linea, nombre FROM "BASES_clientes" where factura=false and nombre not in (SELECT nombre FROM eq_der_generacion_total_consolidad(%s,%s) where total<>0) order by nombre asc ''',[fecha_inicial,fecha_final])        
+        datos['no_operaron'] = bases.objects.raw(''' SELECT 1 as linea,  nombre FROM eq_der_generacion_total_consolidad(%s,%s) where total<=0 order by nombre asc ''',[fecha_inicial,fecha_final])        
         datos['facturas'] =facturas_bases.objects.filter(fecha_emision__gte=fecha_inicial)
         timbre = actividad(name='BASES',accion='generacion_comite',usuario=request.user)
         timbre.save()
@@ -202,7 +203,7 @@ def gen_mensual_cliente_views(request):
     salida=[]
     response = HttpResponse(content_type='text/csv')
     p = 'BASES' if producto =='b' else 'DEPOSITOS'
-    nombre_archivo = "Montos transados año {0} - {1} por cliente".format(agno,p)
+    nombre_archivo = "Generacion Mensual año {0} - {1} por cliente".format(agno,p)
     response['Content-Disposition'] = 'attachment; filename={0}.csv'.format(nombre_archivo)
     writer = csv.writer(response)
     writer.writerow(['cliente','enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'])
