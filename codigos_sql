@@ -2524,7 +2524,7 @@ agno_actual integer;
 c text;
 BEGIN
 IF sobrescribir is true THEN
-	DELETE FROM "BASES_serie_montos_mensual_por_cliente";
+	DELETE FROM "BASES_serie_montos_mensual_por_cliente" where date_part('YEAR',fecha)=agno;
 	FOR n IN SELECT * FROM generate_series(1,12)
 	LOOP
 		raise notice '%',n;
@@ -2648,7 +2648,7 @@ agno_actual integer;
 c text;
 BEGIN
 IF sobrescribir is true THEN
-	DELETE FROM "BASES_serie_generacion_mensual_por_cliente";
+	DELETE FROM "BASES_serie_generacion_mensual_por_cliente" where date_part('YEAR',fecha)=agno;
 	FOR n IN SELECT * FROM generate_series(1,12)
 	LOOP
 		raise notice '%',n;

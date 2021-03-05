@@ -192,9 +192,6 @@ def llegada_lva(request):
                 a = lva(nemo = r['nemo'],tipo = r['tipo'],unidad_reaj = r['unidad_reaj'],precio = truncar(r['precio'],5),plazo_economico = r['plazo_economico'],tir_val = truncar(r['tir_val'],4),tir_transa = truncar(r['tir_transa'],3),categoria = r['categoria'])         
                 a.save()
 
-            
-
-
     return  HttpResponse(texto)
 
 
