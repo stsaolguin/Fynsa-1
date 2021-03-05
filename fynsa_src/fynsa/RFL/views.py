@@ -3,9 +3,9 @@ from django.shortcuts import render,redirect
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib import messages
 from RFL.formularios_RFL import *
-from RFL.funciones_externas_RFL import truncar,actualiza_riesgo,actualiza_tipo,limpia_risk
+from RFL.funciones_externas_RFL import truncar,actualiza_riesgo,actualiza_tipo,limpia_risk,actualiza_riesgo_lva
 import io,csv,re
-from RFL.models import tr,risk,actividad,posiciones,lva
+from RFL.models import tr,risk,actividad,posiciones,lva_vector
 from django.utils.dateparse import parse_date
 from django.db.models import Sum
 
@@ -183,14 +183,19 @@ def llegada_lva(request):
             texto = p.read()
             texto = texto.replace(',','.')
             lva_csv = csv.DictReader(io.StringIO(texto),delimiter=";",dialect='excel')
-            encabezados = ["nemo", "tipo", "unidad_reaj", "precio", "plazo_economico", "tir_val", "tir_transa", "categoria"]
+            #encabezados = ["fecha", "familia", "nemo", "tir_lva", "tipo_instrumento", "precio", "duracion"]
+            encabezados = ["Fecha","Familia","Nemotecnico","TirLVA","TipoTir","Precio","SpreadDuracion","Duracion","PlazoDias"]
             lva_csv.fieldnames = encabezados
             next(lva_csv)
-            lva.objects.all().delete()
+            lva_vector.objects.all().delete()
             for r in lva_csv:
-                print(r)
-                a = lva(nemo = r['nemo'],tipo = r['tipo'],unidad_reaj = r['unidad_reaj'],precio = truncar(r['precio'],5),plazo_economico = r['plazo_economico'],tir_val = truncar(r['tir_val'],4),tir_transa = truncar(r['tir_transa'],3),categoria = r['categoria'])         
-                a.save()
+                if r["Familia"]=='BE':
+                    print(r)
+                    a = lva_vector(familia = r["Familia"], nemo = r["Nemotecnico"],tir_lva =r["TirLVA"],tipo_instrumento= r["TipoTir"],precio = r["Precio"],duracion = r["Duracion"])
+                    a.save()
+            actualiza_riesgo_lva()
+
+
 
     return  HttpResponse(texto)
 
