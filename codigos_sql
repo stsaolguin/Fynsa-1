@@ -2862,3 +2862,45 @@ back up de la base de datos
 pg_dump --inserts -a -d fynsa_db > fynsa_db_1_a_inserts.txt
 podría llevar -c tambien para limpiar toda la base de datos
 
+
+
+====================
+para crear supercintas
+--delete from "RFL_supercintas";
+CREATE OR REPLACE FUNCTION crea_tabla_supercintas() returns void
+AS
+$$
+INSERT INTO "RFL_supercintas"(
+	nemo, tasa_lva, duracion, riesgo)
+	SELECT nemo,tir_lva,duracion,riesgo FROM "RFL_lva_vector";
+UPDATE "RFL_supercintas" set anotacion='color:yellow';
+UPDATE "RFL_supercintas" sc set tasa_rsk=(select tir from "RFL_risk" rs  WHERE sc.nemo=rs.nemo );
+UPDATE "RFL_supercintas" sc set familia=(select tipo from "RFL_risk" rs  WHERE sc.nemo=rs.nemo );
+UPDATE "RFL_supercintas" sc set reaj=(select reaj from "RFL_bonos" rs  WHERE sc.nemo=rs.instrumento );
+UPDATE "RFL_supercintas" sc set familia=(select tipo from "RFL_bonos" rs  WHERE sc.nemo=rs.instrumento ) 
+where familia is null;
+UPDATE "RFL_supercintas" sc set tasa_lva_rsk_media=(tasa_lva+tasa_rsk)/2;
+UPDATE "RFL_supercintas" sc set descalce=tasa_lva_rsk_media-tasa_rsk;
+INSERT INTO "RFL_supercintas"(
+	nemo, tasa_rsk, duracion, riesgo,familia)
+	SELECT nemo,tir,duracion,riesgo,tipo FROM "RFL_risk";
+UPDATE "RFL_supercintas" set anotacion='color:green' where anotacion is null;
+$$
+LANGUAGE SQL;
+
+select nemo,tasa_lva_rsk_media,duracion,anotacion from "RFL_supercintas" 
+where duracion between 6 and 10 
+and riesgo='AAA' 
+and familia='BE'
+and anotacion='color:yellow'
+UNION
+select nemo,tasa_rsk,duracion,anotacion from "RFL_supercintas" 
+where duracion between 6 and 10
+and riesgo='AAA' 
+and familia='BE'
+and anotacion='color:green'
+order by nemo desc;
+
+
+
+

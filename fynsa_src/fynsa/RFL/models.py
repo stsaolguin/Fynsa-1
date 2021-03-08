@@ -100,6 +100,7 @@ class bonos(models.Model):
     instrumento = models.TextField()
     rating = models.TextField()
     tipo = models.TextField(default='',blank=True,null=True)
+    reaj = models.TextField(blank=True,null=True)
 
 class actividad(models.Model):
     '''Este modelo es para poner fecha de ultima subida y timestamp '''
@@ -108,4 +109,15 @@ class actividad(models.Model):
     usuario = models.TextField()
     fecha = models.DateTimeField(auto_now=True)
 
+class supercintas(models.Model):
+    nemo = models.TextField(blank=True,null=True)
+    tasa_lva = models.DecimalField(max_digits=12,decimal_places=2,blank=True,null=True)
+    tasa_rsk = models.DecimalField(max_digits=12,decimal_places=2,blank=True,null=True)
+    tasa_lva_rsk_media = models.DecimalField(max_digits=12,decimal_places=2,blank=True,null=True)
+    duracion = models.DecimalField(max_digits=5,decimal_places=2,blank=True,null=True)
+    riesgo = models.TextField(blank=True,null=True)
+    descalce = models.DecimalField(max_digits=12,decimal_places=2,blank=True,null=True)
+    familia = models.TextField(blank=True,null=True)
+    reaj = models.TextField(default='',blank=True,null=True)
+    anotacion = models.TextField(blank=True,null=True)
 
