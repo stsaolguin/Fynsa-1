@@ -184,6 +184,8 @@ def llegada_lva(request):
         if f.is_valid():
             archivo_lva = request.FILES['lva']
             p = io.TextIOWrapper(archivo_lva.file, encoding='utf-8-sig')
+            #h = f.cleaned_data
+            #p = io.TextIOWrapper(h, encoding='utf-8-sig')
             texto = p.read()
             texto = texto.replace(',','.')
             lva_csv = csv.DictReader(io.StringIO(texto),delimiter=";",dialect='excel')

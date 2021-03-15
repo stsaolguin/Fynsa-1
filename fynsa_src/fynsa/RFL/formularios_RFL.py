@@ -32,19 +32,6 @@ class formulario_posiciones(forms.Form):
 class formulario_lva(forms.Form):
     lva = forms.FileField(label="Archivo LVA, UTF-8 separado por punto y coma (CSV UTF-8)",widget=forms.FileInput(attrs={'class':'form-control mx-2 my-3'}))
     
-    def clean(self):
-        super().clean()
-        archivo = self.cleaned_data['lva']
-        p = io.TextIOWrapper(archivo.file, encoding='utf-8-sig')
-        o = csv.Sniffer()
-        z = o.sniff(p.read())
-        if z.delimiter != ';':
-            p.close()
-            raise ValidationError('El archivo {} no es utf-8 o no está separado por ; (punto y coma). Revise eso manualmente '.format(archivo.file))
-        
-
-
-
 class formulario_consulta_supercintas(forms.Form):
     categoria = forms.ChoiceField(choices=categorias,widget=forms.Select(attrs=atributo))
     rating = forms.ChoiceField(choices=rating,widget=forms.Select(attrs=atributo))
