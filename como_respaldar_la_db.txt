@@ -1,0 +1,4 @@
+Yo : pg_dump -Fc -C -c -d fynsa_db > fynsa_db_5.dump
+
+matias : pg_restore -c -d fynsa_db_respaldo < fynsa_db_5.dump
+

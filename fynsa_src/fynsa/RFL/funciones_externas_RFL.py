@@ -1,4 +1,4 @@
-from RFL.models import tr,risk,bonos
+from RFL.models import tr,risk,bonos,lva_vector
 from django.core.exceptions import ObjectDoesNotExist
 
 
@@ -67,6 +67,21 @@ def limpia_risk():
 
     return True
 
+def actualiza_riesgo_lva():
+    for h in lva_vector.objects.all():
+        try:
+            
+            riesgo_bono = bonos.objects.get(instrumento=h.nemo)
+            #objeto = lva_vector.objects.filter(nemo=h.instrumento)
+            #objeto.update(riesgo = riesgo_bono.rating)
+            h.riesgo = riesgo_bono.rating
+            h.save()
+
+        except bonos.DoesNotExist:
+            print('Bono no encontrado : {}'.format(h.nemo))
+            pass        
+
+    return True
 
 
 

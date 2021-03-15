@@ -3,6 +3,10 @@ from .models import *
 from django import forms
 from RFI.models import rfi_beta
 
+ultima_fecha = bases.objects.latest('fecha')
+ultima_fecha_rfi = rfi_beta.objects.latest('fecha')
+ultima_fecha.refresh_from_db()
+ultima_fecha_rfi.refresh_from_db()
 
 class f_bases(ModelForm):
     class Meta:
@@ -26,7 +30,7 @@ class f_bases(ModelForm):
 
 class f_fechas_comite(forms.Form):
     fecha_inicial = forms.DateField(widget=forms.DateInput(attrs={'class':'form-control mx-2','type':'date'}),label='fecha inicial', required=True, initial='2019-08-09')
-    fecha_final = forms.DateField(widget=forms.DateInput(attrs={'class':'form-control mx-2','type':'date'}),label='fecha final', required=True, initial=bases.objects.latest('fecha'))
+    fecha_final = forms.DateField(widget=forms.DateInput(attrs={'class':'form-control mx-2','type':'date'}),label='fecha final', required=True, initial=ultima_fecha)
 
 class f_fechas_comite_rfi(forms.Form):
     fecha_inicial = forms.DateField(widget=forms.DateInput(attrs={'class':'form-control mx-2','type':'date'}),label='Fecha Inicial', required=True, initial='2021-01-01')
@@ -35,7 +39,7 @@ class f_fechas_comite_rfi(forms.Form):
 class f_conciliaciones(forms.Form):
     cliente = forms.ModelChoiceField(queryset=clientes.objects.filter(factura=True).order_by('nombre'),to_field_name='nombre')
     fecha_inicial = forms.DateField(widget=forms.DateInput(attrs={'class':'form-control mx-2','type':'date'}),label='fecha inicial', required=True, initial='2019-08-09')
-    fecha_final = forms.DateField(widget=forms.DateInput(attrs={'class':'form-control mx-2','type':'date'}),label='fecha final', required=True, initial=bases.objects.latest('fecha'))
+    fecha_final = forms.DateField(widget=forms.DateInput(attrs={'class':'form-control mx-2','type':'date'}),label='fecha final', required=True, initial=ultima_fecha)
     cliente.widget.attrs.update({'class':'form-control mx-2'})
 
 

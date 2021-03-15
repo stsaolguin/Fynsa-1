@@ -44,9 +44,21 @@ class lva(models.Model):
     unidad_reaj = models.CharField(max_length=3)
     precio = models.DecimalField(max_digits=8, decimal_places=5)
     plazo_economico = models.IntegerField()
-    tir_val = models.DecimalField(max_digits=6, decimal_places=4)
-    tir_transa = models.DecimalField(max_digits=4,decimal_places=3)
+    tir_val = models.DecimalField(max_digits=7, decimal_places=4)
+    tir_transa = models.DecimalField(max_digits=6,decimal_places=3)
     categoria = models.CharField(max_length=2)
+
+class lva_vector(models.Model):
+    fecha = models.DateField(blank=True,null=True)
+    familia = models.TextField(blank=True,null=True)
+    nemo = models.TextField(blank=True,null=True)
+    tir_lva = models.DecimalField(max_digits=12,decimal_places=2)
+    tipo_instrumento = models.TextField()
+    precio = models.DecimalField(max_digits=5, decimal_places=2)
+    duracion = models.DecimalField(max_digits = 5, decimal_places=2)
+    riesgo = models.TextField(blank=True,null=True)
+
+
     
 # aca iría los mdelos de arbitraje y la hd.
 class hd(models.Model):
@@ -87,7 +99,8 @@ class bonos(models.Model):
     ''' Este modelo se usa para sacar el riesgo de los bonos y usarlos en cintas '''
     instrumento = models.TextField()
     rating = models.TextField()
-    tipo = models.TextField(default='')
+    tipo = models.TextField(default='',blank=True,null=True)
+    reaj = models.TextField(blank=True,null=True)
 
 class actividad(models.Model):
     '''Este modelo es para poner fecha de ultima subida y timestamp '''
@@ -96,4 +109,15 @@ class actividad(models.Model):
     usuario = models.TextField()
     fecha = models.DateTimeField(auto_now=True)
 
+class supercintas(models.Model):
+    nemo = models.TextField(blank=True,null=True)
+    tasa_lva = models.DecimalField(max_digits=12,decimal_places=2,blank=True,null=True)
+    tasa_rsk = models.DecimalField(max_digits=12,decimal_places=2,blank=True,null=True)
+    tasa_lva_rsk_media = models.DecimalField(max_digits=12,decimal_places=2,blank=True,null=True)
+    duracion = models.DecimalField(max_digits=5,decimal_places=2,blank=True,null=True)
+    riesgo = models.TextField(blank=True,null=True)
+    descalce = models.DecimalField(max_digits=12,decimal_places=2,blank=True,null=True)
+    familia = models.TextField(blank=True,null=True)
+    reaj = models.TextField(default='',blank=True,null=True)
+    anotacion = models.TextField(blank=True,null=True)
 

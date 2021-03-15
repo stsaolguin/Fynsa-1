@@ -3,7 +3,7 @@
 {% block contenido %}
 <div class="contenedor_bases_institucion_trader">
     
-        <div class="titulo_principal_institucion_trader">Generaciones entre {{ fecha_inicial }} y {{ fecha_final }}.  </div>
+        <div class="titulo_principal_institucion_trader">Generaciones Institución - Trader entre {{ fecha_inicial }} y {{ fecha_final }}.  </div>
  
     <div class="grafico1">
         <div id="div_1"></div>
@@ -26,55 +26,62 @@ google.charts.setOnLoadCallback(generaciones_por_trader);
 function generaciones_por_trader(){
     var bases_provisiones = new google.visualization.DataTable();
     bases_provisiones.addColumn('string','cliente');
-    bases_provisiones.addColumn('number','monto');
-    bases_provisiones.addRows([{% for i in bases_prov %}['{{ i.cliente_trader| safe }}',{{ i.provision | safe }}],{% endfor %}])
+    bases_provisiones.addColumn('number','generacion');
+    bases_provisiones.addColumn({type:'number', role:'annotation'});
+    bases_provisiones.addRows([{% for i in bases_prov %}['{{ i.cliente_trader| safe }}',{{ i.provision | safe }},{{ i.provision | safe }}],{% endfor %}])
     
     var bases_tasa = new google.visualization.DataTable();
     bases_tasa.addColumn('string','cliente');
-    bases_tasa.addColumn('number','monto');
+    bases_tasa.addColumn('number','generacion');
     bases_tasa.addRows([{% for i in base_tasa %}['{{ i.cliente_trader| safe }}',{{ i.util_tasa| safe }}],{% endfor %}]);
     
     var depo_provisiones = new google.visualization.DataTable();
     depo_provisiones.addColumn('string','cliente');
-    depo_provisiones.addColumn('number','monto');
+    depo_provisiones.addColumn('number','generacion');
     depo_provisiones.addRows([{% for i in depo_provisiones %}['{{ i.cliente_trader| safe }}',{{ i.provision | safe }}],{% endfor %}]);
     
     var depo_tasa = new google.visualization.DataTable();
     depo_tasa.addColumn('string','cliente');
-    depo_tasa.addColumn('number','monto');
+    depo_tasa.addColumn('number','generacion');
     depo_tasa.addRows([{% for i in depo_tasa %}['{{ i.cliente_trader| safe }}',{{ i.util_tasa| safe }}],{% endfor %}]);
 
-    var chart = new google.visualization.BarChart(document.getElementById('div_1'));
-    var chart = new google.visualization.BarChart(document.getElementById('div_2'));
-    var chart = new google.visualization.BarChart(document.getElementById('div_3'));
-    var chart = new google.visualization.BarChart(document.getElementById('div_4'));
+    var chart1 = new google.visualization.BarChart(document.getElementById('div_1'));
+    var chart2 = new google.visualization.BarChart(document.getElementById('div_2'));
+    var chart3 = new google.visualization.BarChart(document.getElementById('div_3'));
+    var chart4 = new google.visualization.BarChart(document.getElementById('div_4'));
     var options = {
                      titleTextStyle:{
-                                               fontSize: 20,
+                                    fontSize: 2,
                                             },
-                                            width: 650,
-                                            height:1000,
-                                            hAxis: {
-                                            title: 'Monto',
-                                            minValue: 0,
-                                            
-                                            },
-                                            legend: { position: "none" },
-                                            
-                                            fontSize : '17',
-                                            annotations : {
-                                                  textStyle:{
-                                                  fontSize:17,
-                                                  color:'black'
-                                                  },
-                                                }, 
+                     width: 600,
+                     height:1000,
+                     hAxis: {
+                        title: 'Generación',
+                        minValue: 0,
+                             },
+                     legend: { position: "none" },
+                     fontSize : 12,
+                     annotations : {
+                        textStyle:{
+                            fontSize:12,
+                            color:'black'
+                                   },
+                                    },
+                    chartArea :{
+                        left:'50%',
+                        top:30,
+                        width:'50%',
+                        height:'80%',
+                        backgroundColor:'red',
+                    },
+                    backgroundColor:'blue',
     };
 
 
-    chart.draw(bases_provisiones,options);
-    chart.draw(depo_provisiones,options);
-    chart.draw(depo_provisiones,options);
-    chart.draw(depo_tasa,options);  
+    chart1.draw(bases_provisiones,options);
+    chart2.draw(bases_tasa,options);
+    chart3.draw(depo_provisiones,options);
+    chart4.draw(depo_tasa,options);  
            
 
 }

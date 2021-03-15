@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    {% comment %} <link rel="stylesheet" href="{% static 'BASES/css/estilos.css' %}"> {% endcomment %}
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    
+    <script type="text/javascript">
+      google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(drawChart);
+
+      function drawChart() {
+        var data = new google.visualization.DataTable();
+        //data.addColumn('number','Tir');
+        //data.addColumn('number','Duracion');
+        data.addColumn('number','Duracion');
+        data.addColumn('number','Tir');
+        data.addColumn({'tipe':'string','role':'tooltip'});
+        data.addColumn({'tipe':'string','role':'style'});
+        data.addColumn({'tipe':'string','role':'annotation'});
+        data.addRows([
+        {% for r in c %}
+        [{{ r.duracion | safe }},{{ r.tasa | safe }},'{{ r.nemo | safe }}, tir:{{ r.tasa | safe }}, dur:{{ r.duracion | safe }}','{{ r.anotacion | safe }}','{{ r.nemo | safe }}' ],
+        {% endfor %}
+        ]);
+
+        var options = {
+           chartArea:{width:'80%',height:'75%'},
+          title: 'LVA vs Riskamérica',
+          hAxis: {title: 'Duración'},
+          vAxis: {title: 'Tir'},
+          explorer:{actions: ['dragToZoom', 'rightClickToReset']},
+          legend:{position: 'bottom', textStyle: {color: 'blue', fontSize: 16}},
+          annotations: {
+            textStyle:
+            {fontSize: 13}
+            },
+        };
+
+        var chart = new google.visualization.ScatterChart(document.getElementById('chart_div'));
+        chart.draw(data, options);
+        function selectHandler() {
+          var selectedItem = chart.getSelection()[0];
+          if (selectedItem) {
+            var bono = data.getValue(selectedItem.row, 4);
+            window.open("http://127.0.0.1:8000/logeado/rfl/arbitraje/cintas/consulta/" + bono);
+          }
+        }
+
+        google.visualization.events.addListener(chart, 'select', selectHandler);    
+        
+      }
+    </script>
+  </head>
+  <body>
+    <div class="container">
+    <h2 class="h2">{{ titulo }}</h2>
+    <h3 class="h3">Verde : Riskamérica, Amarillo : Lva</h3>
+    <h4 class="h4">Diariamente se borran los datos, el dato de ayer no se puede recuperar</h4>
+    <div class="row">
+             <div class="d-flex justify-content-end small mb-3" >Última actualización el dia {{ultima_subida.fecha}} por {{ultima_subida.usuario}} </div>
+    </div>
+    </div>
+
+    <div id="chart_div" style="width: 1200px; height: 800px;"></div>
+  </body>
+</html>

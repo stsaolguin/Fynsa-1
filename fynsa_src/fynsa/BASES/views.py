@@ -84,7 +84,8 @@ order by fecha asc''',[fecha_inicial,fecha_final])
         datos['instrumentos_depos'] = bases.objects.raw('''select 1 as linea,* from eq_der_instrumentos_depos(%s,%s) where gen<>0 ''',[fecha_inicial,fecha_final])        
         datos['conteo'] = bases.objects.raw(''' SELECT 1 as linea,* from eq_der_conteo_operaciones(%s,%s)''',[fecha_inicial,fecha_final])        
         #NO OPERARON Y GENERACION 0 HAY QUE REVISAR
-        datos['no_operaron'] = bases.objects.raw(''' SELECT 1 as linea, nombre FROM "BASES_clientes" where factura=false and nombre not in (SELECT nombre FROM eq_der_generacion_total_consolidad(%s,%s) where total<>0) order by nombre asc ''',[fecha_inicial,fecha_final])        
+        #datos['no_operaron'] = bases.objects.raw(''' SELECT 1 as linea, nombre FROM "BASES_clientes" where factura=false and nombre not in (SELECT nombre FROM eq_der_generacion_total_consolidad(%s,%s) where total<>0) order by nombre asc ''',[fecha_inicial,fecha_final])        
+        datos['no_operaron'] = bases.objects.raw(''' SELECT 1 as linea,  nombre FROM eq_der_generacion_total_consolidad(%s,%s) where total<=0 order by nombre asc ''',[fecha_inicial,fecha_final])        
         datos['facturas'] =facturas_bases.objects.filter(fecha_emision__gte=fecha_inicial)
         timbre = actividad(name='BASES',accion='generacion_comite',usuario=request.user)
         timbre.save()
@@ -202,7 +203,7 @@ def gen_mensual_cliente_views(request):
     salida=[]
     response = HttpResponse(content_type='text/csv')
     p = 'BASES' if producto =='b' else 'DEPOSITOS'
-    nombre_archivo = "Montos transados año {0} - {1} por cliente".format(agno,p)
+    nombre_archivo = "Generacion Mensual año {0} - {1} por cliente".format(agno,p)
     response['Content-Disposition'] = 'attachment; filename={0}.csv'.format(nombre_archivo)
     writer = csv.writer(response)
     writer.writerow(['cliente','enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'])
@@ -220,10 +221,10 @@ def salida_bases_institucion_trader(request):
     datos={}
     datos['fecha_inicial'] = fecha_inicial
     datos['fecha_final'] = fecha_final
-    datos['bases_prov'] = bases.objects.raw(''' SELECT 1 as linea, * FROM eqder_provisiones_trader(%s,%s,'B') order by provision desc; ''',[fecha_inicial,fecha_final])
-    datos['depo_prov'] = bases.objects.raw(''' SELECT 1 as linea, * FROM eqder_provisiones_trader(%s,%s,'F') order by provision desc; ''',[fecha_inicial,fecha_final])
-    datos['base_tasa'] = bases.objects.raw(''' SELECT 1 as linea, * FROM eqder_generacion_tasas_trader(%s,%s,'B') order by util_tasa desc; ''',[fecha_inicial,fecha_final])
-    datos['depo_tasa'] = bases.objects.raw(''' SELECT 1 as linea, * FROM eqder_generacion_tasas_trader(%s,%s,'F') order by util_tasa desc; ''',[fecha_inicial,fecha_final])
+    datos['bases_prov'] = bases.objects.raw(''' SELECT 1 as linea, * FROM eqder_provisiones_trader(%s,%s,'B') where provision<>0 order by provision desc; ''',[fecha_inicial,fecha_final])
+    datos['depo_prov'] = bases.objects.raw(''' SELECT 1 as linea, * FROM eqder_provisiones_trader(%s,%s,'F') where provision<>0 order by provision desc; ''',[fecha_inicial,fecha_final])
+    datos['base_tasa'] = bases.objects.raw(''' SELECT 1 as linea, * FROM eqder_generacion_tasas_trader(%s,%s,'B') where util_tasa<>0 order by util_tasa desc; ''',[fecha_inicial,fecha_final])
+    datos['depo_tasa'] = bases.objects.raw(''' SELECT 1 as linea, * FROM eqder_generacion_tasas_trader(%s,%s,'F') where util_tasa<>0 order by util_tasa desc; ''',[fecha_inicial,fecha_final])
     timbre = actividad(name='BASES',accion='generacion_institucion_trader',usuario=request.user)
     timbre.save()
     return render(request,'salida-bases-institucion-trader.html',context=datos)         
