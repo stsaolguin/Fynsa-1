@@ -88,6 +88,10 @@ REFRESH MATERIALIZED VIEW serie_mensual_generacion_total_view;
 select * from eq_der_cargador_tabla_serie_generacion_total_diaria();
 REFRESH MATERIALIZED VIEW eq_der_serie_generacion_acumulada_diaria_view;
 
+--detectar fechas de facturacion que no estan en el blotter
+select fecha_emision from "BASES_facturas_bases" 
+where fecha_emision not in (select fecha from "BASES_bases")
+
 
 
 

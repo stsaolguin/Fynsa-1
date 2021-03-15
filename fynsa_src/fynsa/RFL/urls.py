@@ -10,5 +10,6 @@ urlpatterns = [
     path('arbitraje/llegada-lva', views.llegada_lva, name='llegada_lva'),
     path('arbitraje/cintas', views.consulta_cintas, name='consulta_cintas'),
     path('arbitraje/cintas/consulta', views.consulta_cintas_proceso, name='consulta_cintas_proceso'),
+    path('arbitraje/supercintas/consulta', views.consulta_supercintas_proceso, name='consulta_supercintas_proceso'),
     path('arbitraje/cintas/consulta/<str:bono>', views.consulta_cintas_proceso_grafico, name='consulta_cintas_proceso_grafico'),
     ]

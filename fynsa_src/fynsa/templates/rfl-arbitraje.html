@@ -34,6 +34,8 @@
                     
                     {% csrf_token %}
                     {{ fomulario_lva }}
+                    {{ fomulario_lva.errors }}
+                    {{ fomulario_lva.non_field_errors }}
                     
                     </div>
                     <button type="submit" class="btn btn-primary">cargar</button>
@@ -47,6 +49,7 @@
                     
                     {% csrf_token %}
                     {{ formulario_posiciones }}
+                    
                     
                     </div>
                     <button type="submit" class="btn btn-primary">cargar</button>

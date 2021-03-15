@@ -1,7 +1,9 @@
 {% extends "index.html" %}
 
 {% block contenido %}
-<div class="container">
+<div class="container mb-4">
+
+    
     <div class="row">   
                         {% if messages %}
                             {% for m in messages%}
@@ -10,21 +12,41 @@
                         {% endif %}
     </div>
     <div class="row">
-    <h1>Consultas Cintas</h1>
+        <h1>Cintas: Tr vs Riskamérica</h1>
     </div>
     <div class="row">
-             <div class="d-flex justify-content-end small mb-3" >Última actualización el dia {{ultima_subida.fecha}} por {{ultima_subida.usuario}} </div>
+                <div class="d-flex justify-content-end small mb-3" >Última actualización el dia {{ultima_subida.fecha}} por {{ultima_subida.usuario}} </div>
     </div>
-        <div class="row">
-                <form action="{% url 'consulta_cintas_proceso' %}" method="GET" target="_blank">
-                    <div class="form-group form-inline">
-                    
-                    {% csrf_token %}
-                    {{ formulario_consulta_cintas }}
-                    
-                    </div>
-                    <button type="submit" class="btn btn-primary">Generar</button>
-                </form>
+    <div class="row">
+                    <form action="{% url 'consulta_cintas_proceso' %}" method="GET" target="_blank">
+                        <div class="form-group form-inline">
+                        
+                        {% csrf_token %}
+                        {{ formulario_consulta_cintas }}
+                        
+                        </div>
+                        <button type="submit" class="btn btn-primary">Generar</button>
+                    </form>
+    </div>
+    <hr>
+     <div class="row">
+        <h1>Cintas: Lva vs Riskamérica</h1>
         </div>
-</div>
+        <div class="row">
+                <div class="d-flex justify-content-end small mb-3" >Última actualización el dia {{ultima_subida.fecha}} por {{ultima_subida.usuario}} </div>
+        </div>
+            <div class="row alert alert-info">
+                    <form action="{% url 'consulta_supercintas_proceso' %}" method="GET" target="_blank">
+                        <div class="form-group form-inline">
+                        
+                        {% csrf_token %}
+                        
+                        {{ formulario_consulta_supercintas }}
+                                                
+                        </div>
+                        <button type="submit" class="btn btn-primary">Generar</button>
+                    </form>
+            </div>
+    </div>
+   </div>
 {% endblock %}

@@ -5,9 +5,10 @@ from django.contrib import messages
 from RFL.formularios_RFL import *
 from RFL.funciones_externas_RFL import truncar,actualiza_riesgo,actualiza_tipo,limpia_risk,actualiza_riesgo_lva
 import io,csv,re
-from RFL.models import tr,risk,actividad,posiciones,lva_vector
+from RFL.models import tr,risk,actividad,posiciones,lva_vector,supercintas
 from django.utils.dateparse import parse_date
 from django.db.models import Sum
+from django.db import connection
 
 
 def comite_rfl(request):
@@ -73,9 +74,12 @@ def llegada_rfl_1(request):
     return HttpResponse("Conectado")
 
 def consulta_cintas(request):
-    f_consulta_cintas = formulario_consulta_cintas()
-    ultima_subida = actividad.objects.filter(accion='carga_de_datos').latest('fecha')
-    return render(request,'rfl-arbitraje-consultas.html',{'formulario_consulta_cintas':f_consulta_cintas,'ultima_subida':ultima_subida})
+    datos={}
+    datos['formulario_consulta_cintas'] = formulario_consulta_cintas()
+    datos['formulario_consulta_supercintas'] = formulario_consulta_supercintas()
+    
+    datos['ultima_subida'] = actividad.objects.filter(accion='carga_de_datos').latest('fecha')
+    return render(request,'rfl-arbitraje-consultas.html',context=datos)
 
 
 def consulta_cintas_proceso(request):
@@ -183,21 +187,38 @@ def llegada_lva(request):
             texto = p.read()
             texto = texto.replace(',','.')
             lva_csv = csv.DictReader(io.StringIO(texto),delimiter=";",dialect='excel')
-            #encabezados = ["fecha", "familia", "nemo", "tir_lva", "tipo_instrumento", "precio", "duracion"]
             encabezados = ["Fecha","Familia","Nemotecnico","TirLVA","TipoTir","Precio","SpreadDuracion","Duracion","PlazoDias"]
             lva_csv.fieldnames = encabezados
             next(lva_csv)
             lva_vector.objects.all().delete()
             for r in lva_csv:
                 if r["Familia"]=='BE':
-                    print(r)
                     a = lva_vector(familia = r["Familia"], nemo = r["Nemotecnico"],tir_lva =r["TirLVA"],tipo_instrumento= r["TipoTir"],precio = r["Precio"],duracion = r["Duracion"])
                     a.save()
             actualiza_riesgo_lva()
+            supercintas.objects.all().delete()
+            c = connection.cursor()
+            c.execute('SELECT * from crea_tabla_supercintas();')
+            return  redirect('consulta_cintas')
+    return  redirect('arbitraje_rfl')
 
 
-
-    return  HttpResponse(texto)
+def consulta_supercintas_proceso(request):
+    datos = {}
+    categoria = request.GET.get('categoria')
+    rating = request.GET.get('rating')
+    moneda = request.GET.get('moneda')
+    duracion_inicial = request.GET.get('duracion_inicial')
+    duracion_final = request.GET.get('duracion_final')
+    texto = "Bonos {} en {} {} duración entre {} y {}".format(categoria,moneda,rating,duracion_inicial,duracion_final)
+    datos['titulo'] = texto
+    print('***consulta supercintas',datos)
+    datos['c'] = supercintas.objects.raw(''' SELECT 1 AS ID, * from supercintas(%s,%s,%s,%s,%s) where tasa is not null ''',[duracion_inicial,duracion_final,rating,moneda,categoria])
+    #acá creamos la consulta que saca de risk los que están en tr
+    ultima_subida = actividad.objects.filter(accion='carga_de_datos').latest('fecha')
+    #timbre = actividad(name='RFL',accion='consulta_cintas',usuario=request.user)
+    #timbre.save()
+    return render(request,'rfl-arbitraje-consultas-salida-supercintas.html',context=datos)
 
 
 
