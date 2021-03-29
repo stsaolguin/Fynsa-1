@@ -3,6 +3,7 @@ from .models import *
 from django import forms
 from RFI.models import rfi_beta
 
+
 ultima_fecha = bases.objects.latest('fecha')
 ultima_fecha_rfi = rfi_beta.objects.latest('fecha')
 ultima_fecha.refresh_from_db()

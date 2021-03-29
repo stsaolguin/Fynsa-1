@@ -31,7 +31,7 @@
     padding-left:30px ;
     display: grid;
     grid-template-columns: repeat(3,1fr);
-    grid-template-rows: auto auto  400px auto auto auto auto auto auto auto auto auto auto auto;
+    grid-template-rows: auto auto  400px auto auto auto auto auto auto auto auto auto auto auto auto;
 
     
 }
@@ -175,6 +175,13 @@
 .contenedor > .metas_div{
     grid-column:1/-1;
     grid-row: 15;
+}
+.contenedor > .generacion_mensual_div{
+    grid-column:1/-1;
+    grid-row: 16;
+    margin-bottom: 20px;
+
+    
 }
 
 /* ==========================================================
