@@ -146,7 +146,7 @@
 }
 .contenedor > .rfi_tabla_papeles{
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     margin: 20px;
     grid-column:1/-1;
     grid-row: 11;

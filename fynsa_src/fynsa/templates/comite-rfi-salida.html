@@ -11,7 +11,10 @@
     <div class="rfi_generacion"><div id="rfi_generacion"></div></div>
     <div class="rfi_generacion_tabla"><div id="rfi_generacion_tabla"></div></div>
     <div class="generacion_brks">
-          <div class="h4">Generacion entre brokers o dealers</div>
+          <div class="h4">Generacion entre brokers o dealers
+          <div class="display-4" id="total_generacion_brokers"></div>
+          </div>
+          
           <div id="rfi_generacion_brks"></div>
     </div>
 
@@ -282,6 +285,13 @@ function rfi_generacion() {
       ]);
       var datos_grafico = new google.visualization.DataView(data);
       datos_grafico.hideColumns([1]);
+      
+      for (i=0;i<datos_grafico.getNumberOfRows();i++){
+        
+        if(datos_grafico.getValue(i,1)<0){
+          datos_grafico.hideRows([i]);
+        }
+      };
       var options = {
           title: 'Generación por Country of Risk.',
           titleTextStyle:{fontSize:20},
@@ -412,15 +422,22 @@ function rfi_generacion() {
       data.addColumn('string','comprador');
       data.addColumn('string','vendedor');
       data.addColumn('string','spread mesa');
-      data.addColumn('string','ingreso mesa');
+      data.addColumn('number','ingreso mesa');
       data.addColumn('string','categoria');
       data.addColumn('string','categoria');
       data.addRows([
       {% for r in operaciones_entre_brks %}
-      [' {{ r.fecha | safe }} ', ' {{ r.papel | safe }} ', '{{ r.comprador | safe }} ', '{{ r.vendedor | safe }} ', '{{ r.spread_mesa | safe }}', '{{ r.ingreso_mesa | safe }}','{{ r.categoria | safe }} ','{{ r.categoria | safe }} '],
+      [' {{ r.fecha | safe }} ', ' {{ r.papel | safe }} ', '{{ r.comprador | safe }} ', '{{ r.vendedor | safe }} ', '{{ r.spread_mesa | safe }}', {{ r.ingreso_mesa | safe }},'{{ r.categoria | safe }} ','{{ r.categoria | safe }} '],
       {% endfor %}
       ]);
-      
+      var suma_total = 0;
+      for(var i=0;i < data.getNumberOfRows();i++){
+        console.log(data.getValue(i,5));
+          suma_total = suma_total + data.getValue(i,5);
+      };
+      var moneda = 'USD ';
+      document.getElementById('total_generacion_brokers').innerHTML = moneda.concat(suma_total);
+
       var gen_brk = new google.visualization.Table(document.getElementById('rfi_generacion_brks'));
       gen_brk.draw(data);
 
@@ -446,7 +463,7 @@ function rfi_generacion() {
       ]);
 
       var options ={
-          title :'Generación Agrupada por mes.',
+          title :'Generación Agrupada por Mes.',
           height:600,
           legend:{position:'bottom'},
           chartArea:{left:'20%',top:80,width:'80%',height:'75%'},

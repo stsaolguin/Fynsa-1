@@ -54,5 +54,7 @@ class f_facturas_bases(ModelForm):
         widgets ={
             'cliente' : Select(choices=clientes)
         }
+
+
         
         
