@@ -8,24 +8,12 @@
 </head>
 <body>
     <h1>HOLA</h1>
-    <div class="cat_pais_div"><div id="cat_pais_div"></div></div>
     <script>
-        google.charts.load('current', {packages: ['corechart', 'bar','Table','geochart'],'language': 'es-cl'});
-        google.charts.setOnLoadCallback(CategoriaPaisCrosstab);
-        function CategoriaPaisCrosstab(){
-            var data = new google.visualization.arrayToDataTable([['CATEGORIA', 'AR', 'CL', 'PE'], ['ADC', 0, 887, 0], ['B', 0, 5874, 0], ['FM', 11195, 437, 0], ['FO', 0, 0, 1030], ['FYNSA', 0, 3760, 0]]);
-            var options ={
-                        isStacked:true,
-                        height:600,
-                        
-
-                        };
-            var cat_pais = new google.visualization.ColumnChart(document.getElementById('cat_pais_div'));
-            cat_pais.draw(data,options);
-        
-        };
-        
-        </script>
+    autos =['honda','toyota','nissan'];
+    console.log(autos.pop());
+    console.log(autos.push('fiat'));
+    console.log(autos);
+    </script>
     
 </body>
 </html>

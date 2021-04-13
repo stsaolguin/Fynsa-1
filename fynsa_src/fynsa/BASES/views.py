@@ -175,8 +175,11 @@ select 1 as linea,*,sum(porcentaje) over (order by porcentaje desc) as porcentaj
 
 
 def ingreso_operaciones_views(request):
-    #esta es cotota
-    return render(request,'bases-ingreso-operaciones.html',context={})
+    datos = {}
+    
+    datos['ingreso_operaciones'] = bases_ingreso_operaciones()
+
+    return render(request,'bases-ingreso-operaciones.html',context=datos)
 
 def monto_mensual_cliente_views(request):
     producto = request.GET.get('selectorProductoMonto')

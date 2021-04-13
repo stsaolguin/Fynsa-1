@@ -1,6 +1,10 @@
 {% extends 'index.html' %}
 
 {% block contenido %}
-<h1>Conectado</h1>
+<form action="#" method="post">
+    {% csrf_token %}
+    {{ ingreso_operaciones }}
+    <input type="submit" value="Submit">
+</form>
 
 {% endblock %}

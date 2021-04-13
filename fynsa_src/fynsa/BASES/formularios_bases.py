@@ -56,5 +56,7 @@ class f_facturas_bases(ModelForm):
         }
 
 
-        
-        
+class bases_ingreso_operaciones(ModelForm):
+    class Meta:
+        model = bases
+        fields = ['fecha','nemo','tipo_de_pago','buy','seller','monto','tasa','valor_final']
