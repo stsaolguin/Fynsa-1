@@ -80,7 +80,7 @@ update "BASES_bases" set concate=concat(fecha, fynsa, otc_tr, nemo, dias, monto,
 
 
 
-select * from eq_der_rutinas()
+select * from eq_der_rutinas();
 REFRESH MATERIALIZED VIEW cobranzas_view;
 REFRESH MATERIALIZED VIEW cobranzas_view_consolidada;
 REFRESH MATERIALIZED VIEW serie_cobranzas_view;
