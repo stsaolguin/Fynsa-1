@@ -60,3 +60,10 @@ class bases_ingreso_operaciones(ModelForm):
     class Meta:
         model = bases
         fields = ['fecha','nemo','tipo_de_pago','buy','seller','monto','tasa','valor_final']
+
+
+class cargador_bases_form(forms.Form):
+    bases = forms.FileField(label="Archivo del blotter, UTF-8 separado por punto y coma (CSV UTF-8)",widget=forms.FileInput(attrs={'class':'form-control mx-2 my-3'}))
+
+class cargador_rfi_form(forms.Form):
+    rfi = forms.FileField(label="Archivo del blotter, UTF-8 separado por punto y coma (CSV UTF-8)",widget=forms.FileInput(attrs={'class':'form-control mx-2 my-3'}))

@@ -5,10 +5,8 @@ from django.core import serializers
 from BASES.models import bases,facturas_bases
 from .formularios_bases import *
 from RFL.models import actividad
+from .funciones_externas_Bases import *
 import csv
-
-
-
 
 def comite_bases(request):
     fechas_ingreso=f_fechas_comite()
@@ -232,3 +230,27 @@ def salida_bases_institucion_trader(request):
     timbre.save()
     return render(request,'salida-bases-institucion-trader.html',context=datos)         
     
+def cargador_bases(request):
+    if request.method=='POST':
+        formulario = cargador_bases_form(request.POST,request.FILES)
+        if formulario.is_valid():
+            datos_crudos = request.FILES['bases']
+            datos_crudos_salida = io.TextIOWrapper(datos_crudos.file,encoding='utf-8-sig')
+            c = limpiador_bases_interno(datos_crudos_salida)
+            for r in c:
+                try:
+                    fila = bases(**r)
+                    fila.save(using='pruebas')
+                except ValueError as err:
+                    print(err)
+                    print(r)
+                    return HttpResponse("Error!!!!")
+                    
+            return HttpResponse(c)
+       
+
+    datos = {}
+    datos['bf'] = cargador_bases_form()
+    return render(request,'cargador-bases.html',context=datos)         
+
+

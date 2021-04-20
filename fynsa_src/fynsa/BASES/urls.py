@@ -14,5 +14,6 @@ urlpatterns = [
     path('comite/salida/conciliaciones-csv', views.conciliaciones_views, name='conciliaciones_csv'),
     path('comite/salida/consolidado-csv', views.consolidado_csv_views, name='consolidado_csv'),
     path('bases-ingreso-operaciones', views.ingreso_operaciones_views, name='ingreso_operaciones'),
+    path('cargador-operaciones', views.cargador_bases, name='cargador_operaciones_bases'),
     ]
 
