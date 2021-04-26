@@ -5,6 +5,7 @@ import datetime
 
 def limpiador_bases_interno(texto):
     texto = texto.read()
+    texto = texto.replace(',00;',';')
     texto = texto.replace('.','').replace(',','.')
     texto = re.sub(';\s+-\s+;\s+-\s+;',';;;',texto)
     texto = re.sub(';\s+-\s+;',';;',texto)
@@ -28,3 +29,8 @@ def limpiador_bases_interno(texto):
         c = dict(zip(encabezados_salida,[f2,r[1],r[2],r[3],int(r[4]),int(r[5]),r[6],r[7],r[8],r[9],r[10],float(r[11]),int(r[12]),r[13],r[14],r[15],r[16],r[17],r[18],r[19],r[20],r[22],r[23],r[24],r[25],0,0]))
         lista.append(c)
     return lista
+
+
+def limpiador_rfi_interno(texto):
+    pass
+     

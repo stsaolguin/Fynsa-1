@@ -1,10 +1,28 @@
 {% extends 'index.html' %}
 
 {% block contenido %}
-<form action="#" method="post">
-    {% csrf_token %}
-    {{ ingreso_operaciones }}
-    <input type="submit" value="Submit">
-</form>
+<div class="container">
+    <div class="row d-flex flex-row-reverse">
+    <div class="btn btn-primary mx-1" id="agrega_cliente">agregar cliente</div>
+    <div class="btn btn-primary mx-1" id="agrega_instrumento">agregar instrumento</div>
+    </div>
+
+    <form action="#" method="post">
+            {% csrf_token %}
+                {{ ingreso_operaciones }}
+        <input type="submit" class = "btn btn-primary my-3" value="Submit">
+    </form>
+</div>
+<script>
+var add_cliente = document.getElementById('agrega_cliente');
+var add_instrumento = document.getElementById('agrega_instrumento');
+add_cliente.addEventListener('click',function(){
+    alert('se clickeo en Agrega cliente');
+});
+add_instrumento.addEventListener('click',function(){
+    alert('se clickeo en Agrega Instrumento');
+});
+
+</script>
 
 {% endblock %}
