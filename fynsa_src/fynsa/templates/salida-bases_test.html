@@ -157,8 +157,13 @@
             <!-- ======================= FIN DE INSTRUMENTOS MAS GENERACION ======= -->
 
             <!-- ============================ aca empieza un modulo  -->
- 
+           
             <div class="vencimientos_class">
+             <div class="display-1" id="total_facturado"></div>
+            
+                       
+
+            
             <h2>Vencimientos</h2>
             <table class="table">
                     <thead>
@@ -934,7 +939,18 @@
 
             var chart = new google.visualization.BarChart(document.getElementById('Monto_OTC_Bases_div'));
             chart.draw(view, options);
-            }
+            var suma_total=0;
+            for(var i=0;i < data.getNumberOfRows();i++){
+                suma_total = suma_total + data.getValue(i,1);
+
+            };
+            console.log("SUMA TOTAL",suma_total);
+            var a = document.getElementById("total_facturado").innerHTML=suma_total;
+            
+
+
+
+            };
 
 
             // ========OverflowEvent======OverflowEvent

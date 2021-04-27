@@ -38,3 +38,4 @@ class formulario_consulta_supercintas(forms.Form):
     moneda = forms.ChoiceField(choices=moneda,widget=forms.Select(attrs=atributo))
     duracion_inicial = forms.DecimalField(label="Duración inicial (000.00)",min_value=0,max_value=999.99,max_digits=5, decimal_places=2,widget=forms.NumberInput(attrs=atributo))
     duracion_final = forms.DecimalField(label="Duración final (000.00)",min_value=0,max_value=999.99,max_digits=5, decimal_places=2,widget=forms.NumberInput(attrs=atributo))
+    

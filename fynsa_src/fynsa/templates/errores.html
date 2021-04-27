@@ -1,0 +1,15 @@
+{% extends "index.html" %}
+
+{% block contenido %}
+<div class="container">
+            <div class="row">
+                <div class="col-lg my-3">
+                <p>Hay una línea dentro del csv que no está acorde al tipo de dato de la columna. Abre el csv, corríjelo manualmente, guárdalo como csv, y vuelve a subirlo</p>
+                    {{ error }}
+                </div>
+            </div>
+            <div class="row">
+            <a href="{% url "cargador_operaciones_bases" %}" class="btn btn-secondary">Volver</a>
+            </div>
+</div>
+{% endblock%}

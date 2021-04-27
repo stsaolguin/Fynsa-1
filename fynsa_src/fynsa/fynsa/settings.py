@@ -90,6 +90,14 @@ DATABASES = {
         'PASSWORD': 'Fynsa2019',
         'HOST': '127.0.0.1',
         'PORT': '5432',
+    },
+        'pruebas': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'fynsa_db_respaldo',
+        'USER': 'fynsa',
+        'PASSWORD': 'Fynsa2019',
+        'HOST': '127.0.0.1',
+        'PORT': '5432',
     }
 }
 

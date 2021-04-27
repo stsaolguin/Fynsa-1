@@ -201,6 +201,8 @@ def llegada_lva(request):
             supercintas.objects.all().delete()
             c = connection.cursor()
             c.execute('SELECT * from crea_tabla_supercintas();')
+            timbre = actividad(name='RFL',accion='carga_de_LVA',usuario=request.user)
+            timbre.save()
             return  redirect('consulta_cintas')
     return  redirect('arbitraje_rfl')
 
@@ -218,8 +220,8 @@ def consulta_supercintas_proceso(request):
     datos['c'] = supercintas.objects.raw(''' SELECT 1 AS ID, * from supercintas(%s,%s,%s,%s,%s) where tasa is not null ''',[duracion_inicial,duracion_final,rating,moneda,categoria])
     #acá creamos la consulta que saca de risk los que están en tr
     ultima_subida = actividad.objects.filter(accion='carga_de_datos').latest('fecha')
-    #timbre = actividad(name='RFL',accion='consulta_cintas',usuario=request.user)
-    #timbre.save()
+    timbre = actividad(name='RFL',accion='consulta_LVA',usuario=request.user)
+    timbre.save()
     return render(request,'rfl-arbitraje-consultas-salida-supercintas.html',context=datos)
 
 

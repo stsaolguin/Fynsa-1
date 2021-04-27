@@ -3,6 +3,7 @@ from .models import *
 from django import forms
 from RFI.models import rfi_beta
 
+
 ultima_fecha = bases.objects.latest('fecha')
 ultima_fecha_rfi = rfi_beta.objects.latest('fecha')
 ultima_fecha.refresh_from_db()
@@ -53,5 +54,28 @@ class f_facturas_bases(ModelForm):
         widgets ={
             'cliente' : Select(choices=clientes)
         }
-        
-        
+
+
+class bases_ingreso_operaciones(ModelForm):
+    class Meta:
+        clientes = [(x.institucion_trader,x.institucion_trader) for x in cliente_trader.objects.all().order_by('-institucion_trader')] 
+        instrumentos = [(x.nemo,x.nemo) for x in bases.objects.distinct('nemo').order_by('-nemo')]
+        model = bases
+        fields = ['fecha','nemo','tipo_de_pago','buy','seller','monto','tasa','valor_final']
+        widgets = {
+            'nemo': forms.Select(attrs={'class': "form-control"},choices = instrumentos),
+            'buy': forms.Select(attrs={'class': "form-control"},choices = clientes),
+            'seller': forms.Select(attrs={'class': "form-control"},choices = clientes),
+            'monto' : forms.NumberInput(attrs={'class': "form-control"}),
+            'tasa' : forms.NumberInput(attrs={'class': "form-control"}),
+            'valor_final' : forms.NumberInput(attrs={'class': "form-control"}),
+            'fecha' : forms.DateInput(attrs={'class': "form-control",'type':'date'}),
+            'tipo_de_pago' : forms.Select(attrs={'class': "form-control"},choices=['PH','PM']),
+        }
+
+
+class cargador_bases_form(forms.Form):
+    bases = forms.FileField(label="Archivo del blotter, UTF-8 separado por punto y coma (CSV UTF-8)",widget=forms.FileInput(attrs={'class':'form-control mx-2 my-3'}))
+
+class cargador_rfi_form(forms.Form):
+    rfi = forms.FileField(label="Archivo del blotter, UTF-8 separado por punto y coma (CSV UTF-8)",widget=forms.FileInput(attrs={'class':'form-control mx-2 my-3'}))

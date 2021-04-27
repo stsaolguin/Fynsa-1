@@ -1,0 +1,21 @@
+{% extends "index.html" %}
+
+{% block contenido %}
+<div class="container">
+            <div class="row">
+                        <div class="d-flex justify-content-center">
+                        
+                                <form action="{% url 'cargador_operaciones_bases' %}" method="POST" enctype="multipart/form-data">
+
+                                    <div class="form-inline">
+                                        {% csrf_token %}
+                                        {{bf}}                                
+                                        <input type="submit" class="btn btn-primary" value="Generar"> 
+                                    </div>
+                                </form>
+                    
+                        
+                        </div>
+            </div>
+</div>
+{% endblock%}
