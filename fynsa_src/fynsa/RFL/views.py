@@ -99,6 +99,7 @@ def consulta_cintas_proceso(request):
     ultima_subida = actividad.objects.filter(accion='carga_de_datos').latest('fecha')
     timbre = actividad(name='RFL',accion='consulta_cintas',usuario=request.user)
     timbre.save()
+    datos['servidor'] = request.get_host()
     if consulta_rsk.exists() and consulta_tr.exists():
         return render(request,'rfl-arbitraje-consultas-salida.html',context=datos)
     elif consulta_rsk.exists() and consulta_tr.exists()==False:
@@ -176,6 +177,8 @@ def consulta_cintas_proceso_grafico(request,bono):
     datos = {}
     datos['tenedores'] = posiciones.objects.filter(nemotecnico = bono).values('fuente_del_instrumento','institucion').annotate(monto_total=Sum('valor_nominal')).order_by('-monto_total')
     datos['bono'] = bono
+    
+    #print(request.get_host())
     return render(request,'rfl-arbitraje-consultas-salida-grafico.html',context=datos)
 
 def llegada_lva(request):
@@ -222,6 +225,7 @@ def consulta_supercintas_proceso(request):
     ultima_subida = actividad.objects.filter(accion='carga_de_datos').latest('fecha')
     timbre = actividad(name='RFL',accion='consulta_LVA',usuario=request.user)
     timbre.save()
+    datos['servidor'] = request.get_host()
     return render(request,'rfl-arbitraje-consultas-salida-supercintas.html',context=datos)
 
 
