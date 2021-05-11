@@ -59,7 +59,9 @@ class bases(models.Model):
     institucion_trader_seller = models.TextField(null=True)
     institucion_trader_participante_1 = models.TextField(null=True)
     institucion_trader_participante_2 = models.TextField(null=True)
-    
+    tasa_buyer = models.DecimalField(max_digits=4, decimal_places=2,null=True)
+    tasa_seller = models.DecimalField(max_digits=4, decimal_places=2,null=True)
+        
 
     def __str__(self):
         return str(self.fecha)

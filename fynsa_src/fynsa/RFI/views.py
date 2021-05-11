@@ -99,7 +99,7 @@ or (b.categoria='DLR' and c.categoria='DLR')
         tabla.append(fila)
     
     datos['cross'] = tabla
-    datos['metas']=rfi_beta.objects.raw(''' select 1 as linea, date_trunc('month',fecha)::date as mensual,sum(ingreso_mesa) as monto from "RFI_rfi_beta" group by mensual order by mensual asc; ''')
+    datos['metas']=rfi_beta.objects.raw(''' select 1 as linea,date_trunc('month',fecha)::date as mensual,sum(ingreso_mesa) FILTER (WHERE vendedor='FYNSA' or comprador='FYNSA') as ingreso_banca_privada,sum(ingreso_mesa) FILTER (WHERE vendedor!='FYNSA' and comprador!='FYNSA') as ingreso_resto from "RFI_rfi_beta" group by mensual order by mensual asc; ''')
     datos['generacion_mensual'] = rfi_beta.objects.raw('''select 1 as linea,mes,"2014","2015","2016","2017","2018","2019","2020",COALESCE("2021",0) as "2021",COALESCE("2022",0) as "2022" FROM crosstab('select date_part(''month'',fecha) as mes,date_part(''YEAR'',fecha) as agno, sum(ingreso_mesa)
 from "RFI_rfi_beta"
 group by mes,agno

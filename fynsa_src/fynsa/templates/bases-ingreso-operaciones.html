@@ -2,26 +2,206 @@
 
 {% block contenido %}
 <div class="container">
-    <div class="row d-flex flex-row-reverse">
-    <div class="btn btn-primary mx-1" id="agrega_cliente">agregar cliente</div>
-    <div class="btn btn-primary mx-1" id="agrega_instrumento">agregar instrumento</div>
+    <div class="row d-flex">
+            <div class="mr-auto p-2" name="total_operacion" id="total_operacion_id"></div>
+            <div class="btn btn-primary mx-1" id="agrega_cliente">agregar cliente</div>
+            <div class="btn btn-primary mx-1" id="agrega_instrumento">agregar instrumento</div>
+
     </div>
 
     <form action="#" method="post">
             {% csrf_token %}
-                {{ ingreso_operaciones }}
-        <input type="submit" class = "btn btn-primary my-3" value="Submit">
+            <div class="row">
+                <label for="{{ ingreso_operaciones.fecha.id_for_label }}">Fecha:</label>{{ ingreso_operaciones.fecha }}
+            </div>
+            <div class="row">
+                <div class="col-3">
+                    <label for="{{ ingreso_operaciones.nemo.id_for_label }}">Instrumento:</label>{{ ingreso_operaciones.nemo }}
+                </div>
+                <div class="col-3">
+                    <label for="{{ ingreso_operaciones.fynsa.id_for_label }}">Fynsa:</label>{{ ingreso_operaciones.fynsa }}
+                </div>
+                <div class="col-3">
+                    <label for="{{ ingreso_operaciones.otc_tr.id_for_label }}">Otc/Tr:</label>{{ ingreso_operaciones.otc_tr }}
+                </div>
+                <div class="col-3">
+                    <label for="{{ ingreso_operaciones.tipo_de_pago.id_for_label }}">Tipo de pago:</label>{{ ingreso_operaciones.tipo_de_pago }}
+                </div>
+            </div>
+            <div class="row d-flex justify-content-center">
+     
+                    <div class="col-4">
+                        <label for="{{ ingreso_operaciones.monto.id_for_label }}">Monto:</label>{{ ingreso_operaciones.monto }}
+                    </div>
+
+            </div>
+            <div class="row alert-primary my-2 py-3"><!--vendedor-->
+                <div class="col-4">
+                    <label for="{{ ingreso_operaciones.seller.id_for_label }}">Vendedor:</label>{{ ingreso_operaciones.seller }}
+                </div>
+                 <div class="col-3">
+                        <label for="{{ ingreso_operaciones.venta_depo.id_for_label }}">Valor final:</label>{{ ingreso_operaciones.venta_depo }}
+                </div>
+                <div class="col-3">
+                        <label for="{{ ingreso_operaciones.fee_seller_clp.id_for_label }}">Fee:</label>{{ ingreso_operaciones.fee_seller_clp }}
+                </div>
+                <div class="col-2">
+                        <label for="{{ ingreso_operaciones.tasa.id_for_label }}">Tasa:</label>{{ ingreso_operaciones.tasa_seller }}
+                </div>
+            
+            </div>
+                <div class="row alert-secondary my-2 py-3"><!--compradores-->
+                        <div class="col-4">
+                            <label for="{{ ingreso_operaciones.buy.id_for_label }}">Comprador:</label>{{ ingreso_operaciones.buy }}
+                        </div>
+                        <div class="col-3">
+                            <label for="{{ ingreso_operaciones.compra_depo.id_for_label }}">Valor final:</label>{{ ingreso_operaciones.compra_depo }}
+                        </div>
+                        <div class="col-3">
+                                <label for="{{ ingreso_operaciones.fee_buyer_clp.id_for_label }}">Fee:</label>{{ ingreso_operaciones.fee_buyer_clp }}
+                        </div>
+                        <div class="col-2">
+                            <label for="{{ ingreso_operaciones.tasa.id_for_label }}">Tasa:</label>{{ ingreso_operaciones.tasa_buyer }}
+                        </div>
+            
+            </div>
+
+        <div class="row d-flex flex-row-reverse">
+            <input type="submit" class = "btn btn-primary my-3" value="Guardar y crear tickets">
+        </div>
     </form>
+    
 </div>
+<div class="modal fade" id="modalclientenuevo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Agregar Cliente Nuevo</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <span>Nombre:</span>
+            <input type="text" class="form-control" name="nombreNuevoCliente" id="nuevoClienteId">
+            <span>Institución: </span>
+            <input type="text" class="form-control" name="institucionNuevoCliente" id="nuevoinstitucionId">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" id="guadaClienteNuevoId">Guardar</button>
+            </div>
+            </div>
+        </div>
+        </div>
+
+        <div class="modal fade" id="modalinstrumentonuevo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Agregar instrumento Nuevo</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                </div>
+                <div class="modal-body">
+                <input type="text" class="form-control" name="nuevoinstrumento" id="nuevoInstrumentoId">
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" id="guadaInstrumentoNuevoId">Guardar</button>
+                </div>
+            </div>
+            </div>
+        </div>
+</div>
+
+
+
 <script>
 var add_cliente = document.getElementById('agrega_cliente');
 var add_instrumento = document.getElementById('agrega_instrumento');
+var guarda_cliente = document.getElementById('guadaClienteNuevoId');
+var guarda_instrumento = document.getElementById('guadaInstrumentoNuevoId');
 add_cliente.addEventListener('click',function(){
-    alert('se clickeo en Agrega cliente');
-});
+    $('#modalclientenuevo').modal();
+    });
 add_instrumento.addEventListener('click',function(){
-    alert('se clickeo en Agrega Instrumento');
+    $('#modalinstrumentonuevo').modal();
 });
+
+guarda_instrumento.addEventListener('click',function(){
+    var instrumento = document.getElementById("nuevoInstrumentoId");
+    var selector = document.getElementById('id_nemo');
+    var nuevo_elemento = document.createElement('option');
+    nuevo_elemento.innerText = instrumento.value;
+    nuevo_elemento.value = instrumento.value;
+    nuevo_elemento.className = "bg-success";
+    nuevo_elemento.defaultSelected = true;
+    selector.appendChild(nuevo_elemento);
+    $('#modalinstrumentonuevo').modal('hide');
+
+});
+
+
+guarda_cliente.addEventListener('click',function(){
+    var cliente = document.getElementById("nuevoClienteId");
+    var institucion = document.getElementById("nuevoinstitucionId");
+    var selector_comprador = document.getElementById("id_buy");
+    var selector_vendedor = document.getElementById("id_seller");
+    
+    var n_e = document.createElement('option');
+    var cliente_institucion = institucion.value + ' - ' + cliente.value  
+    n_e.innerText = cliente_institucion;
+    n_e.value = cliente_institucion;
+    n_e.defaultSelected = true;
+    var n_e_2 = n_e.cloneNode(true);
+    selector_comprador.appendChild(n_e);
+    selector_vendedor.appendChild(n_e_2);
+    console.log(cliente.value);
+    console.log(institucion.value);
+    $('#modalclientenuevo').modal('hide');
+    
+
+
+});
+function separador_miles(n){
+    var n_parts = n.toString();
+    var n_salida = n_parts.replace(/\B(?=(\d{3})+(?!\d))/g,".");
+    return n_salida
+    
+};
+var valor_final_buyer = document.getElementById('id_compra_depo');
+var valor_final_seller = document.getElementById('id_venta_depo');
+var tasa_buyer = document.getElementById('id_tasa_comprador');
+var tasa_seller = document.getElementById('id_tasa_vendedor');
+var fee_seller = document.getElementById('id_fee_seller_clp');
+var fee_buyer = document.getElementById('id_fee_buyer_clp');
+var monto = document.getElementById("id_monto");
+var total_operacion = document.getElementById('total_operacion');
+monto.addEventListener('change',e => {
+    monto.value = separador_miles(monto.value);
+    });
+valor_final_seller.addEventListener('change',f =>{
+     valor_final_seller.value = separador_miles(valor_final_seller.value)    
+     valor_final_buyer.value = valor_final_seller.value;
+     
+});
+valor_final_buyer.addEventListener('change',d =>{
+     valor_final_buyer.value = separador_miles(valor_final_buyer.value);
+     
+});
+
+fee_seller.addEventListener('change',e => {fee_seller.value = separador_miles(fee_seller.value);});
+fee_buyer.addEventListener('change',e => {fee_buyer.value = separador_miles(fee_buyer.value);});
+
+
+
+
+
+
+
+
 
 </script>
 

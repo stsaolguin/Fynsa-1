@@ -55,23 +55,30 @@ class f_facturas_bases(ModelForm):
             'cliente' : Select(choices=clientes)
         }
 
-
 class bases_ingreso_operaciones(ModelForm):
     class Meta:
         clientes = [(x.institucion_trader,x.institucion_trader) for x in cliente_trader.objects.all().order_by('-institucion_trader')] 
         instrumentos = [(x.nemo,x.nemo) for x in bases.objects.distinct('nemo').order_by('-nemo')]
         model = bases
-        fields = ['fecha','nemo','tipo_de_pago','buy','seller','monto','tasa','valor_final']
+        fields = ['fecha','nemo','tipo_de_pago','otc_tr','fynsa','buy','seller','fee_buyer_clp','fee_seller_clp','monto','tasa','valor_final','compra_depo','venta_depo','tasa_buyer','tasa_seller']
         widgets = {
             'nemo': forms.Select(attrs={'class': "form-control"},choices = instrumentos),
             'buy': forms.Select(attrs={'class': "form-control"},choices = clientes),
             'seller': forms.Select(attrs={'class': "form-control"},choices = clientes),
-            'monto' : forms.NumberInput(attrs={'class': "form-control"}),
-            'tasa' : forms.NumberInput(attrs={'class': "form-control"}),
-            'valor_final' : forms.NumberInput(attrs={'class': "form-control"}),
+            'fynsa': forms.Select(attrs={'class': "form-control"},choices = ['SI','NO']),
+            'otc_tr': forms.Select(attrs={'class': "form-control"},choices = ['OTC','TR']),
+            'monto' : forms.TextInput(attrs={'class': "form-control","placeholder":"0"}),
+            'tasa_buyer' : forms.TextInput(attrs={'class': "form-control"}),
+            'tasa_seller' : forms.TextInput(attrs={'class': "form-control"}),
+            'compra_depo' : forms.TextInput(attrs={'class': "form-control"}),
+            'venta_depo' : forms.TextInput(attrs={'class': "form-control"}),
             'fecha' : forms.DateInput(attrs={'class': "form-control",'type':'date'}),
-            'tipo_de_pago' : forms.Select(attrs={'class': "form-control"},choices=['PH','PM']),
+            'tipo_de_pago' : forms.Select(attrs={'class': "form-control"},choices=[('PH','PH'),('PM','PM'),('CN','CN')]),
+            'fee_buyer_clp' : forms.TextInput(attrs={'class': "form-control"}),
+            'fee_seller_clp' : forms.TextInput(attrs={'class': "form-control"}),
         }
+    
+    
 
 
 class cargador_bases_form(forms.Form):
