@@ -60,7 +60,7 @@ class bases_ingreso_operaciones(ModelForm):
         clientes = [(x.institucion_trader,x.institucion_trader) for x in cliente_trader.objects.all().order_by('-institucion_trader')] 
         instrumentos = [(x.nemo,x.nemo) for x in bases.objects.distinct('nemo').order_by('-nemo')]
         model = bases
-        fields = ['fecha','nemo','tipo_de_pago','otc_tr','fynsa','buy','seller','fee_buyer_clp','fee_seller_clp','monto','tasa','valor_final','compra_depo','venta_depo','tasa_buyer','tasa_seller']
+        fields = ['fecha','nemo','tipo_de_pago','otc_tr','fynsa','buy','seller','fee_buyer_clp','fee_seller_clp','monto','compra_depo','venta_depo','tasa_buyer','tasa_seller']
         widgets = {
             'nemo': forms.Select(attrs={'class': "form-control"},choices = instrumentos),
             'buy': forms.Select(attrs={'class': "form-control"},choices = clientes),

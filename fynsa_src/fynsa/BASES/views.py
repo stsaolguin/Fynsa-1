@@ -51,9 +51,9 @@ def salida_bases(request):
         datos['serie_generaciones'] = bases.objects.raw(''' select 1 as linea,fecha,sum(util_depo+fee_buyer_clp+fee_seller_clp) as monto from "BASES_bases" where util_depo>0 or fee_buyer_clp>0 or fee_seller_clp>0 group by fecha HAVING fecha BETWEEN %s and %s order by fecha asc  ''',[fecha_inicial,fecha_final])
         #datos['serie_generaciones_apiladas'] = bases.objects.raw(''' select 1 as linea,fecha,sum(util_depo) as util_depo, sum(fee_buyer_clp+fee_seller_clp) as provision from "BASES_bases" where (util_depo>0 or fee_buyer_clp>0 or fee_seller_clp>0) and fecha BETWEEN %s and %s group by fecha order by fecha asc   ''',[fecha_inicial,fecha_final])
         datos['serie_generaciones_apiladas'] = bases.objects.raw(''' select 1 as linea,* from eqder_serie_generaciones_categorias(%s,%s) order by fecha_salida asc;   ''',[fecha_inicial,fecha_final])
-        datos['total_generaciones'] = bases.objects.raw(''' select 1 as linea,sum(util_depo+fee_buyer_clp+fee_seller_clp) as monto from "BASES_bases" where (util_depo>0 or fee_buyer_clp>0 or fee_seller_clp>0) and fecha BETWEEN %s and %s  ''',[fecha_inicial,fecha_final])[0]
-        datos['total_generaciones_bases'] = bases.objects.raw(''' select 1 as linea, sum(fee_buyer_clp+fee_seller_clp+util_depo) as monto_bases from "BASES_bases" where fecha between %s and %s and nemo ilike 'B%%' and (fee_buyer_clp>0 or fee_seller_clp>0 OR util_depo>0)  ''',[fecha_inicial,fecha_final])[0]
-        datos['total_generaciones_depos'] = bases.objects.raw(''' select 1 as linea, sum(fee_buyer_clp+fee_seller_clp+util_depo) as monto_depos from "BASES_bases" where fecha between %s and %s and nemo ilike 'F%%' and (fee_buyer_clp>0 or fee_seller_clp>0 OR util_depo>0)  ''',[fecha_inicial,fecha_final])[0]
+        datos['total_generaciones'] = bases.objects.raw(''' select 1 as linea,COALESCE(sum(util_depo+fee_buyer_clp+fee_seller_clp),0) as monto from "BASES_bases" where (util_depo>0 or fee_buyer_clp>0 or fee_seller_clp>0) and fecha BETWEEN %s and %s  ''',[fecha_inicial,fecha_final])[0]
+        datos['total_generaciones_bases'] = bases.objects.raw(''' select 1 as linea, COALESCE(sum(fee_buyer_clp+fee_seller_clp+util_depo),0) as monto_bases from "BASES_bases" where fecha between %s and %s and nemo ilike 'B%%' and (fee_buyer_clp>0 or fee_seller_clp>0 OR util_depo>0)  ''',[fecha_inicial,fecha_final])[0]
+        datos['total_generaciones_depos'] = bases.objects.raw(''' select 1 as linea, COALESCE(sum(fee_buyer_clp+fee_seller_clp+util_depo),0) as monto_depos from "BASES_bases" where fecha between %s and %s and nemo ilike 'F%%' and (fee_buyer_clp>0 or fee_seller_clp>0 OR util_depo>0)  ''',[fecha_inicial,fecha_final])[0]
         
         #datos['cobros'] = bases.objects.raw(''' select 1 as linea,cliente,provision,ida_vuelta,(provision-ida_vuelta)as saldo from generaciones_bases_historico() order by provision desc  ''')
         datos['cobros'] = bases.objects.raw(''' Select 1 as linea,* from cobranzas_view_consolidada where provisiones>0; ''')
@@ -173,10 +173,8 @@ select 1 as linea,*,sum(porcentaje) over (order by porcentaje desc) as porcentaj
 
 
 def ingreso_operaciones_views(request):
-    datos = {}
-    
+    datos = {}    
     datos['ingreso_operaciones'] = bases_ingreso_operaciones()
-
     return render(request,'bases-ingreso-operaciones.html',context=datos)
 
 def monto_mensual_cliente_views(request):
@@ -253,3 +251,19 @@ def cargador_bases(request):
     return render(request,'cargador-bases.html',context=datos)
 
 
+def formulario_bases(request):
+    if request.method=='POST':
+        datos = request.POST.copy()
+        datos['monto'] = datos['monto'].replace('.','')
+        datos['venta_depo'] = datos['venta_depo'].replace('.','')
+        datos['compra_depo'] = datos['compra_depo'].replace('.','')
+        datos['fee_seller_clp'] = datos['fee_seller_clp'].replace('.','')
+        datos['fee_buyer_clp'] = datos['fee_buyer_clp'].replace('.','')
+        f = bases_ingreso_operaciones(data=datos)
+        #print(f.is_valid())
+        #print(f.errors)
+        if f.is_valid():
+            #para_grabar = f.save(commit=False)
+            #para_grabar.save(using='pruebas')
+            return render(request,'bases-salida-tickets.html',context=datos.dict())
+    return HttpResponse("En caso de errores, salir de acá")

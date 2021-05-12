@@ -9,7 +9,7 @@
 
     </div>
 
-    <form action="#" method="post">
+    <form action="{% url 'formulario_operaciones_bases' %}" method="post">
             {% csrf_token %}
             <div class="row">
                 <label for="{{ ingreso_operaciones.fecha.id_for_label }}">Fecha:</label>{{ ingreso_operaciones.fecha }}
@@ -178,7 +178,7 @@ var tasa_seller = document.getElementById('id_tasa_vendedor');
 var fee_seller = document.getElementById('id_fee_seller_clp');
 var fee_buyer = document.getElementById('id_fee_buyer_clp');
 var monto = document.getElementById("id_monto");
-var total_operacion = document.getElementById('total_operacion');
+var total_operacion = document.getElementById('total_operacion_id');
 monto.addEventListener('change',e => {
     monto.value = separador_miles(monto.value);
     });
@@ -186,11 +186,12 @@ valor_final_seller.addEventListener('change',f =>{
      valor_final_seller.value = separador_miles(valor_final_seller.value)    
      valor_final_buyer.value = valor_final_seller.value;
      
+     
 });
 valor_final_buyer.addEventListener('change',d =>{
      valor_final_buyer.value = separador_miles(valor_final_buyer.value);
      
-});
+     });
 
 fee_seller.addEventListener('change',e => {fee_seller.value = separador_miles(fee_seller.value);});
 fee_buyer.addEventListener('change',e => {fee_buyer.value = separador_miles(fee_buyer.value);});
