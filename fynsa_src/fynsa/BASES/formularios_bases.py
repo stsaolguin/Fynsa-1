@@ -1,4 +1,5 @@
 from django.forms import ModelForm, Textarea,Select,DateInput, ModelChoiceField
+from django.core.exceptions import ValidationError
 from .models import *
 from django import forms
 from RFI.models import rfi_beta
@@ -65,18 +66,29 @@ class bases_ingreso_operaciones(ModelForm):
             'nemo': forms.Select(attrs={'class': "form-control"},choices = instrumentos),
             'buy': forms.Select(attrs={'class': "form-control"},choices = clientes),
             'seller': forms.Select(attrs={'class': "form-control"},choices = clientes),
-            'fynsa': forms.Select(attrs={'class': "form-control"},choices = ['SI','NO']),
-            'otc_tr': forms.Select(attrs={'class': "form-control"},choices = ['OTC','TR']),
+            'fynsa': forms.Select(attrs={'class': "form-control"}),
+            'otc_tr': forms.Select(attrs={'class': "form-control"}),
             'monto' : forms.TextInput(attrs={'class': "form-control","placeholder":"0"}),
             'tasa_buyer' : forms.TextInput(attrs={'class': "form-control"}),
             'tasa_seller' : forms.TextInput(attrs={'class': "form-control"}),
             'compra_depo' : forms.TextInput(attrs={'class': "form-control"}),
             'venta_depo' : forms.TextInput(attrs={'class': "form-control"}),
             'fecha' : forms.DateInput(attrs={'class': "form-control",'type':'date'}),
-            'tipo_de_pago' : forms.Select(attrs={'class': "form-control"},choices=[('PH','PH'),('PM','PM'),('CN','CN')]),
+            'tipo_de_pago' : forms.Select(attrs={'class': "form-control"}),
             'fee_buyer_clp' : forms.TextInput(attrs={'class': "form-control"}),
             'fee_seller_clp' : forms.TextInput(attrs={'class': "form-control"}),
+            'dias' : forms.NumberInput(attrs={'class': "form-control"}),
         }
+    def clean(self):
+        super().clean()
+        vendedor = self.cleaned_data.get("seller")
+        comprador = self.cleaned_data.get("buy")
+        monto_comprador = self.cleaned_data.get("compra_depo")
+        monto_vendedor = self.cleaned_data.get("venta_depo")
+        if comprador==vendedor:
+            raise ValidationError("vendedor y comprador no pueden ser el mismo, Ojo ahí!")
+        if monto_vendedor > monto_comprador:
+            raise ValidationError("¿Lo estás vendiendo mas barato a lo que lo compraste?, Ojo!")
     
     
 
@@ -86,3 +98,30 @@ class cargador_bases_form(forms.Form):
 
 class cargador_rfi_form(forms.Form):
     rfi = forms.FileField(label="Archivo del blotter, UTF-8 separado por punto y coma (CSV UTF-8)",widget=forms.FileInput(attrs={'class':'form-control mx-2 my-3'}))
+
+class bases_ingreso_operaciones_depos(bases_ingreso_operaciones):
+    model = bases
+    class Meta(bases_ingreso_operaciones.Meta):
+        fields = '__all__'
+        exclude = (
+            'trader_buy',
+        'trader_seller',
+        'fee_buyer',
+        'fee_seller',
+        'fee_buyer_moneda',
+        'fee_seller_moneda',
+        'valor_final',
+        'participante_1',
+        'participante_2',
+        'tipo_de_cambio',
+        'uf',
+        'concate',
+        'institucion_trader_seller',
+        'institucion_trader_buyer',
+        'institucion_trader_participante_1',
+        'institucion_trader_participante_2',
+        'valor_clp',
+        'tasa',
+        'util_depo',
+        )
+    

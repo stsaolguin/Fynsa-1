@@ -1,11 +1,12 @@
+from django.http.response import HttpResponse
 from django.shortcuts import render
 from RFI.models import rfi_beta
 from RFI.models import rfi_generacion_comite_temporal as comite
-
 from BASES.formularios_bases import f_fechas_comite_rfi
 from django.utils.dateparse import parse_date
+from .formularios_rfi import rfi_ingreso_orden_formulario
     
-
+#estas de abajo hay que borrarlas
 def rfi_cruce(request,f):
     fondo = sw.objects.raw(''' select 1 as id, * from dinamico(%s) where dif<>0 order by dif desc; ''',[f])
     ventas = sw.objects.raw(''' select 1 as id, sum(dif) as v from dinamico(%s) where dif<0; ''',[f])
@@ -110,8 +111,10 @@ as ct(mes numeric, "2014" numeric, "2015" numeric,"2016" numeric,"2017" numeric,
     
 def rfi_comite_cliente(request,cliente):
     datos={}
-    
     datos['cliente'] = cliente
-
     return render(request,'comite-rfi-salida-cliente.html',datos)
 
+def rfi_ingreso_ordenes(request):
+    datos={}
+    datos['formulario']=rfi_ingreso_orden_formulario()
+    return render(request,'rfi-ingreso-ordenes.html',context=datos)

@@ -33,7 +33,7 @@ class bases(models.Model):
     nemo = models.TextField()
     dias = models.IntegerField(null=True, default=0)
     monto = models.BigIntegerField(null=True, default=0)
-    tipo_de_pago = models.TextField(choices=[('PM','PM'),('PH','PH')],null=True,blank=True)
+    tipo_de_pago = models.TextField(choices=[('PM','PM'),('PH','PH'),('CN','CN')],null=True,blank=True)
     buy = models.TextField()
     seller = models.TextField()
     trader_buy = models.TextField(null=True, default=0)

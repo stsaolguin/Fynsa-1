@@ -172,10 +172,7 @@ select 1 as linea,*,sum(porcentaje) over (order by porcentaje desc) as porcentaj
     return response
 
 
-def ingreso_operaciones_views(request):
-    datos = {}    
-    datos['ingreso_operaciones'] = bases_ingreso_operaciones()
-    return render(request,'bases-ingreso-operaciones.html',context=datos)
+
 
 def monto_mensual_cliente_views(request):
     producto = request.GET.get('selectorProductoMonto')
@@ -251,19 +248,46 @@ def cargador_bases(request):
     return render(request,'cargador-bases.html',context=datos)
 
 
-def formulario_bases(request):
+def ingreso_operaciones_views(request):
+    datos = {}    
+    datos['ingreso_operaciones'] = bases_ingreso_operaciones()
+    datos['ingreso_operaciones_depositos'] = bases_ingreso_operaciones_depos()
+    return render(request,'bases-ingreso-operaciones.html',context=datos)
+
+def formulario_bases(request):    
     if request.method=='POST':
+        print(request.POST)
         datos = request.POST.copy()
         datos['monto'] = datos['monto'].replace('.','')
         datos['venta_depo'] = datos['venta_depo'].replace('.','')
         datos['compra_depo'] = datos['compra_depo'].replace('.','')
         datos['fee_seller_clp'] = datos['fee_seller_clp'].replace('.','')
         datos['fee_buyer_clp'] = datos['fee_buyer_clp'].replace('.','')
-        f = bases_ingreso_operaciones(data=datos)
-        #print(f.is_valid())
-        #print(f.errors)
-        if f.is_valid():
-            #para_grabar = f.save(commit=False)
-            #para_grabar.save(using='pruebas')
-            return render(request,'bases-salida-tickets.html',context=datos.dict())
-    return HttpResponse("En caso de errores, salir de acá")
+        datos['tasa_buyer'] = datos['tasa_buyer'].replace(',','.')
+        datos['tasa_seller'] = datos['tasa_seller'].replace(',','.')
+
+        if 'boton_bases' in request.POST:            
+            f = bases_ingreso_operaciones(data=datos)
+            #print(f.is_valid())
+            #print(f.errors)
+            if f.is_valid():
+                #para_grabar = f.save(commit=False)
+                #para_grabar.save(using='pruebas')
+                return render(request,'bases-salida-tickets.html',context=datos.dict())
+            else:
+                diccionario_inicial = {}
+                diccionario_inicial['ingreso_operaciones'] = ingreso_operaciones=f
+                print(ingreso_operaciones.errors)
+                diccionario_inicial['ingreso_operaciones_depositos'] = bases_ingreso_operaciones_depos()
+                return render(request,'bases-ingreso-operaciones.html',context=diccionario_inicial)
+        elif 'boton_depositos' in request.POST:
+            f = bases_ingreso_operaciones_depos(data=datos)
+            #print(f.is_valid())
+            #print(f.errors)
+            if f.is_valid():
+                #para_grabar = f.save(commit=False)
+                #para_grabar.save(using='pruebas')
+                return render(request,'bases-salida-tickets.html',context=datos.dict())
+
+        
+    return render(request,'bases-ingreso-operaciones.html',context=datos)

@@ -2,14 +2,36 @@
 
 {% block contenido %}
 <div class="container">
+    
+   
+    <ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+          <a href="#contenido_bases" class="nav-link active" data-toggle="tab" role="tab" aria-controls="contenido_bases">Bases</a>
+        </li>
+        <li class="nav-item">
+             <a href="#contenido_depositos" class="nav-link" data-toggle="tab" aria-controls="contenido_depositos">Depósitos</a>       
+        </li>
+    </ul>
     <div class="row d-flex">
             <div class="mr-auto p-2" name="total_operacion" id="total_operacion_id"></div>
-            <div class="btn btn-primary mx-1" id="agrega_cliente">agregar cliente</div>
-            <div class="btn btn-primary mx-1" id="agrega_instrumento">agregar instrumento</div>
+            <div class="btn btn-primary mx-1" id="agrega_cliente">Agregar cliente</div>
+            <div class="btn btn-primary mx-1" id="agrega_instrumento">Agregar instrumento</div>
 
     </div>
+    <div class="tab-content">
+        <div class="tab-pane active" id="contenido_bases" role="tabpanel" aria-labelledby="contenido_bases-tab">
+    <form action="{% url 'formulario_operaciones_bases' %}" method="post" target="_blank">
+            {% if ingreso_operaciones.non_field_errors %}
+            <div class="alert alert-danger" role="alert">{{ ingreso_operaciones.non_field_errors }}</div>
+            {% endif %}
+            {% for f in ingreso_operaciones %}
+                {% if f.errors %}
+                <div class="alert alert-danger" role="alert">
+                {{f.errors}} en el campo {{f.label}}
+                </div>
+                {% endif %}
+            {% endfor %}
 
-    <form action="{% url 'formulario_operaciones_bases' %}" method="post">
             {% csrf_token %}
             <div class="row">
                 <label for="{{ ingreso_operaciones.fecha.id_for_label }}">Fecha:</label>{{ ingreso_operaciones.fecha }}
@@ -67,10 +89,95 @@
             </div>
 
         <div class="row d-flex flex-row-reverse">
-            <input type="submit" class = "btn btn-primary my-3" value="Guardar y crear tickets">
+            <input type="submit" class = "btn btn-primary my-3" name="boton_bases" value="Guardar y crear tickets">
         </div>
     </form>
+         </div>
     
+    
+        <div class="tab-pane fade" id="contenido_depositos" role="tabpanel" aria-labelledby="contenido_depositos-tab">
+            <form action="{% url 'formulario_operaciones_bases' %}" method="POST" target="_blank">
+             {% for f in ingreso_operaciones_depositos %}
+                {% if f.errors %}
+                <div class="alert alert-danger" role="alert">
+                {{f.errors}} en el campo {{f.label}}
+                </div>
+                {% endif %}
+            {% endfor %}
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-lg-12">
+                 <label for="{{ ingreso_operaciones_depositos.fecha.id_for_label }}">Fecha:</label>
+                    {{ ingreso_operaciones_depositos.fecha }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-3">
+                <label for="{{ ingreso_operaciones_depositos.nemo.id_for_label }}">Instrumento:</label>
+                    {{ ingreso_operaciones_depositos.nemo }}
+                </div>
+                <div class="col-lg-3">
+                <label for="{{ ingreso_operaciones_depositos.fynsa.id_for_label }}">Fynsa:</label>
+                    {{ ingreso_operaciones_depositos.fynsa }}
+                </div>
+                <div class="col-lg-3">
+                <label for="{{ ingreso_operaciones_depositos.otc_tr.id_for_label }}">Otc / Tr:</label>
+                    {{ ingreso_operaciones_depositos.otc_tr }}
+                </div>
+                <div class="col-lg-3">
+                <label for="{{ ingreso_operaciones_depositos.tipo_de_pago.id_for_label }}">Tipo de Pago:</label>
+                    {{ ingreso_operaciones_depositos.tipo_de_pago }}
+                </div>
+            </div>
+            <div class="row d-flex justify-content-center">
+     
+                    <div class="col-4">
+                        <label for="{{ ingreso_operaciones_depositos.monto.id_for_label }}">Monto Rescate:</label>{{ ingreso_operaciones_depositos.monto }}
+                    </div>
+                    <div class="col-4">
+                        <label for="{{ ingreso_operaciones_depositos.id_for_label }}">Días:</label>{{ ingreso_operaciones_depositos.dias }}
+                    </div>
+
+            </div>
+            <div class="row alert-warning my-2 py-3"><!--vendedor-->
+                <div class="col-4">
+                    <label for="{{ ingreso_operaciones_depositos.seller.id_for_label }}">Vendedor:</label>{{ ingreso_operaciones_depositos.seller }}
+                </div>
+                 <div class="col-3">
+                        <label for="{{ ingreso_operaciones_depositos.venta_depo.id_for_label }}">Valor captación:</label>{{ ingreso_operaciones_depositos.venta_depo }}
+                </div>
+                <div class="col-3">
+                        <label for="{{ ingreso_operaciones_depositos.fee_seller_clp.id_for_label }}">Fee:</label>{{ ingreso_operaciones_depositos.fee_seller_clp }}
+                </div>
+                <div class="col-2">
+                        <label for="{{ ingreso_operaciones_depositos.tasa.id_for_label }}">Tasa:</label>{{ ingreso_operaciones_depositos.tasa_seller }}
+                </div>
+            
+            </div>
+                <div class="row alert-info my-2 py-3"><!--compradores-->
+                        <div class="col-4">
+                            <label for="{{ ingreso_operaciones_depositos.buy.id_for_label }}">Comprador:</label>{{ ingreso_operaciones_depositos.buy }}
+                        </div>
+                        <div class="col-3">
+                            <label for="{{ ingreso_operaciones_depositos.compra_depo.id_for_label }}">Valor captación:</label>{{ ingreso_operaciones_depositos.compra_depo }}
+                        </div>
+                        <div class="col-3">
+                                <label for="{{ ingreso_operaciones_depositos.fee_buyer_clp.id_for_label }}">Fee:</label>{{ ingreso_operaciones_depositos.fee_buyer_clp }}
+                        </div>
+                        <div class="col-2">
+                            <label for="{{ ingreso_operaciones_depositos.tasa.id_for_label }}">Tasa:</label>{{ ingreso_operaciones_depositos.tasa_buyer }}
+                        </div>
+            
+            </div>
+
+        <div class="row d-flex flex-row-reverse">
+            <button type="submit" class = "btn btn-primary my-3" name="boton_depositos">Guardar y crear tickets</button>  
+        </div>
+            
+            
+            </form>
+        </div>
+    </div>
 </div>
 <div class="modal fade" id="modalclientenuevo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -115,6 +222,7 @@
             </div>
         </div>
 </div>
+
 
 
 
@@ -195,14 +303,6 @@ valor_final_buyer.addEventListener('change',d =>{
 
 fee_seller.addEventListener('change',e => {fee_seller.value = separador_miles(fee_seller.value);});
 fee_buyer.addEventListener('change',e => {fee_buyer.value = separador_miles(fee_buyer.value);});
-
-
-
-
-
-
-
-
 
 </script>
 
