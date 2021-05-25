@@ -1,10 +1,17 @@
 {% extends 'index.html' %}
 
 {% block contenido %}
-<div class="container">
+<div class="container mb-4">
+        <div class="row d-flex mb-3">
+                <div class="card" style="width: 13rem;">
+                <div class="card-body">
+                    <h5 class="card-title">Hoy: $xx.xxX.xxX</h5>
+                </div>
+                </div>
+        </div>
     
    
-    <ul class="nav nav-tabs" role="tablist">
+    <ul class="nav nav-tabs mb-2" role="tablist">
         <li class="nav-item">
           <a href="#contenido_bases" class="nav-link active" data-toggle="tab" role="tab" aria-controls="contenido_bases">Bases</a>
         </li>
@@ -22,7 +29,7 @@
         <div class="tab-pane active" id="contenido_bases" role="tabpanel" aria-labelledby="contenido_bases-tab">
     <form action="{% url 'formulario_operaciones_bases' %}" method="post" target="_blank">
             {% if ingreso_operaciones.non_field_errors %}
-            <div class="alert alert-danger" role="alert">{{ ingreso_operaciones.non_field_errors }}</div>
+            <div class="alert alert-danger my-2" role="alert">{{ ingreso_operaciones.non_field_errors }}</div>
             {% endif %}
             {% for f in ingreso_operaciones %}
                 {% if f.errors %}
@@ -97,7 +104,10 @@
     
         <div class="tab-pane fade" id="contenido_depositos" role="tabpanel" aria-labelledby="contenido_depositos-tab">
             <form action="{% url 'formulario_operaciones_bases' %}" method="POST" target="_blank">
-             {% for f in ingreso_operaciones_depositos %}
+             {% if ingreso_operaciones_depositos.non_field_errors %}
+                <div class="alert alert-danger my-2" role="alert">{{ ingreso_operaciones_depositos.non_field_errors }}</div>
+            {% endif %}
+            {% for f in ingreso_operaciones_depositos %}
                 {% if f.errors %}
                 <div class="alert alert-danger" role="alert">
                 {{f.errors}} en el campo {{f.label}}
@@ -189,7 +199,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <span>Nombre:</span>
+                <span>Trader:</span>
             <input type="text" class="form-control" name="nombreNuevoCliente" id="nuevoClienteId">
             <span>Institución: </span>
             <input type="text" class="form-control" name="institucionNuevoCliente" id="nuevoinstitucionId">
@@ -240,13 +250,16 @@ add_instrumento.addEventListener('click',function(){
 
 guarda_instrumento.addEventListener('click',function(){
     var instrumento = document.getElementById("nuevoInstrumentoId");
-    var selector = document.getElementById('id_nemo');
+    var selector_bases = document.getElementById('id_nemo');
+    var selector_depos = document.getElementById('id_nemo_depositos');
     var nuevo_elemento = document.createElement('option');
     nuevo_elemento.innerText = instrumento.value;
     nuevo_elemento.value = instrumento.value;
     nuevo_elemento.className = "bg-success";
     nuevo_elemento.defaultSelected = true;
-    selector.appendChild(nuevo_elemento);
+    var nuevo_elemento_2 = nuevo_elemento.cloneNode(true);
+    selector_bases.appendChild(nuevo_elemento);
+    selector_depos.appendChild(nuevo_elemento_2);
     $('#modalinstrumentonuevo').modal('hide');
 
 });
@@ -257,6 +270,8 @@ guarda_cliente.addEventListener('click',function(){
     var institucion = document.getElementById("nuevoinstitucionId");
     var selector_comprador = document.getElementById("id_buy");
     var selector_vendedor = document.getElementById("id_seller");
+    var selector_comprador_depos = document.getElementById("id_buy_depositos");
+    var selector_vendedor_depos = document.getElementById("id_seller_depositos");
     
     var n_e = document.createElement('option');
     var cliente_institucion = institucion.value + ' - ' + cliente.value  
@@ -264,14 +279,15 @@ guarda_cliente.addEventListener('click',function(){
     n_e.value = cliente_institucion;
     n_e.defaultSelected = true;
     var n_e_2 = n_e.cloneNode(true);
+    var n_e_3 = n_e.cloneNode(true);
+    var n_e_4 = n_e.cloneNode(true);
+     
     selector_comprador.appendChild(n_e);
     selector_vendedor.appendChild(n_e_2);
-    console.log(cliente.value);
-    console.log(institucion.value);
+    selector_vendedor_depos.appendChild(n_e_3);
+    selector_comprador_depos.appendChild(n_e_4);
     $('#modalclientenuevo').modal('hide');
     
-
-
 });
 function separador_miles(n){
     var n_parts = n.toString();
@@ -293,12 +309,9 @@ monto.addEventListener('change',e => {
 valor_final_seller.addEventListener('change',f =>{
      valor_final_seller.value = separador_miles(valor_final_seller.value)    
      valor_final_buyer.value = valor_final_seller.value;
-     
-     
-});
+    });
 valor_final_buyer.addEventListener('change',d =>{
      valor_final_buyer.value = separador_miles(valor_final_buyer.value);
-     
      });
 
 fee_seller.addEventListener('change',e => {fee_seller.value = separador_miles(fee_seller.value);});

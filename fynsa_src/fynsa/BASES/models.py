@@ -25,6 +25,9 @@ class clientes(models.Model):
     def __str__(self):
         return self.nombre
 
+class cliente_trader(models.Model):
+    institucion_trader = models.TextField(null=True)
+
 class bases(models.Model):
     linea = models.AutoField(primary_key=True)
     fecha = models.DateField()
@@ -65,6 +68,23 @@ class bases(models.Model):
 
     def __str__(self):
         return str(self.fecha)
+
+    def save(self, *args, **kwargs):
+        vendedor = self.seller
+        comprador = self.buy
+        institucion_vendedor = vendedor.split(" - ")
+        institucion_comprador = comprador.split(" - ")
+        self.seller = institucion_vendedor[0]
+        self.buy = institucion_comprador[0]
+        self.trader_buy = institucion_comprador[1]
+        self.trader_seller = institucion_vendedor[1]
+        self.util_depo = self.compra_depo - self.venta_depo
+        self.participante_1 = vendedor
+        self.participante_2 = comprador
+        cliente_trader.objects.get_or_create(institucion_trader=vendedor)
+        cliente_trader.objects.get_or_create(institucion_trader=comprador)
+        super().save(*args, **kwargs)
+
 
 class facturas_bases(models.Model):
     linea = models.AutoField(primary_key=True)
@@ -107,6 +127,5 @@ class serie_generacion_mensual_por_cliente(models.Model):
     prov_bases = models.BigIntegerField(null=True, blank=True)
     prov_depos = models.BigIntegerField(null=True, blank=True)
     
-class cliente_trader(models.Model):
-    institucion_trader = models.TextField(null=True)
+
 

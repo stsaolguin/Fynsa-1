@@ -58,8 +58,8 @@ class f_facturas_bases(ModelForm):
 
 class bases_ingreso_operaciones(ModelForm):
     class Meta:
-        clientes = [(x.institucion_trader,x.institucion_trader) for x in cliente_trader.objects.all().order_by('-institucion_trader')] 
-        instrumentos = [(x.nemo,x.nemo) for x in bases.objects.distinct('nemo').order_by('-nemo')]
+        clientes = [(x.institucion_trader,x.institucion_trader) for x in cliente_trader.objects.all().order_by('institucion_trader')] 
+        instrumentos = [(x.nemo,x.nemo) for x in bases.objects.filter(nemo__startswith='B').distinct('nemo').order_by('-nemo')]
         model = bases
         fields = ['fecha','nemo','tipo_de_pago','otc_tr','fynsa','buy','seller','fee_buyer_clp','fee_seller_clp','monto','compra_depo','venta_depo','tasa_buyer','tasa_seller']
         widgets = {
@@ -85,11 +85,14 @@ class bases_ingreso_operaciones(ModelForm):
         comprador = self.cleaned_data.get("buy")
         monto_comprador = self.cleaned_data.get("compra_depo")
         monto_vendedor = self.cleaned_data.get("venta_depo")
+        lista_de_errores = []
         if comprador==vendedor:
-            raise ValidationError("vendedor y comprador no pueden ser el mismo, Ojo ahí!")
+            lista_de_errores.append(ValidationError("vendedor y comprador no pueden ser el mismo, Ojo ahí!"))
         if monto_vendedor > monto_comprador:
-            raise ValidationError("¿Lo estás vendiendo mas barato a lo que lo compraste?, Ojo!")
-    
+            lista_de_errores.append(ValidationError("¿Lo estás vendiendo mas barato a lo que lo compraste?, Ojo!"))
+        if len(lista_de_errores)>0:
+            raise ValidationError(lista_de_errores)
+        
     
 
 
@@ -99,29 +102,39 @@ class cargador_bases_form(forms.Form):
 class cargador_rfi_form(forms.Form):
     rfi = forms.FileField(label="Archivo del blotter, UTF-8 separado por punto y coma (CSV UTF-8)",widget=forms.FileInput(attrs={'class':'form-control mx-2 my-3'}))
 
-class bases_ingreso_operaciones_depos(bases_ingreso_operaciones):
-    model = bases
-    class Meta(bases_ingreso_operaciones.Meta):
-        fields = '__all__'
-        exclude = (
-            'trader_buy',
-        'trader_seller',
-        'fee_buyer',
-        'fee_seller',
-        'fee_buyer_moneda',
-        'fee_seller_moneda',
-        'valor_final',
-        'participante_1',
-        'participante_2',
-        'tipo_de_cambio',
-        'uf',
-        'concate',
-        'institucion_trader_seller',
-        'institucion_trader_buyer',
-        'institucion_trader_participante_1',
-        'institucion_trader_participante_2',
-        'valor_clp',
-        'tasa',
-        'util_depo',
-        )
-    
+class bases_ingreso_operaciones_depos(ModelForm):
+    class Meta:
+        clientes = [(x.institucion_trader,x.institucion_trader) for x in cliente_trader.objects.all().order_by('institucion_trader')] 
+        instrumentos = [(x.nemo,x.nemo) for x in bases.objects.filter(nemo__startswith='F').distinct('nemo').order_by('-nemo')]
+        model = bases
+        fields = ['fecha','nemo','tipo_de_pago','otc_tr','fynsa','buy','seller','fee_buyer_clp','fee_seller_clp','monto','compra_depo','venta_depo','tasa_buyer','tasa_seller','dias']
+        widgets = {
+                'nemo': forms.Select(attrs={'class': "form-control",'id':'id_nemo_depositos'},choices = instrumentos),
+                'buy': forms.Select(attrs={'class': "form-control",'id':'id_buy_depositos'},choices = clientes),
+                'seller': forms.Select(attrs={'class': "form-control",'id':'id_seller_depositos'},choices = clientes),
+                'fynsa': forms.Select(attrs={'class': "form-control",'id':'id_fynsa_depositos'}),
+                'otc_tr': forms.Select(attrs={'class': "form-control",'id':'id_otc_tr_depositos'}),
+                'monto' : forms.TextInput(attrs={'class': "form-control","placeholder":"0",'id':'id_monto_depositos'}),
+                'tasa_buyer' : forms.TextInput(attrs={'class': "form-control",'id':'id_tasa_buyer_depositos'}),
+                'tasa_seller' : forms.TextInput(attrs={'class': "form-control",'id':'id_tasa_seller_depositos'}),
+                'compra_depo' : forms.TextInput(attrs={'class': "form-control",'id':'id_compra_depositos'}),
+                'venta_depo' : forms.TextInput(attrs={'class': "form-control",'id':'id_venta_depositos'}),
+                'fecha' : forms.DateInput(attrs={'class': "form-control",'type':'date','id':'id_fecha_depositos'}),
+                'tipo_de_pago' : forms.Select(attrs={'class': "form-control",'id':'id_tipo_de_pago_depositos'}),
+                'fee_buyer_clp' : forms.TextInput(attrs={'class': "form-control",'id':'id_fee_buyer_depositos'}),
+                'fee_seller_clp' : forms.TextInput(attrs={'class': "form-control",'id':'id_fee_seller_depositos'}),
+                'dias' : forms.NumberInput(attrs={'class': "form-control",'id':'id_dias_depositos'})
+                }
+    def clean(self):
+        super().clean()
+        vendedor = self.cleaned_data.get("seller")
+        comprador = self.cleaned_data.get("buy")
+        monto_comprador = self.cleaned_data.get("compra_depo")
+        monto_vendedor = self.cleaned_data.get("venta_depo")
+        lista_de_errores = []
+        if comprador==vendedor:
+            lista_de_errores.append(ValidationError("vendedor y comprador no pueden ser el mismo, Ojo ahí!"))
+        if monto_vendedor > monto_comprador:
+            lista_de_errores.append(ValidationError("¿Lo estás vendiendo mas barato a lo que lo compraste?, Ojo!"))
+        if len(lista_de_errores)>0:
+            raise ValidationError(lista_de_errores)

@@ -6,6 +6,7 @@ from BASES.models import bases,facturas_bases
 from .formularios_bases import *
 from RFL.models import actividad
 from .funciones_externas_Bases import *
+from django.views.generic import ListView
 import csv
 
 def comite_bases(request):
@@ -256,7 +257,7 @@ def ingreso_operaciones_views(request):
 
 def formulario_bases(request):    
     if request.method=='POST':
-        print(request.POST)
+        
         datos = request.POST.copy()
         datos['monto'] = datos['monto'].replace('.','')
         datos['venta_depo'] = datos['venta_depo'].replace('.','')
@@ -265,29 +266,39 @@ def formulario_bases(request):
         datos['fee_buyer_clp'] = datos['fee_buyer_clp'].replace('.','')
         datos['tasa_buyer'] = datos['tasa_buyer'].replace(',','.')
         datos['tasa_seller'] = datos['tasa_seller'].replace(',','.')
-
         if 'boton_bases' in request.POST:            
             f = bases_ingreso_operaciones(data=datos)
-            #print(f.is_valid())
-            #print(f.errors)
             if f.is_valid():
-                #para_grabar = f.save(commit=False)
-                #para_grabar.save(using='pruebas')
+                para_grabar = f.save(commit=False)
+                para_grabar.save(using='pruebas')
                 return render(request,'bases-salida-tickets.html',context=datos.dict())
             else:
                 diccionario_inicial = {}
-                diccionario_inicial['ingreso_operaciones'] = ingreso_operaciones=f
-                print(ingreso_operaciones.errors)
+                diccionario_inicial['ingreso_operaciones'] =f
                 diccionario_inicial['ingreso_operaciones_depositos'] = bases_ingreso_operaciones_depos()
                 return render(request,'bases-ingreso-operaciones.html',context=diccionario_inicial)
         elif 'boton_depositos' in request.POST:
             f = bases_ingreso_operaciones_depos(data=datos)
-            #print(f.is_valid())
-            #print(f.errors)
             if f.is_valid():
-                #para_grabar = f.save(commit=False)
-                #para_grabar.save(using='pruebas')
+                para_grabar = f.save(commit=False)
+                para_grabar.save(using='pruebas')
                 return render(request,'bases-salida-tickets.html',context=datos.dict())
-
-        
+            else:
+                diccionario_inicial = {}
+                diccionario_inicial['ingreso_operaciones'] = bases_ingreso_operaciones()
+                diccionario_inicial['ingreso_operaciones_depositos'] = f
+                return render(request,'bases-ingreso-operaciones.html',context=diccionario_inicial)
     return render(request,'bases-ingreso-operaciones.html',context=datos)
+
+
+def ListTodoBlotterBases(request):
+    datos={}
+    datos['todo_blotter']=bases.objects.all().order_by('-fecha')[:10]
+    return render(request,'listar-blotter.html',context=datos)
+
+def EliminarFilaBlotter(request,linea):
+    print(linea)
+    #bases.objects.delete(linea=linea)
+    return redirect('listar_blotter')
+
+    
