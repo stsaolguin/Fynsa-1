@@ -6,6 +6,7 @@ from BASES.models import bases,facturas_bases
 from .formularios_bases import *
 from RFL.models import actividad
 from .funciones_externas_Bases import *
+from django.views.generic import ListView
 import csv
 
 def comite_bases(request):
@@ -51,9 +52,9 @@ def salida_bases(request):
         datos['serie_generaciones'] = bases.objects.raw(''' select 1 as linea,fecha,sum(util_depo+fee_buyer_clp+fee_seller_clp) as monto from "BASES_bases" where util_depo>0 or fee_buyer_clp>0 or fee_seller_clp>0 group by fecha HAVING fecha BETWEEN %s and %s order by fecha asc  ''',[fecha_inicial,fecha_final])
         #datos['serie_generaciones_apiladas'] = bases.objects.raw(''' select 1 as linea,fecha,sum(util_depo) as util_depo, sum(fee_buyer_clp+fee_seller_clp) as provision from "BASES_bases" where (util_depo>0 or fee_buyer_clp>0 or fee_seller_clp>0) and fecha BETWEEN %s and %s group by fecha order by fecha asc   ''',[fecha_inicial,fecha_final])
         datos['serie_generaciones_apiladas'] = bases.objects.raw(''' select 1 as linea,* from eqder_serie_generaciones_categorias(%s,%s) order by fecha_salida asc;   ''',[fecha_inicial,fecha_final])
-        datos['total_generaciones'] = bases.objects.raw(''' select 1 as linea,sum(util_depo+fee_buyer_clp+fee_seller_clp) as monto from "BASES_bases" where (util_depo>0 or fee_buyer_clp>0 or fee_seller_clp>0) and fecha BETWEEN %s and %s  ''',[fecha_inicial,fecha_final])[0]
-        datos['total_generaciones_bases'] = bases.objects.raw(''' select 1 as linea, sum(fee_buyer_clp+fee_seller_clp+util_depo) as monto_bases from "BASES_bases" where fecha between %s and %s and nemo ilike 'B%%' and (fee_buyer_clp>0 or fee_seller_clp>0 OR util_depo>0)  ''',[fecha_inicial,fecha_final])[0]
-        datos['total_generaciones_depos'] = bases.objects.raw(''' select 1 as linea, sum(fee_buyer_clp+fee_seller_clp+util_depo) as monto_depos from "BASES_bases" where fecha between %s and %s and nemo ilike 'F%%' and (fee_buyer_clp>0 or fee_seller_clp>0 OR util_depo>0)  ''',[fecha_inicial,fecha_final])[0]
+        datos['total_generaciones'] = bases.objects.raw(''' select 1 as linea,COALESCE(sum(util_depo+fee_buyer_clp+fee_seller_clp),0) as monto from "BASES_bases" where (util_depo>0 or fee_buyer_clp>0 or fee_seller_clp>0) and fecha BETWEEN %s and %s  ''',[fecha_inicial,fecha_final])[0]
+        datos['total_generaciones_bases'] = bases.objects.raw(''' select 1 as linea, COALESCE(sum(fee_buyer_clp+fee_seller_clp+util_depo),0) as monto_bases from "BASES_bases" where fecha between %s and %s and nemo ilike 'B%%' and (fee_buyer_clp>0 or fee_seller_clp>0 OR util_depo>0)  ''',[fecha_inicial,fecha_final])[0]
+        datos['total_generaciones_depos'] = bases.objects.raw(''' select 1 as linea, COALESCE(sum(fee_buyer_clp+fee_seller_clp+util_depo),0) as monto_depos from "BASES_bases" where fecha between %s and %s and nemo ilike 'F%%' and (fee_buyer_clp>0 or fee_seller_clp>0 OR util_depo>0)  ''',[fecha_inicial,fecha_final])[0]
         
         #datos['cobros'] = bases.objects.raw(''' select 1 as linea,cliente,provision,ida_vuelta,(provision-ida_vuelta)as saldo from generaciones_bases_historico() order by provision desc  ''')
         datos['cobros'] = bases.objects.raw(''' Select 1 as linea,* from cobranzas_view_consolidada where provisiones>0; ''')
@@ -172,12 +173,7 @@ select 1 as linea,*,sum(porcentaje) over (order by porcentaje desc) as porcentaj
     return response
 
 
-def ingreso_operaciones_views(request):
-    datos = {}
-    
-    datos['ingreso_operaciones'] = bases_ingreso_operaciones()
 
-    return render(request,'bases-ingreso-operaciones.html',context=datos)
 
 def monto_mensual_cliente_views(request):
     producto = request.GET.get('selectorProductoMonto')
@@ -240,7 +236,7 @@ def cargador_bases(request):
                 c = limpiador_bases_interno(datos_crudos_salida)
                 for r in c:
                         fila = bases(**r)
-                        fila.save(using='pruebas')
+                        fila.save()
             except ValueError as err:
                 datos_error = {}
                 datos_error['error'] = err
@@ -253,3 +249,67 @@ def cargador_bases(request):
     return render(request,'cargador-bases.html',context=datos)
 
 
+def ingreso_operaciones_views(request):
+    datos = {}    
+    datos['ingreso_operaciones'] = bases_ingreso_operaciones()
+    datos['ingreso_operaciones_depositos'] = bases_ingreso_operaciones_depos()
+    a = bases.objects.raw(''' select 1 as linea, fecha, sum(fee_buyer_clp+fee_seller_clp) as prov from "BASES_bases" group by fecha order by fecha desc limit 1; ''') 
+    for i in a:
+        datos['provision'] = i.prov
+        fecha_1 = i.fecha 
+        break
+    b = bases.objects.raw(''' select 1 as linea, fecha, sum(util_depo) as util from "BASES_bases" group by fecha order by fecha desc limit 1; ''')      
+    for j in b:
+        datos['tasa'] = j.util
+        fecha_2=j.fecha
+    datos['fecha'] = fecha_2 if fecha_2 >= fecha_1 else fecha_1
+
+    return render(request,'bases-ingreso-operaciones.html',context=datos)
+
+def formulario_bases(request):    
+    if request.method=='POST':
+        
+        datos = request.POST.copy()
+        datos['monto'] = datos['monto'].replace('.','')
+        datos['venta_depo'] = datos['venta_depo'].replace('.','')
+        datos['compra_depo'] = datos['compra_depo'].replace('.','')
+        datos['fee_seller_clp'] = datos['fee_seller_clp'].replace('.','')
+        datos['fee_buyer_clp'] = datos['fee_buyer_clp'].replace('.','')
+        datos['tasa_buyer'] = datos['tasa_buyer'].replace(',','.')
+        datos['tasa_seller'] = datos['tasa_seller'].replace(',','.')
+        if 'boton_bases' in request.POST:            
+            f = bases_ingreso_operaciones(data=datos)
+            if f.is_valid():
+                para_grabar = f.save(commit=False)
+                para_grabar.save(using='pruebas')
+                return render(request,'bases-salida-tickets.html',context=datos.dict())
+            else:
+                diccionario_inicial = {}
+                diccionario_inicial['ingreso_operaciones'] =f
+                diccionario_inicial['ingreso_operaciones_depositos'] = bases_ingreso_operaciones_depos()
+                return render(request,'bases-ingreso-operaciones.html',context=diccionario_inicial)
+        elif 'boton_depositos' in request.POST:
+            f = bases_ingreso_operaciones_depos(data=datos)
+            if f.is_valid():
+                para_grabar = f.save(commit=False)
+                para_grabar.save(using='pruebas')
+                return render(request,'bases-salida-tickets.html',context=datos.dict())
+            else:
+                diccionario_inicial = {}
+                diccionario_inicial['ingreso_operaciones'] = bases_ingreso_operaciones()
+                diccionario_inicial['ingreso_operaciones_depositos'] = f
+                return render(request,'bases-ingreso-operaciones.html',context=diccionario_inicial)
+    return render(request,'bases-ingreso-operaciones.html',context=datos)
+
+
+def ListTodoBlotterBases(request):
+    datos={}
+    datos['todo_blotter']=bases.objects.all().order_by('-fecha')[:10]
+    return render(request,'listar-blotter.html',context=datos)
+
+def EliminarFilaBlotter(request,linea):
+    print(linea)
+    #bases.objects.delete(linea=linea)
+    return redirect('listar_blotter')
+
+    

@@ -1,0 +1,11 @@
+{% include 'index.html' %}
+
+{% block 'contenido' %}
+<div class="container mb-4">
+    <form action="#" class="" method="post">
+        {% csrf_token %}
+        {{ formulario }}
+        <input type="submit" class="btn btn-primary mt-1" value="Cargar">
+    </form>
+</div>
+{% endblock %}

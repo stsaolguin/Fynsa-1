@@ -15,5 +15,8 @@ urlpatterns = [
     path('comite/salida/consolidado-csv', views.consolidado_csv_views, name='consolidado_csv'),
     path('bases-ingreso-operaciones', views.ingreso_operaciones_views, name='ingreso_operaciones'),
     path('cargador-operaciones', views.cargador_bases, name='cargador_operaciones_bases'),
+    path('formulario-operaciones', views.formulario_bases, name='formulario_operaciones_bases'),
+    path('listar-blotter', views.ListTodoBlotterBases,name='listar_blotter'),
+    path('borrar-blotter/<int:linea>', views.EliminarFilaBlotter,name='borrar_blotter'),
     ]
 

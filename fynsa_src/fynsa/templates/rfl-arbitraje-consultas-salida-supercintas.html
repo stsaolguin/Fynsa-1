@@ -50,7 +50,7 @@
           var selectedItem = chart.getSelection()[0];
           if (selectedItem) {
             var bono = data.getValue(selectedItem.row, 4);
-            window.open("http://127.0.0.1:8000/logeado/rfl/arbitraje/cintas/consulta/" + bono);
+            window.open("http://{{ servidor|safe  }}/logeado/rfl/arbitraje/cintas/consulta/" + bono);
           }
         }
 

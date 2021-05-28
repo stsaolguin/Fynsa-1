@@ -394,11 +394,12 @@ function rfi_generacion() {
     function Metas(){
       var data = new google.visualization.DataTable();
       data.addColumn('string','Mes');
-      data.addColumn('number','Generacion');
+      data.addColumn('number','Generacion Banca Privada (FYNSA)');
+      data.addColumn('number','Generacion Resto');
       data.addColumn('number','Meta');
       data.addRows([
       {% for i in metas %}
-      ['{{ i.mensual | safe }}',{{ i.monto | safe }},133000],
+      ['{{ i.mensual | safe }}',{{ i.ingreso_banca_privada | safe }},{{ i.ingreso_resto | safe }},133000],
       {% endfor %}
       ]);
       var options ={
@@ -406,7 +407,16 @@ function rfi_generacion() {
           height:600,
           width:'100%',
           seriesType:'bars',
-          series:{1:{type:'line'}},
+          series:{
+             2:{type:'line'},
+            },
+          isStacked: true,
+          vAxis:{
+            viewWindow:{
+              max:275000,
+            },
+                     
+          }
           
       };
      

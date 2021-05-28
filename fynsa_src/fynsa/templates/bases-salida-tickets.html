@@ -1,0 +1,57 @@
+{% extends 'index.html' %}
+{% load filtros_extras %}
+{% block contenido %}
+{% load static %}
+    <div class="container mt-5">
+    <div class="row my-3">
+        <div class="display-4">Ticket Comprador</div>
+    </div>
+            <div class="row my-2">
+                    <div class="col-2">
+                        <img src="{% static 'BASES/img/fynsa_verde_oscuro.png' %}" class="rounded img-thumbnail">
+                    </div>
+                    <div class="col-5">
+                        <table class="table table-sm table-striped">
+                            <tbody>
+                                <tr><td>Fecha:</td><td>{{fecha}}</td></tr>
+                                <tr><td>Nemotécnico:</td><td>{{nemo}}</td></tr>
+                                <tr><td>Tipo de Pago:</td><td>{{tipo_de_pago}}</td></tr>
+                                <tr><td>Comprador:</td><td>{{buy}}</td></tr>
+                                <tr><td>Vendedor:</td><td>TELERENTA</td></tr>
+                                <tr><td>Monto Inicial:</td><td>{{monto | sep}}</td></tr>
+                                <tr><td>Tasa:</td><td>{{tasa_buyer}}</td></tr>
+                                <tr><td>Valor Final:</td><td>{{compra_depo | sep}}</td></tr>
+                                <tr><td>Fee:</td><td>{{fee_buyer_clp | sep}}</td></tr>
+                            </tbody>
+                            </table>
+                       
+                    </div>
+            </div>
+                <div class="row my-4">
+                        <div class="display-4">Ticket Vendedor</div>
+                    </div>
+            <div class="row my-3">
+                    <div class="col-2">
+                        <img src="{% static 'BASES/img/fynsa_verde_oscuro.png' %}" class="rounded img-thumbnail">
+                    </div>
+                    <div class="col-5">
+                        <table class="table table-sm table-striped">
+                            <tbody>
+                                <tr><td>Fecha:</td><td>{{fecha}}</td></tr>
+                                <tr><td>Nemotécnico:</td><td>{{nemo}}</td></tr>
+                                <tr><td>Tipo de Pago:</td><td>{{tipo_de_pago}}</td></tr>
+                                <tr><td>Comprador:</td><td>TELERENTA</td></tr>
+                                <tr><td>Vendedor:</td><td>{{seller}}</td></tr>
+                                <tr><td>Monto Inicial:</td><td>{{monto | sep}}</td></tr>
+                                <tr><td>Tasa:</td><td>{{tasa_seller}}</td></tr>
+                                <tr><td>Valor Final:</td><td>{{venta_depo | sep}}</td></tr>
+                                <tr><td>Fee:</td><td>{{fee_seller_clp | sep}}</td></tr>
+                            </tbody>
+                            </table>
+                       
+                    </div>
+            </div>
+
+    </div>
+
+{% endblock %}

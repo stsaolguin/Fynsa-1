@@ -1,0 +1,59 @@
+{% extends 'index.html' %}
+
+{% block contenido %}
+
+<div class="container">
+        <div class="row mb-1">
+                <a href="#" class="btn btn-warning">Descargar blotter</a>
+        </div>
+</div>
+<table class="table table-bordered table-sm">
+  <thead class="thead-dark">
+    <tr>
+      
+      <th scope="col">Fecha</th>
+      <th scope="col">Otc tr</th>
+      <th scope="col">Nemo</th>
+      <th scope="col">Días</th>
+      <th scope="col">Monto</th>
+      <th scope="col">Tipo de pago</th>
+      <th scope="col">Participante 1</th>
+      <th scope="col">Participante 2</th>
+      <th scope="col">Fee buyer</th>
+      <th scope="col">Fee seller</th>
+      <th scope="col">Tasa comprador</th>
+      <th scope="col">Tasa vendedor</th>
+      <th scope="col">valor comprador</th>
+      <th scope="col">valor vendedor</th>
+      <th scope="col">utilidad</th>
+      <th scope="col">Accion</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for r in todo_blotter%}
+    <tr>
+      
+      <td>{{ r.fecha }}</td>
+      <td>{{ r.otc_tr }}</td>
+      <td>{{ r.nemo }}</td>
+      <td>{{ r.dias }}</td>
+      <td>{{ r.monto }}</td>
+      <td>{{ r.tipo_de_pago }}</td>
+      <td>{{ r.participante_1 }}</td>
+      <td>{{ r.participante_2 }}</td>
+      <td>{{ r.fee_buyer_clp }}</td>
+      <td>{{ r.fee_seller_clp }}</td>
+      <td>{{ r.tasa_buyer }}</td>
+      <td>{{ r.tasa_seller }}</td>
+      <td>{{ r.compra_depo }}</td>
+      <td>{{ r.venta_depo }}</td>
+      <td>{{ r.util_depo }}</td>
+      <td><a href="{% url 'borrar_blotter' r.linea  %}" class="btn btn-danger btn-sm">Eliminar</a></td>
+     
+    </tr>
+    {% endfor %}
+    
+  </tbody>
+</table>
+
+{% endblock %}

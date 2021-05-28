@@ -1,11 +1,12 @@
+from django.http.response import HttpResponse
 from django.shortcuts import render
 from RFI.models import rfi_beta
 from RFI.models import rfi_generacion_comite_temporal as comite
-
 from BASES.formularios_bases import f_fechas_comite_rfi
 from django.utils.dateparse import parse_date
+from .formularios_rfi import rfi_ingreso_orden_formulario
     
-
+#estas de abajo hay que borrarlas
 def rfi_cruce(request,f):
     fondo = sw.objects.raw(''' select 1 as id, * from dinamico(%s) where dif<>0 order by dif desc; ''',[f])
     ventas = sw.objects.raw(''' select 1 as id, sum(dif) as v from dinamico(%s) where dif<0; ''',[f])
@@ -99,7 +100,7 @@ or (b.categoria='DLR' and c.categoria='DLR')
         tabla.append(fila)
     
     datos['cross'] = tabla
-    datos['metas']=rfi_beta.objects.raw(''' select 1 as linea, date_trunc('month',fecha)::date as mensual,sum(ingreso_mesa) as monto from "RFI_rfi_beta" group by mensual order by mensual asc; ''')
+    datos['metas']=rfi_beta.objects.raw(''' select 1 as linea,date_trunc('month',fecha)::date as mensual,sum(ingreso_mesa) FILTER (WHERE vendedor='FYNSA' or comprador='FYNSA') as ingreso_banca_privada,sum(ingreso_mesa) FILTER (WHERE vendedor!='FYNSA' and comprador!='FYNSA') as ingreso_resto from "RFI_rfi_beta" group by mensual order by mensual asc; ''')
     datos['generacion_mensual'] = rfi_beta.objects.raw('''select 1 as linea,mes,"2014","2015","2016","2017","2018","2019","2020",COALESCE("2021",0) as "2021",COALESCE("2022",0) as "2022" FROM crosstab('select date_part(''month'',fecha) as mes,date_part(''YEAR'',fecha) as agno, sum(ingreso_mesa)
 from "RFI_rfi_beta"
 group by mes,agno
@@ -110,8 +111,10 @@ as ct(mes numeric, "2014" numeric, "2015" numeric,"2016" numeric,"2017" numeric,
     
 def rfi_comite_cliente(request,cliente):
     datos={}
-    
     datos['cliente'] = cliente
-
     return render(request,'comite-rfi-salida-cliente.html',datos)
 
+def rfi_ingreso_ordenes(request):
+    datos={}
+    datos['formulario']=rfi_ingreso_orden_formulario()
+    return render(request,'rfi-ingreso-ordenes.html',context=datos)
