@@ -2,3 +2,8 @@ cintas/
 settings.py
 fynsa_src/fynsa/templates/prue*.html
 pruebas*.html
+fynsa/__pycache__
+__pycache__
+BASES/__pycache__
+RFI/__pycache__
+RFL/__pycache__
