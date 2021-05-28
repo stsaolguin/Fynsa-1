@@ -2,14 +2,18 @@
 
 {% block contenido %}
 <div class="container mb-4">
-        <div class="row d-flex mb-3">
-                <div class="card" style="width: 13rem;">
-                <div class="card-body">
-                    <h5 class="card-title">Hoy: $xx.xxX.xxX</h5>
-                </div>
-                </div>
+
+        <div class="row mb-3">
+            <div class="col-lg-6">
+                    <div class="card w-75" style="width: 13rem;">
+                    <div class="card-body">
+                        <h5 class="card-title">Hoy: Provisiones $ {{ provision }} + Tasa: $ {{ tasa }}</h5>
+                        <p class="card-text">Último trade el: {{fecha}}</p>
+                    </div>
+                    </div>
+            </div>
         </div>
-    
+
    
     <ul class="nav nav-tabs mb-2" role="tablist">
         <li class="nav-item">

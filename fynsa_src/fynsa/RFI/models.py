@@ -1,3 +1,4 @@
+from RFL.models import risk
 from django.db import models
 
 # Create your models here.
@@ -28,21 +29,6 @@ class rfi_beta(models.Model):
     def __str__(self):
         return str(self.fecha)
 
-
-class bonos_rfi(models.Model):
-    #esta class es para los datos del informe spread
-    cusip = models.TextField(primary_key=True)
-    duration = models.DecimalField(max_digits=5, decimal_places=3,default=0,null=True,blank=True)
-    papel = models.TextField(null=True,blank=True)
-    industry_sector = models.TextField(default='-',null=True,blank=True)
-    industry_group = models.TextField(default='-',null=True,blank=True)
-    cntry_of_risk = models.CharField(max_length=2,default='-',null=True,blank=True)
-    industria = models.TextField(default='-',null=True,blank=True)
-    risk = models.TextField(default='',null=True,blank=True)
-    tasa = models.IntegerField(default='',null=True,blank=True)
-    fecha_subida = models.DateField(null=True,blank=True)
-    maturity = models.DateField(null=True,blank=True)
-    
 class clientes_rfi(models.Model):
     fondo = models.TextField(null=True,blank=True)
     nombre_cliente = models.TextField(unique=True,null=True,blank=True)

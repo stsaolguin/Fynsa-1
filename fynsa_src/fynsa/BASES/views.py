@@ -236,7 +236,7 @@ def cargador_bases(request):
                 c = limpiador_bases_interno(datos_crudos_salida)
                 for r in c:
                         fila = bases(**r)
-                        fila.save(using='pruebas')
+                        fila.save()
             except ValueError as err:
                 datos_error = {}
                 datos_error['error'] = err
@@ -253,6 +253,17 @@ def ingreso_operaciones_views(request):
     datos = {}    
     datos['ingreso_operaciones'] = bases_ingreso_operaciones()
     datos['ingreso_operaciones_depositos'] = bases_ingreso_operaciones_depos()
+    a = bases.objects.raw(''' select 1 as linea, fecha, sum(fee_buyer_clp+fee_seller_clp) as prov from "BASES_bases" group by fecha order by fecha desc limit 1; ''') 
+    for i in a:
+        datos['provision'] = i.prov
+        fecha_1 = i.fecha 
+        break
+    b = bases.objects.raw(''' select 1 as linea, fecha, sum(util_depo) as util from "BASES_bases" group by fecha order by fecha desc limit 1; ''')      
+    for j in b:
+        datos['tasa'] = j.util
+        fecha_2=j.fecha
+    datos['fecha'] = fecha_2 if fecha_2 >= fecha_1 else fecha_1
+
     return render(request,'bases-ingreso-operaciones.html',context=datos)
 
 def formulario_bases(request):    
