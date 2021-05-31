@@ -308,8 +308,7 @@ def ListTodoBlotterBases(request):
     return render(request,'listar-blotter.html',context=datos)
 
 def EliminarFilaBlotter(request,linea):
-    print(linea)
-    #bases.objects.delete(linea=linea)
+    bases.objects.delete(linea=linea)
     return redirect('listar_blotter')
 
     
