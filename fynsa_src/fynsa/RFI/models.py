@@ -1,5 +1,6 @@
 from RFL.models import risk
 from django.db import models
+from django.contrib.postgres.fields import ArrayField
 
 # Create your models here.
 class rfi_beta(models.Model):
@@ -167,5 +168,8 @@ class rfi_bonos(models.Model):
         super().save(*args, **kwargs)
 
 
+
+class PruebaArrayModel(models.Model):
+    riesgo = ArrayField(models.CharField(max_length=100, blank=True))
 
 

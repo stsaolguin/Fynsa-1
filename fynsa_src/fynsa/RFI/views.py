@@ -4,7 +4,7 @@ from RFI.models import rfi_beta
 from RFI.models import rfi_generacion_comite_temporal as comite
 from BASES.formularios_bases import f_fechas_comite_rfi
 from django.utils.dateparse import parse_date
-from .formularios_rfi import rfi_ingreso_orden_formulario
+from .formularios_rfi import rfi_ingreso_orden_formulario,PruebaArregloForm
     
 #estas de abajo hay que borrarlas
 def rfi_cruce(request,f):
@@ -118,3 +118,15 @@ def rfi_ingreso_ordenes(request):
     datos={}
     datos['formulario']=rfi_ingreso_orden_formulario()
     return render(request,'rfi-ingreso-ordenes.html',context=datos)
+
+def rfi_prueba_arreglo(request):
+    """Esta vista es para probar cómo funcionaría un formulario con array"""
+    datos = {}
+    datos['formulario']=PruebaArregloForm()
+    if request.method=='POST':
+        print(request.POST)
+        c = PruebaArregloForm(request.POST)
+        if c.is_valid():
+            c.save()
+
+    return render(request,'prueba-array.html',context=datos)

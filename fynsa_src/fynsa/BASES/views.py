@@ -178,7 +178,7 @@ select 1 as linea,*,sum(porcentaje) over (order by porcentaje desc) as porcentaj
 def monto_mensual_cliente_views(request):
     producto = request.GET.get('selectorProductoMonto')
     agno = request.GET.get('selectorAgnoMonto')
-    montos = bases.objects.raw(''' select 1 as linea,* from eq_bases_montos_transados_mensual_cliente(false,%s,%s) order by cliente asc ''',[agno,producto])
+    montos = bases.objects.raw(''' select 1 as linea,* from eq_bases_montos_transados_mensual_cliente(true,%s,%s) order by cliente asc ''',[agno,producto])
     salida=[]
     response = HttpResponse(content_type='text/csv')
     p = 'BASES' if producto =='b' else 'DEPOSITOS'
@@ -196,7 +196,7 @@ def monto_mensual_cliente_views(request):
 def gen_mensual_cliente_views(request):
     producto = request.GET.get('selectorProductoGen')
     agno = request.GET.get('selectorAgnoGen')
-    generacion = bases.objects.raw(''' select 1 as linea,* from eq_bases_generacion_mensual_cliente(false,%s,%s) order by cliente asc ''',[agno,producto])
+    generacion = bases.objects.raw(''' select 1 as linea,* from eq_bases_generacion_mensual_cliente(true,%s,%s) order by cliente asc ''',[agno,producto])
     salida=[]
     response = HttpResponse(content_type='text/csv')
     p = 'BASES' if producto =='b' else 'DEPOSITOS'
