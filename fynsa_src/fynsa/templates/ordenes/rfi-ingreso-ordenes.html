@@ -1,0 +1,133 @@
+{% include 'index.html' %}
+
+{% block 'contenido' %}
+<div class="container mb-4">
+    <form action="#" class="" method="post">
+        {% csrf_token %}
+    
+    <div class="row">
+        <div class="col-lg-6">
+            <label for="{{ formulario.cliente.id_for_label }}">Cliente:</label>
+            <input type="text" list="clientes" class="form-control">
+            <datalist id="clientes">
+            {% for r,s in formulario.cliente.field.choices %}
+                 <option value="{{ r }}">
+            {% endfor %}
+            </datalist>
+          
+        </div>
+        <div class="col-lg-6">
+             <label for="{{ formulario.fecha.id_for_label }}">Fecha:</label>
+            {{ formulario.fecha }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-4">
+            <label for="{{ formulario.orden.id_for_label }}">Orden:</label>
+            {{ formulario.orden }}
+        </div>
+        <div class="col-lg-4">
+            <label for="{{ formulario.nominales.id_for_label }}">Nominales:</label>
+            {{ formulario.nominales }}
+        </div>
+        <div class="col-lg-4">
+            <label for="{{ formulario.precio.id_for_label }}">Precio Ordenado:</label>
+            {{ formulario.precio }}
+        </div>
+    </div>
+    <div class="row">
+    <div class="col-lg-6">
+          <label for="{{ formulario.isin.id_for_label }}">Isin:</label>
+           <input type="text" list="isin" id="id_isin" class="form-control">
+            <datalist id="isin">
+            {% for r,s in formulario.isin.field.choices %}
+                 <option value="{{ r }}">
+            {% endfor %}
+            </datalist>
+
+             </div>
+    <div class="col-lg-6">
+           <label for="{{ formulario.precio.id_for_label }}">Papel:</label>
+          {{ formulario.papel }}
+    </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-3">
+                <label for="{{ formulario.rating.id_for_label }}">Rating:</label>
+                {{ formulario.rating }}
+        </div>
+        <div class="col-lg-3">
+            <label for="{{ formulario.duration_text.id_for_label }}">Duración:</label>
+            {{ formulario.duration_text }}
+        </div>
+        <div class="col-lg-3">
+            <label for="{{ formulario.payment_rank.id_for_label }}">Payment Rank:</label>
+            {{ formulario.payment_rank }}
+        </div>
+        <div class="col-lg-3">
+            <label for="{{ formulario.ytm.id_for_label }}">YTM:</label>
+            {{ formulario.ytm }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-9">
+            <label for="{{ formulario.sector.id_for_label }}">Sector:</label>
+            {{ formulario.sector }}
+        </div>
+        <div class="col-lg-3">
+            <label for="{{ formulario.country_of_risk.id_for_label }}">Country of risk:</label>
+            {{ formulario.country_of_risk }}
+        </div>
+    </div>
+    <div class="row">
+           
+            <label for="{{ formulario.notas.id_for_label }}">Notas:</label>
+            {{ formulario.notas }}
+         
+    </div> 
+    <div class="row">
+      <input type="submit" class="btn btn-primary mt-1" value="Cargar">
+    </div>
+    </form>
+</div>
+
+<script>
+function separador_miles(n){
+    var n_parts = n.toString();
+    var n_salida = n_parts.replace(/\B(?=(\d{3})+(?!\d))/g,".");
+    return n_salida
+    
+};
+var nominales = document.getElementById('id_nominales');
+nominales.addEventListener('change',d =>{
+     nominales.value = separador_miles(nominales.value);
+     });
+
+
+var isin = document.getElementById('id_isin');
+
+
+var papel = document.getElementById('id_papel');
+
+isin.addEventListener('change',d =>{
+    
+    var nemo = isin.value;
+    var direccion_api = 'http://127.0.0.1:8000/logeado/rfl/ordenes/api/v1/' + nemo;
+    fetch(direccion_api)
+    .then(res => res.json())
+    .then(data => {
+    var nemo = data['0'].fields['security_name'];
+    papel.value = nemo;
+
+})
+
+
+    
+})
+
+
+
+
+
+</script>
+{% endblock %}

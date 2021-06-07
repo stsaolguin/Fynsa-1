@@ -88,6 +88,8 @@ class rfi_bonos(models.Model):
     tasa = models.IntegerField(default='',null=True,blank=True)
     fecha_subida = models.DateField(null=True,blank=True)
     maturity = models.DateField(null=True,blank=True)
+    yas_bond_porcentaje = models.DecimalField(max_digits=9, decimal_places=3,default=0,null=True,blank=True)
+    yas_bond_text = models.TextField(null=True,blank=True)
 
     def __str__(self):
         return self.short_name
@@ -171,5 +173,6 @@ class rfi_bonos(models.Model):
 
 class PruebaArrayModel(models.Model):
     riesgo = ArrayField(models.CharField(max_length=100, blank=True))
+    
 
 

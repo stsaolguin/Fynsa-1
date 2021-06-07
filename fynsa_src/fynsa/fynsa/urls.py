@@ -26,6 +26,7 @@ urlpatterns = [
     path('logeado/bases/',include('BASES.urls')),
     path('logeado/rfi/',include('RFI.urls')),
     path('logeado/rfl/',include('RFL.urls')),
+    path('logeado/rfl/ordenes/',include('ordenes.urls')),
     path('entrada/', views.raiz, name='raiz'), #en esa linea se renderiza la plantilla del login
     path('salida/', views.logout_, name='logout'), #en esa linea logout
     path('login/', views.login_, name='login_'), #procesa el login    
