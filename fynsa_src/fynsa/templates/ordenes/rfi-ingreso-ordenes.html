@@ -2,13 +2,13 @@
 
 {% block 'contenido' %}
 <div class="container mb-4">
-    <form action="#" class="" method="post">
+    <form method="POST">
         {% csrf_token %}
     
     <div class="row">
         <div class="col-lg-6">
             <label for="{{ formulario.cliente.id_for_label }}">Cliente:</label>
-            <input type="text" list="clientes" class="form-control">
+            <input type="text" list="clientes" name="cliente" class="form-control">
             <datalist id="clientes">
             {% for r,s in formulario.cliente.field.choices %}
                  <option value="{{ r }}">
@@ -17,14 +17,14 @@
           
         </div>
         <div class="col-lg-6">
-             <label for="{{ formulario.fecha.id_for_label }}">Fecha:</label>
-            {{ formulario.fecha }}
+             <label for="{{ formulario.fecha_ingreso.id_for_label }}">Fecha:</label>
+            {{ formulario.fecha_ingreso }}
         </div>
     </div>
     <div class="row">
         <div class="col-lg-4">
-            <label for="{{ formulario.orden.id_for_label }}">Orden:</label>
-            {{ formulario.orden }}
+            <label for="{{ formulario.orden_tipo.id_for_label }}">Orden:</label>
+            {{ formulario.orden_tipo }}
         </div>
         <div class="col-lg-4">
             <label for="{{ formulario.nominales.id_for_label }}">Nominales:</label>
@@ -38,7 +38,7 @@
     <div class="row">
     <div class="col-lg-6">
           <label for="{{ formulario.isin.id_for_label }}">Isin:</label>
-           <input type="text" list="isin" id="id_isin" class="form-control">
+           <input type="text" list="isin" id="id_isin" name ="isin" class="form-control">
             <datalist id="isin">
             {% for r,s in formulario.isin.field.choices %}
                  <option value="{{ r }}">
@@ -57,8 +57,8 @@
                 {{ formulario.rating }}
         </div>
         <div class="col-lg-3">
-            <label for="{{ formulario.duration_text.id_for_label }}">Duración:</label>
-            {{ formulario.duration_text }}
+            <label for="{{ formulario.duracion.id_for_label }}">Duración:</label>
+            {{ formulario.duracion }}
         </div>
         <div class="col-lg-3">
             <label for="{{ formulario.payment_rank.id_for_label }}">Payment Rank:</label>
@@ -75,8 +75,8 @@
             {{ formulario.sector }}
         </div>
         <div class="col-lg-3">
-            <label for="{{ formulario.country_of_risk.id_for_label }}">Country of risk:</label>
-            {{ formulario.country_of_risk }}
+            <label for="{{ formulario.pais.id_for_label }}">Country of risk:</label>
+            {{ formulario.pais }}
         </div>
     </div>
     <div class="row">
