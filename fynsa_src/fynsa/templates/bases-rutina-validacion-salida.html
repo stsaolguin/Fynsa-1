@@ -1,0 +1,29 @@
+{% extends 'index.html' %}
+
+{% block contenido %}
+<div class="container my-4">
+<div class="h1">Rutinas de validación</div>
+
+  
+  
+    <table class="table">
+    <thead>
+    <tr>
+      <th scope="col">Verificacion</th>
+      <th scope="col">item</th>
+    </tr>
+  </thead>
+  <tbody>
+      {% for u in rutina_de_validacion %}
+    <tr>
+    <td>{{ u.verificacion }}</td>
+    <td>{{ u.item }}</td>
+    </tr>
+      {% endfor %}
+     </tbody>
+</table>
+
+</div>
+
+{% endblock contenido %}
+

@@ -69,3 +69,26 @@ def security_name_api(request,isin):
     consulta = rfi_bonos.objects.filter(ising=isin)
     consulta_json = serializers.serialize('json',consulta)
     return HttpResponse(consulta_json,content_type='application/json')
+
+def listado_ordenes(request):
+    """ Lista las ordenes puestas en pantalla """
+    datos = {}
+    datos['listado'] = rfi_tsox.objects.all()
+    return render(request,'ordenes/rfi-listado-ordenes.html',context=datos)
+
+def actualiza_status(request):
+    """ Función para actualizar el estatus a intencion a firme"""
+    print(request.POST)
+    #rfi_tsox.objects.filter(id=orden_numero).update(status=nuevo_status)
+    return True
+
+def busca_papeles(request):
+    if request.POST:
+        paises = request.POST.get("paises") or None
+        sector = request.POST.get("sector") or None
+        print(paises,sector)
+        #acá buscamos el resultado de la busqueda
+        papeles = rfi_bonos.objects.filter(cntry_of_risk='CL').filter(industria='Retail')
+
+        return HttpResponse(papeles)
+    return HttpResponse("TODO BIEN!")

@@ -25,7 +25,7 @@ def listado_cntry():
 
 class rfi_ingreso_orden_formulario(forms.Form):
     cliente = forms.ChoiceField(choices = [(x.fondo,x.fondo) for x in clientes_rfi.objects.all()])
-    fecha_ingreso = forms.DateField(initial = datetime.date.today)
+    fecha_ingreso = forms.DateField(widget=forms.DateInput(attrs={'class':'form-control','type':'date'}),initial = datetime.date.today)
     orden_tipo = forms.ChoiceField(choices = [('cliente compra','cliente compra'),('cliente vende','cliente vende')])
     isin = forms.ChoiceField(choices=listado_isin(),required=False)
     papel = forms.CharField(required=False)
@@ -40,7 +40,7 @@ class rfi_ingreso_orden_formulario(forms.Form):
     pais = forms.MultipleChoiceField(choices = listado_cntry(),initial='Todos',required=False) 
 
     cliente.widget.attrs.update({'class':'form-control'})
-    fecha_ingreso.widget.attrs.update({'type':'date','class':'form-control'})
+    #fecha_ingreso.widget.attrs.update({'class':'form-control'})
     orden_tipo.widget.attrs.update({'class':'form-control'})
     isin.widget.attrs.update({'class':'form-control'})
     papel.widget.attrs.update({'class':'form-control'})

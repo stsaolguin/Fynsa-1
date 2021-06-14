@@ -1,0 +1,98 @@
+{% include 'index.html' %}
+
+{% block contenido %}
+<div class="container">
+<div class="row">
+  
+
+</div>
+<div class="row">
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">id</th>
+      <th scope="col">trader</th>
+      <th scope="col">cliente</th>
+      <th scope="col">orden</th>
+      <th scope="col">nominales</th>
+      <th scope="col">precio</th>
+      <th scope="col">caracteristicas</th>
+      <th scope="col">status</th>
+      <th scope="col">acción</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for l in listado %}
+  {% if 'cliente compra' in l.orden_tipo%}
+      <tr class="alert alert-success">
+  {% else %}
+      <tr class="alert alert-danger">
+    
+  {% endif %}
+      <th scope="row">{{l.id}}</th>
+      <td>{{l.trader}}</td>
+      <td>{{l.cliente}}</td>
+      <td>{{l.orden_tipo}}</td>
+      <td>{{l.nominales}}</td>
+      <td>{{l.precio}}</td>
+      <td>
+      pais : {{l.pais}}<br>
+      sector : {{l.sector}}<br>
+      
+      </td>
+      <td>
+            <select class="custom-select" id="{{l.id}}" onChange="capturar(this.value,this.id,this.parentNode.parentNode)">
+              <option class="alert alert-primary" value="Firme">Firme</option>
+              <option class="alert alert-warning" value="Intención">Intención</option>
+            </select>
+
+      {% comment %} {{l.status}} {% endcomment %}
+      
+      </td>
+      <td>
+      <a href="#">editar</a>
+      <a href="#" class="text-danger">borrar</a>
+        <form action="{% url 'buscador_papeles' %}" method="POST">
+             {% csrf_token %}
+              <input type="hidden" name="paises" value="{{l.pais}}">
+              <input type="hidden" name="sector" value="{{l.sector}}">
+              <input type="submit" class="btn btn-primary btn-sm" value="papeles">
+          </form>
+      
+      
+
+      </td>
+    </tr>
+     {% endfor %}
+  </tbody>
+</table>
+</div>
+</div>
+<script>
+function capturar(e,f,g){
+  var estado_inicial = g.getElementsByTagName("td")[2];
+  var estado_inicial_texto = estado_inicial.innerText;
+  estado_inicial_texto == 'cliente vende' ? clase_inicial=['alert','alert-danger'] : clase_inicial=['alert','alert-success'];
+  if(e=='Intención'){
+    g.classList.remove(clase_inicial[0],clase_inicial[1]);
+    g.classList.add("alert","alert-warning");
+  } else if (e=='Firme'){
+    g.classList.remove("alert","alert-warning");
+    g.classList.add(clase_inicial[0],clase_inicial[1]);
+  };
+
+    fetch('http://127.0.0.1:8000/logeado/rfl/ordenes/api/v1/actualiza-status',{
+      method:'GET',
+      credentials:"same-origin",
+      body : {'nombre':'Algo','otro':'otro'}
+    })
+
+
+
+
+ };
+
+
+
+</script>
+{% endblock %}

@@ -6,7 +6,7 @@ from BASES.models import bases,facturas_bases
 from .formularios_bases import *
 from RFL.models import actividad
 from .funciones_externas_Bases import *
-from django.views.generic import ListView
+from django.db import connection
 import csv
 
 def comite_bases(request):
@@ -236,14 +236,14 @@ def cargador_bases(request):
                 c = limpiador_bases_interno(datos_crudos_salida)
                 for r in c:
                         fila = bases(**r)
-                        fila.save()
+                        fila.save2(using='pruebas')
             except ValueError as err:
                 datos_error = {}
                 datos_error['error'] = err
                 return render(request,'errores.html',context=datos_error)
-            return redirect('ingreso_bases')
-       
-
+            salida_correcta={}
+            salida_correcta['bunch'] = c
+            return render(request,'bases-listado-blotter.html',context=salida_correcta)
     datos = {}
     datos['bf'] = cargador_bases_form()
     return render(request,'cargador-bases.html',context=datos)
@@ -311,4 +311,8 @@ def EliminarFilaBlotter(request,linea):
     bases.objects.delete(linea=linea)
     return redirect('listar_blotter')
 
-    
+def RutinasDeValidacion(request):
+    """ Esta vista ejecuta las rutinas de validación despues de la carga de los datos de bases """
+    datos = {}
+    datos['rutina_de_validacion'] = bases.objects.raw(''' SELECT 1 as linea, * from eq_der_rutinas(); ''' )
+    return render(request,'bases-rutina-validacion-salida.html',context=datos)

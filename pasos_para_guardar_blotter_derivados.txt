@@ -42,7 +42,7 @@ UPDATE "BASES_bases" set valor_clp=monto where valor_clp is null and nemo ilike 
 update "BASES_bases" set trader_seller='PABLO ARROYO' where trader_seller='P ARROYO';
 update "BASES_bases" set trader_seller='MIGUEL SARMIENTO' where trader_seller='MIGUE SARMIENTO';
 update "BASES_bases" set trader_seller='JORGE TROMBERT' where trader_seller='JORGE TROMBERG';
-update "BASES_bases" set trader_seller='IGNACIO SILVA' where trader_seller='IGNACIO ';
+update "BASES_bases" set trader_seller='IGNACIO SILVA' where trader_seller='IGNACIO ';s
 update "BASES_bases" set trader_seller='GABRIELA VARGAS' where trader_seller='GABRIELA VARGAS ';
 update "BASES_bases" set trader_seller='FYNSA' where trader_seller='FYNSA ';
 update "BASES_bases" set trader_seller='FELIPE MENA' where trader_seller='FELIP MENA';
@@ -76,9 +76,6 @@ update "BASES_bases" set institucion_trader_seller=concat(seller,' - ',trader_se
 update "BASES_bases" set institucion_trader_participante_1='' where institucion_trader_participante_1 is null;
 update "BASES_bases" set institucion_trader_participante_2='' where institucion_trader_participante_2 is null;
 update "BASES_bases" set concate=concat(fecha, fynsa, otc_tr, nemo, dias, monto, tipo_de_pago, buy, seller, trader_buy, trader_seller, tasa, valor_final, fee_buyer, fee_seller, fee_buyer_moneda, fee_seller_moneda, compra_depo, venta_depo, util_depo, valor_clp, fee_buyer_clp, fee_seller_clp, participante_1, participante_2) where concate='';
-
-
-
 
 select * from eq_der_rutinas();
 REFRESH MATERIALIZED VIEW cobranzas_view;
