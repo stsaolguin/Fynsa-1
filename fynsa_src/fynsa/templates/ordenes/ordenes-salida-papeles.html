@@ -1,0 +1,37 @@
+{% include 'index.html' %}
+
+{% block contenido %}
+
+<div class="container">
+    <div class="display-4">Resultado de los papeles que hacen match.</div>
+    <hr>
+    <div class="lead d-flex flex-row-reverse small">{{iteraciones}} iteraciones en {{ tiempo }} s.</div>
+
+    {% if not resultado %}
+    <div class="lead mb-2">No Hay papeles que se ajustan a tu búsqueda</div>
+
+    {% else %}
+    
+    <div class="lead mb-2">Hay {{conteo_bonos}} papeles que se ajustan a tu búsqueda:</div>
+    
+            <ol>
+    {% for res in resultado %}
+
+            {% for r in res %}
+            <li>{{ r.security_name }}
+            {% endfor %}
+    
+    {% endfor %}
+        </ol>
+    {% endif %}
+
+</div>
+
+
+
+{% endblock contenido %}
+
+
+
+
+

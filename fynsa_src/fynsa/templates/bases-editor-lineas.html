@@ -1,0 +1,59 @@
+{% include 'index.html' %}
+
+{% block contenido %}
+
+<div class="container">
+        <div class="row">
+            <form class="form-inline" method='POST' action="{% url 'buscador_blotter' %}">
+                    {% csrf_token %}
+                    <label for="texto_a_buscar">Texto a buscar:</label>
+                    <input type="search" class="form-control mx-2" name="texto_a_buscar" id="texto_a_buscar">
+                    <input type="submit" class="btn btn-success mx-2" value="Buscar">
+            </form>
+        </div>
+
+<table class="table table-sm">
+  <thead>
+    <tr>
+      <th scope="col">Linea</th>
+      <th scope="col">Fecha</th>
+      <th scope="col">Buy</th>
+      <th scope="col">Seller</th>
+      <th scope="col">Participante_1</th>
+      <th scope="col">Participante_2</th>
+      <th scope="col">Acción</th>
+
+    </tr>
+  </thead>
+  <tbody>
+  {% for r in texto_a_buscar %}
+    <tr>
+      <th scope="row">{{ r.linea }}</th>
+      <th scope="row">{{ r.fecha }}</th>
+      <td>{{ r.buy }}</td>
+      <td>{{ r.seller }}</td>
+      <td>{{ r.participante_1 }}</td>
+      <td>{{ r.participante_2 }}</td>
+      <td>
+      <a href="#">editar</a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+</div>
+
+{% endblock contenido %}
+
+
+
+
