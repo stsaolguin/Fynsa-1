@@ -6,8 +6,9 @@ from BASES.models import bases,facturas_bases
 from .formularios_bases import *
 from RFL.models import actividad
 from .funciones_externas_Bases import *
-from django.db import connection
+from django.db.models import Q 
 import csv
+
 
 def comite_bases(request):
     fechas_ingreso=f_fechas_comite()
@@ -316,3 +317,19 @@ def RutinasDeValidacion(request):
     datos = {}
     datos['rutina_de_validacion'] = bases.objects.raw(''' SELECT 1 as linea, * from eq_der_rutinas(); ''' )
     return render(request,'bases-rutina-validacion-salida.html',context=datos)
+
+def BuscadorBlotter(request):
+    datos={}
+    if request.method=='POST':
+        texto_a_buscar = request.POST.get('texto_a_buscar')
+        #texto_a_buscar = texto_a_buscar.upper()
+        
+        resultado = bases.objects.filter(
+            Q(buy__iexact=texto_a_buscar) |
+            Q(seller__iexact=texto_a_buscar) |
+            Q(participante_1__iexact=texto_a_buscar) |
+            Q(participante_2__iexact=texto_a_buscar) 
+            ).order_by('-fecha')
+        datos['texto_a_buscar'] = resultado
+        return render(request,'bases-editor-lineas.html',context=datos)
+    return render(request,'bases-editor-lineas.html',context=datos)

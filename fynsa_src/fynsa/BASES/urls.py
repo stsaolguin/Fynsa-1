@@ -19,5 +19,6 @@ urlpatterns = [
     path('listar-blotter', views.ListTodoBlotterBases,name='listar_blotter'),
     path('borrar-blotter/<int:linea>', views.EliminarFilaBlotter,name='borrar_blotter'),
     path('cargador-operaciones/rutinas', views.RutinasDeValidacion,name='rutinas_validacion'),
+    path('cargador-operaciones/buscador', views.BuscadorBlotter,name='buscador_blotter'),
     ]
 
