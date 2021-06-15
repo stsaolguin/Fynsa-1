@@ -1,7 +1,10 @@
-from django.test import SimpleTestCase,Client
+from RFI.models import rfi_bonos
+from django.test import SimpleTestCase,TestCase
 from ordenes.formularios_ordenes import rfi_ingreso_orden_formulario
 from ordenes.models import rfi_tsox
-
+import ast
+import timeit
+'''
 class TestFormulario(SimpleTestCase):
     def setUp(self):
         self.datos ={
@@ -30,4 +33,53 @@ class TestFormulario(SimpleTestCase):
         e = rfi_tsox(**self.datos)
         e.save()
         self.assertIs(e.save(),True)
+
+'''
+
+class TestBuscadorDePapeles(TestCase):
+    """ Este test es para determinar el tiempo de busqueda de papeles """
+    def setUp(self):
+        #self.paises = ["['BR', 'CL']"]
+        #self.sector = ["['Airlines', 'Banking']"]
+        #self.rating = ["['IG', 'HY']"]
+        #self.duracion = ["['x<=3', '3<x<=5']"]
+        #self.ytm = ["['0 a 100', '201 a 300']"]
+        #self.payment_rank = ["['1st lien', 'Jr Subordinated']"]
+        self.paises = ["['BR']"]
+        self.sector = ["['Banco y Financieras']"]
+        self.rating = ["['HY']"]
+        self.duracion = ["['x<=3', '3<x<=5']"]
+        self.ytm = ["['0 a 100','201 a 300']"]
+        self.payment_rank = ["['Sr Unsecured']"]
+
+    def test_ObtenerListaUnica(self):
+        pr = [d for d in ast.literal_eval(self.paises.pop())]
+        sr = [e for e in ast.literal_eval(self.sector.pop())]
+        rr = [f for f in ast.literal_eval(self.rating.pop())]
+        dr = [g for g in ast.literal_eval(self.duracion.pop())]
+        yr = [h for h in ast.literal_eval(self.ytm.pop())]
+        pyr = [i for i in ast.literal_eval(self.payment_rank.pop())]
+        print(pr)
+        resultado = []
+        comienzo = timeit.timeit()
+        for r in rr:
+            for s in pr:
+                print(s)
+                for t in sr:
+                    for u in dr:
+                        for v in yr:
+                            for w in pyr:
+                                print(r,s,t,u,v,w)
+                                busqueda = rfi_bonos.objects.filter(risk=r,cntry_of_risk=s,industria=t,dur_text=u,yas_bond_text=v,payment_rank=w)
+                                print(busqueda)
+                                if busqueda.exists():
+                                    resultado.append(busqueda)
+        final = timeit.timeit()
+        print(resultado)
+        print("tiempo total  : ",final-comienzo)
+
+        
+        self.assertEqual(True,True)
+        
+
 

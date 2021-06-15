@@ -5,6 +5,7 @@ from ordenes.formularios_ordenes import rfi_ingreso_orden_formulario
 from RFI.models import rfi_bonos
 from ordenes.models import rfi_tsox
 from django.core import serializers
+import ast,time
 
 
 def rfi_ingreso_ordenes(request):
@@ -84,11 +85,43 @@ def actualiza_status(request):
 
 def busca_papeles(request):
     if request.POST:
-        paises = request.POST.get("paises") or None
-        sector = request.POST.get("sector") or None
-        print(paises,sector)
-        #acá buscamos el resultado de la busqueda
-        papeles = rfi_bonos.objects.filter(cntry_of_risk='CL').filter(industria='Retail')
+        datos = {}
+        paises = request.POST.getlist("paises") or None
+        sector = request.POST.getlist("sector") or None
+        rating = request.POST.getlist("rating") or None
+        duracion = request.POST.getlist("duracion") or None
+        ytm = request.POST.getlist("ytm") or None
+        payment_rank = request.POST.getlist("payment_rank") or None
+        pr = [d for d in ast.literal_eval(paises.pop())]
+        sr = [e for e in ast.literal_eval(sector.pop())]
+        rr = [f for f in ast.literal_eval(rating.pop())]
+        dr = [g for g in ast.literal_eval(duracion.pop())]
+        yr = [h for h in ast.literal_eval(ytm.pop())]
+        pyr = [i for i in ast.literal_eval(payment_rank.pop())]
+        resultado = []
+        
+        comienzo = time.time()
+        contador = 0
+        conteo_bonos = 0
+        for r in rr:
+            for s in pr:
+                for t in sr:
+                    for u in dr:
+                        for v in yr:
+                            for w in pyr:
+                                contador+=1
+                                busqueda = rfi_bonos.objects.filter(risk=r,cntry_of_risk=s,industria=t,dur_text=u,yas_bond_text=v,payment_rank=w)
+                                if busqueda.exists():
+                                    conteo_bonos+=int(len(busqueda))
+                                    resultado.append(busqueda)
+                                    
 
-        return HttpResponse(papeles)
+        final = time.time()
+        tiempo_total = final-comienzo
+       
+        datos['resultado'] = resultado
+        datos['iteraciones'] = contador 
+        datos['tiempo'] = tiempo_total
+        datos['conteo_bonos'] = conteo_bonos
+        return render(request,'ordenes/ordenes-salida-papeles.html',context=datos)
     return HttpResponse("TODO BIEN!")

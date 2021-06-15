@@ -29,33 +29,37 @@
       <tr class="alert alert-danger">
     
   {% endif %}
-      <th scope="row">{{l.id}}</th>
-      <td>{{l.trader}}</td>
-      <td>{{l.cliente}}</td>
-      <td>{{l.orden_tipo}}</td>
-      <td>{{l.nominales}}</td>
-      <td>{{l.precio}}</td>
+      <th scope="row">{{ l.id }}</th>
+      <td>{{ l.trader }}</td>
+      <td>{{ l.cliente }}</td>
+      <td>{{ l.orden_tipo }}</td>
+      <td>{{ l.nominales }}</td>
+      <td>{{ l.precio }}</td>
       <td>
-      pais : {{l.pais}}<br>
-      sector : {{l.sector}}<br>
-      
+      rating : {{ l.rating }}<br>
+      duración : {{ l.duracion }}<br>
+      Payment Rank : {{ l.payment_rank }}<br>
+      ytm : {{ l.ytm }}<br>
+      pais : {{ l.pais }}<br>
+      sector : {{ l.sector }}<br>
       </td>
       <td>
             <select class="custom-select" id="{{l.id}}" onChange="capturar(this.value,this.id,this.parentNode.parentNode)">
               <option class="alert alert-primary" value="Firme">Firme</option>
               <option class="alert alert-warning" value="Intención">Intención</option>
             </select>
-
-      {% comment %} {{l.status}} {% endcomment %}
-      
       </td>
       <td>
       <a href="#">editar</a>
       <a href="#" class="text-danger">borrar</a>
-        <form action="{% url 'buscador_papeles' %}" method="POST">
+        <form action="{% url 'buscador_papeles' %}" method="POST" target="_blank">
              {% csrf_token %}
               <input type="hidden" name="paises" value="{{l.pais}}">
               <input type="hidden" name="sector" value="{{l.sector}}">
+              <input type="hidden" name="ytm" value="{{l.ytm}}">
+              <input type="hidden" name="payment_rank" value="{{l.payment_rank}}">
+              <input type="hidden" name="duracion" value="{{l.duracion}}">
+              <input type="hidden" name="rating" value="{{l.rating}}">
               <input type="submit" class="btn btn-primary btn-sm" value="papeles">
           </form>
       

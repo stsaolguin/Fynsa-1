@@ -5,7 +5,7 @@ from RFI.models import PruebaArrayModel,clientes_rfi,rfi_bonos
 import datetime
 
 def lista_sector():
-    listado = [(x.classification,x.classification) for x in rfi_bonos.objects.all().distinct('industria')]
+    listado = [(x.industria,x.industria) for x in rfi_bonos.objects.all().distinct('industria')]
     listado.insert(0,('Todos','Todos'))
     return listado
 
