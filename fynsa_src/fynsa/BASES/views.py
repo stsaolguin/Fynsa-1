@@ -1,4 +1,5 @@
 from django.http import HttpResponse
+from django.urls import reverse_lazy
 from django.utils.dateparse import parse_date
 from django.shortcuts import render,redirect
 from django.core import serializers
@@ -6,7 +7,9 @@ from BASES.models import bases,facturas_bases
 from .formularios_bases import *
 from RFL.models import actividad
 from .funciones_externas_Bases import *
-from django.db.models import Q 
+from django.db.models import Q
+from django.views.generic.edit import UpdateView
+from django.db import connection
 import csv
 
 
@@ -237,13 +240,16 @@ def cargador_bases(request):
                 c = limpiador_bases_interno(datos_crudos_salida)
                 for r in c:
                         fila = bases(**r)
-                        fila.save2(using='pruebas')
+                        fila.save()
             except ValueError as err:
                 datos_error = {}
                 datos_error['error'] = err
                 return render(request,'errores.html',context=datos_error)
             salida_correcta={}
             salida_correcta['bunch'] = c
+            c = connection.cursor()
+            c.execute('SELECT * from limpia_bases();')
+            #aca hay que agregar la rutina de limpieza.
             return render(request,'bases-listado-blotter.html',context=salida_correcta)
     datos = {}
     datos['bf'] = cargador_bases_form()
@@ -293,7 +299,7 @@ def formulario_bases(request):
             f = bases_ingreso_operaciones_depos(data=datos)
             if f.is_valid():
                 para_grabar = f.save(commit=False)
-                para_grabar.save(using='pruebas')
+                para_grabar.save()
                 return render(request,'bases-salida-tickets.html',context=datos.dict())
             else:
                 diccionario_inicial = {}
@@ -333,3 +339,20 @@ def BuscadorBlotter(request):
         datos['texto_a_buscar'] = resultado
         return render(request,'bases-editor-lineas.html',context=datos)
     return render(request,'bases-editor-lineas.html',context=datos)
+
+def correcto(request):
+    return render(request,'correcto.html')
+
+class EditorLineaBases(UpdateView):
+    form_class = BlotterModelForm
+    template_name = 'bases-actualiza-blotter.html'
+    success_url = reverse_lazy('correcto-salida')
+    def get_queryset(self):
+        pk = self.kwargs.get("pk")
+        return bases.objects.filter(linea=pk)
+    
+
+#editar linea blotter
+#agregar y editar clientes
+#rutinas de refresco
+

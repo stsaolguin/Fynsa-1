@@ -1,0 +1,21 @@
+{% include 'index.html' %}
+
+{% block contenido %}
+
+<div class="container">
+    <form method="post">
+    {% csrf_token %}
+        {{form.as_p}}
+        <input class="btn btn-success" type="submit" value="Actualizar">
+    </form>
+</div>
+
+
+
+
+{% endblock contenido %}
+
+
+
+
+

@@ -54,10 +54,24 @@ class rfi_ingreso_orden_formulario(forms.Form):
     ytm.widget.attrs.update({'class':'form-control'})
     pais.widget.attrs.update({'class':'form-control'})
 
-
+    def clean_cliente(self):
+        cliente = self.cleaned_data['cliente']
+        return cliente
     
 class PruebaArregloForm(ModelForm):
     class Meta:
         model = PruebaArrayModel
         fields = '__all__'
 
+
+class AgregaClientes(ModelForm):
+    def __init__(self,*args, **kwargs):
+        super(AgregaClientes,self).__init__(*args, **kwargs)
+        self.fields['fondo'].widget.attrs = {'class':'form-control'}
+        self.fields['final'].widget.attrs = {'class':'form-control'}
+        self.fields['categoria'].widget.attrs = {'class':'form-control'}
+        self.fields['pais'].widget.attrs = {'class':'form-control'}
+
+    class Meta:
+        model = clientes_rfi
+        fields = ['fondo','final','categoria','pais']

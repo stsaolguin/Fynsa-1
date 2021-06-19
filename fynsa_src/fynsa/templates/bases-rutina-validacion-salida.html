@@ -2,9 +2,8 @@
 
 {% block contenido %}
 <div class="container my-4">
-<div class="h1">Rutinas de validación</div>
 
-  
+  <div class="h1">Rutinas de validación</div>
   
     <table class="table">
     <thead>
@@ -17,7 +16,11 @@
       {% for u in rutina_de_validacion %}
     <tr>
     <td>{{ u.verificacion }}</td>
-    <td>{{ u.item }}</td>
+    <td>{% for j in u.item %}
+    {% comment %} <a href="{% url 'editar_blotter' j %}" target="_blank">{{ j }}</a> {% endcomment %}
+     {{ j }}
+    {% endfor%}
+    </td>
     </tr>
       {% endfor %}
      </tbody>

@@ -69,7 +69,7 @@ class bases(models.Model):
     def __str__(self):
         return str(self.linea)
 
-    def save(self, *args, **kwargs):
+    def save2(self, *args, **kwargs):
         vendedor = self.seller
         comprador = self.buy
         institucion_vendedor = vendedor.split(" - ")
@@ -84,7 +84,7 @@ class bases(models.Model):
         cliente_trader.objects.get_or_create(institucion_trader=vendedor)
         cliente_trader.objects.get_or_create(institucion_trader=comprador)
         super().save(*args, **kwargs)
-    def save2(self,*args, **kwargs):
+    def save(self,*args, **kwargs):
         super().save(*args, **kwargs)
 
 

@@ -18,7 +18,10 @@ urlpatterns = [
     path('formulario-operaciones', views.formulario_bases, name='formulario_operaciones_bases'),
     path('listar-blotter', views.ListTodoBlotterBases,name='listar_blotter'),
     path('borrar-blotter/<int:linea>', views.EliminarFilaBlotter,name='borrar_blotter'),
+    path('cargador-operaciones/editar-blotter/<pk>', views.EditorLineaBases.as_view(),name='editar_blotter'),
+    path('cargador-operaciones/listo', views.correcto,name='correcto-salida'),
     path('cargador-operaciones/rutinas', views.RutinasDeValidacion,name='rutinas_validacion'),
     path('cargador-operaciones/buscador', views.BuscadorBlotter,name='buscador_blotter'),
+    
     ]
 

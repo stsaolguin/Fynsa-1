@@ -42,7 +42,7 @@ class clientes_rfi(models.Model):
     final = models.BooleanField(null=True,blank=True,default='t')
     categoria_fynsa = models.TextField(null=True,blank=True)
 
-
+    
 class rfi_generacion_historica(models.Model):
     fecha = models.DateField(null=True,blank=True)
     pais = models.CharField(max_length=3,null=True,blank=True)
@@ -174,5 +174,3 @@ class rfi_bonos(models.Model):
 class PruebaArrayModel(models.Model):
     riesgo = ArrayField(models.CharField(max_length=100, blank=True))
     
-
-

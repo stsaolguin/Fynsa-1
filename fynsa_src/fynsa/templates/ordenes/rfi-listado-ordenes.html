@@ -22,12 +22,16 @@
     </tr>
   </thead>
   <tbody>
+
   {% for l in listado %}
-  {% if 'cliente compra' in l.orden_tipo%}
-      <tr class="alert alert-success">
+  {% if not 'Intención' in l.status %}
+        {% if 'cliente compra' in l.orden_tipo%}
+              <tr class="alert alert-success">
+        {% elif 'cliente vende' %}
+              <tr class="alert alert-danger">
+        {% endif %}
   {% else %}
-      <tr class="alert alert-danger">
-    
+    <tr class="alert alert-warning">
   {% endif %}
       <th scope="row">{{ l.id }}</th>
       <td>{{ l.trader }}</td>
@@ -43,15 +47,24 @@
       pais : {{ l.pais }}<br>
       sector : {{ l.sector }}<br>
       </td>
-      <td>
+      <td style="width: 14%">
+       <div id="estado_orden" type="hidden" value="{{ l.status }}"></div>
             <select class="custom-select" id="{{l.id}}" onChange="capturar(this.value,this.id,this.parentNode.parentNode)">
+            {% if 'Intención' in l.status %}
               <option class="alert alert-primary" value="Firme">Firme</option>
-              <option class="alert alert-warning" value="Intención">Intención</option>
+              <option class="alert alert-warning" value="Intención" selected>Intención</option>
+            {% else %}
+            <option class="alert alert-primary" value="Firme" selected>Firme</option>
+            <option class="alert alert-warning" value="Intención">Intención</option>
+            {% endif%}
+
+
+            
             </select>
       </td>
       <td>
-      <a href="#">editar</a>
-      <a href="#" class="text-danger">borrar</a>
+      {% comment %} <a href="{% url 'editar_ordenes'  l.id  %}">Editar</a> {% endcomment %}
+      <a href="{% url 'borrar_ordenes' l.id %}" class="text-danger">Borrar</a>
         <form action="{% url 'buscador_papeles' %}" method="POST" target="_blank">
              {% csrf_token %}
               <input type="hidden" name="paises" value="{{l.pais}}">
@@ -74,6 +87,26 @@
 </div>
 <script>
 function capturar(e,f,g){
+  var clase_seminal = g.classList;
+  console.log(e,f,g);
+  console.log(clase_seminal);
+  
+  if (clase_seminal[0]=='alert-warning'){
+    console.log(clase_seminal)
+    console.log('dentro del seminal')
+    var estado_inicial = g.getElementsByTagName("td")[2];
+    var estado_inicial_texto = estado_inicial.innerText;
+    estado_inicial_texto == 'cliente vende' ? clase_inicial=['alert','alert-danger'] : clase_inicial=['alert','alert-success'];
+  if(e=='Intención'){
+    g.classList.remove(clase_inicial[0],clase_inicial[1]);
+    g.classList.add("alert","alert-warning");
+  } else if (e=='Firme'){
+    g.classList.remove("alert","alert-warning");
+    g.classList.add(clase_inicial[0],clase_inicial[1]);
+  };
+
+  }
+  else {
   var estado_inicial = g.getElementsByTagName("td")[2];
   var estado_inicial_texto = estado_inicial.innerText;
   estado_inicial_texto == 'cliente vende' ? clase_inicial=['alert','alert-danger'] : clase_inicial=['alert','alert-success'];
@@ -84,18 +117,12 @@ function capturar(e,f,g){
     g.classList.remove("alert","alert-warning");
     g.classList.add(clase_inicial[0],clase_inicial[1]);
   };
+  };
+  
+    url = 'http://127.0.0.1:8000/logeado/rfl/ordenes/api/v1/actualiza-status/'+f+'/'+e;
+    fetch(url);
 
-    fetch('http://127.0.0.1:8000/logeado/rfl/ordenes/api/v1/actualiza-status',{
-      method:'GET',
-      credentials:"same-origin",
-      body : {'nombre':'Algo','otro':'otro'}
-    })
-
-
-
-
- };
-
+};//fin de capturar, no borrar
 
 
 </script>

@@ -141,3 +141,31 @@ class bases_ingreso_operaciones_depos(ModelForm):
             lista_de_errores.append(ValidationError("vendedor y comprador no pueden ser el mismo, Ojo ahí!"))
         if len(lista_de_errores)>0:
             raise ValidationError(lista_de_errores)
+
+
+class BlotterModelForm(forms.ModelForm):
+
+    class Meta:
+        model = bases
+        exclude=[
+        'concate', 
+    'institucion_trader_buyer', 
+    'institucion_trader_seller',
+    'institucion_trader_participante_1',
+    'institucion_trader_participante_2', 
+    'tasa_buyer',
+    'tasa_seller',
+    'tipo_de_cambio',
+    'uf',
+    ]
+        
+
+    def clean_participante_1(self):
+        return self.cleaned_data['participante_1'] or None
+    def clean_participante_2(self):
+        return self.cleaned_data['participante_2'] or None
+    def clean_institucion_trader_participante_1(self):
+        return self.cleaned_data['institucion_trader_participante_1'] or None
+    def clean_institucion_trader_participante_2(self):
+        return self.cleaned_data['institucion_trader_participante_1'] or None
+    

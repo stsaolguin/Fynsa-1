@@ -1,7 +1,7 @@
 {% extends "index.html" %}
 
 {% block contenido %}
-<div class="container">
+<div class="container my-4">
             <div class="row">
                         <div class="d-flex justify-content-center">
                         
@@ -16,6 +16,38 @@
                     
                         
                         </div>
+            </div>
+            <div class="row">
+            <h4>Consideraciones:</h4>
+
+            <p>Esta página es para cargar las operaciones que ya están en el blotter de bases. <strong>Solo en el intervalo de tiempo 
+            que falta por cargar</strong>. Es necesario fijarse en la última fecha que aparece en la pantalla "comité" y cargar desde el día después. 
+            La información debe ser cargada en formato csv utf-8. Dentro del proceso, hay un algoritmo que limpia los campos a fin
+            de dejarlos ordenados y sanitizados para correctos cálculos. Los cálculos detrás son largos y engorrosos por lo que un sistema
+            con bases de datos proporciona mayor rapidez y robustez.</p>
+            <p>Independiente de los algoritmos para sanitizar la data, es crucial una inspección humana de los datos 
+            en el blotter antes de cargar el csv. Para ello, se exponen algunas directices e instrucciones como guia del proceso.</p>
+
+
+            <h4>Instrucciones:</h4>
+            <ul>
+            <li>Revise el blotter excel visualmente, fíjese que las columnas X e Y estén todas completas con sus fórmulas, 
+            desde estas columnas son donde se hacen los cálculos. Arrastre las celdas hasta la última fecha con datos ingresado
+            y no sobrepase esa última línea.</li>
+            <li>En las columnas O y P se han encontrado "-" u otros caracteres, lo que debe ser reemplazado por 0 en toda la celda. El 0 es tratable como número, todo
+            otro caracter, no.</li>
+            <li>Revisar que los datos existentes en la columna U (UTIL DEPO) tenga, en la misma línea,
+             datos en las columnas PARTICIPANTE 1 y PARTICIPANTE 2. Ej si hay una ganancia de $100 en la columna U, al frente debe existir quién lo hizo (Santander y FM algo, ejemplo).
+            </li>
+            <li>Revise los TRD, deben ser TRAD. CDB debe ser reemplazado por CB, etc.</li>
+            <li>Revise los doble espacios, en algunos casos es casi imperceptible.</li>
+            <li><strong>Los decimales, en la columna TASA, deben estar con " , " (coma) y no con " . " (punto),</strong> 
+            esto es crucial para que el algoritmo funcione bien.</li>
+            <li>Guarde el bunch de datos como csv separado por punto y como UTF-8 con los encabezados, tal cual está en el blotter.</li>
+            <li>Súbalo, si hay algún error, lo va a avisar. En ese caso, presiones retroceder y vuelva a subir. Un error conocido es cuando se agrega 
+            un derivado en la misma planilla.</li>
+            </ul>
+
             </div>
 </div>
 {% endblock%}

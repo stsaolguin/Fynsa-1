@@ -35,7 +35,7 @@
       <td>{{ r.participante_1 }}</td>
       <td>{{ r.participante_2 }}</td>
       <td>
-      <a href="#">editar</a>
+      <a href="{% url 'editar_blotter' r.linea %}" target="_blank">editar</a>
       </td>
     </tr>
     {% endfor %}

@@ -1,9 +1,11 @@
 from django.db import close_old_connections
-from django.http.response import HttpResponse
-from django.shortcuts import render
-from ordenes.formularios_ordenes import rfi_ingreso_orden_formulario
-from RFI.models import rfi_bonos
-from ordenes.models import rfi_tsox
+from django.views.generic.list import ListView
+from django.views.generic.edit import CreateView
+from django.http.response import HttpResponse, HttpResponseRedirect
+from django.shortcuts import redirect, render
+from ordenes.formularios_ordenes import rfi_ingreso_orden_formulario,AgregaClientes
+from RFI.models import rfi_bonos,clientes_rfi
+from ordenes.models import rfi_tsox, rfi_tsox_borrado
 from django.core import serializers
 import ast,time
 
@@ -11,7 +13,10 @@ import ast,time
 def rfi_ingreso_ordenes(request):
     
     if request.method=='POST':
+        print(request.POST)
         f = rfi_ingreso_orden_formulario(request.POST)
+        print(f.errors)
+        #acá no podemos agregar un cliente nuevo directamente, hay que arreglar
         if f.is_valid():
             #acá procesamos la vista correcta
             precio = request.POST.get('precio')
@@ -25,6 +30,8 @@ def rfi_ingreso_ordenes(request):
             e.isin = request.POST.get('isin')
             e.papel = request.POST.get('papel')
             e.cliente = request.POST.get('cliente')
+            # Acá consultamos si el cliente existe en la bd si no lo creamos
+            clientes_rfi.objects.get_or_create(fondo=e.cliente)
             e.rating = request.POST.getlist('rating')
             e.pais = request.POST.getlist('pais')
             e.duracion = request.POST.getlist('duracion')
@@ -74,14 +81,15 @@ def security_name_api(request,isin):
 def listado_ordenes(request):
     """ Lista las ordenes puestas en pantalla """
     datos = {}
-    datos['listado'] = rfi_tsox.objects.all()
+    datos['listado'] = rfi_tsox.objects.all().order_by('id')
     return render(request,'ordenes/rfi-listado-ordenes.html',context=datos)
 
-def actualiza_status(request):
+def actualiza_status(request,orden_numero,estado):
     """ Función para actualizar el estatus a intencion a firme"""
-    print(request.POST)
-    #rfi_tsox.objects.filter(id=orden_numero).update(status=nuevo_status)
-    return True
+    rfi_tsox.objects.filter(id=orden_numero).update(status=estado)
+    q = rfi_tsox.objects.filter(id=orden_numero)
+    actualizacion = serializers.serialize('json',q)
+    return HttpResponse(actualizacion,content_type='application/json')
 
 def busca_papeles(request):
     if request.POST:
@@ -125,3 +133,39 @@ def busca_papeles(request):
         datos['conteo_bonos'] = conteo_bonos
         return render(request,'ordenes/ordenes-salida-papeles.html',context=datos)
     return HttpResponse("TODO BIEN!")
+
+def EditarOrden(request,numero):
+    """Para que funcione bien esta función hay que cambiar el formulario de ingreso de ordenes a modelform"""
+    datos = {}
+    orden = rfi_tsox.objects.get(id=numero) #la consulta la convertimos en diccionario
+    f = rfi_ingreso_orden_formulario(instance=orden) 
+    datos['formulario'] = f #llenamos el formulario
+    return render(request,'ordenes/rfi-ingreso-ordenes.html',context=datos)
+
+def BorrarOrden(request,numero):
+    """ Esta función tiene por objectivo borrar la orden y copiarla a otra tabla, no la borra totalmente, la saca."""
+    q = rfi_tsox.objects.filter(id=numero)
+    for r in q.values():
+        rfi_tsox_borrado.objects.create(**r)
+    q.delete()
+    return redirect('listado_ordenes')
+
+class CrearClienteCreateView(CreateView):
+    #context_object_name = 'formulario'
+    form_class = AgregaClientes
+    template_name = "ordenes/ordenes-listar-clientes.html"
+   
+
+
+    def form_valid(self, form):
+        self.object = form
+        self.object.save()
+        return HttpResponseRedirect('ordenes/ordenes-agregar-exitoso.html')
+
+
+
+
+
+    
+    
+
