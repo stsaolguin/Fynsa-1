@@ -17,6 +17,7 @@
       <th scope="col">nominales</th>
       <th scope="col">precio</th>
       <th scope="col">caracteristicas</th>
+      <th scope="col">notas</th>
       <th scope="col">status</th>
       <th scope="col">acción</th>
     </tr>
@@ -47,6 +48,7 @@
       pais : {{ l.pais }}<br>
       sector : {{ l.sector }}<br>
       </td>
+      <td>{{ l.notas }}</td>
       <td style="width: 14%">
        <div id="estado_orden" type="hidden" value="{{ l.status }}"></div>
             <select class="custom-select" id="{{l.id}}" onChange="capturar(this.value,this.id,this.parentNode.parentNode)">
@@ -57,13 +59,10 @@
             <option class="alert alert-primary" value="Firme" selected>Firme</option>
             <option class="alert alert-warning" value="Intención">Intención</option>
             {% endif%}
-
-
-            
             </select>
       </td>
       <td>
-      {% comment %} <a href="{% url 'editar_ordenes'  l.id  %}">Editar</a> {% endcomment %}
+      <a href="{% url 'editar_ordenes'  l.id  %}">Editar</a>
       <a href="{% url 'borrar_ordenes' l.id %}" class="text-danger">Borrar</a>
         <form action="{% url 'buscador_papeles' %}" method="POST" target="_blank">
              {% csrf_token %}

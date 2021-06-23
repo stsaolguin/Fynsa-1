@@ -144,7 +144,6 @@ class bases_ingreso_operaciones_depos(ModelForm):
 
 
 class BlotterModelForm(forms.ModelForm):
-
     class Meta:
         model = bases
         exclude=[

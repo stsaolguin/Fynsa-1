@@ -352,6 +352,16 @@ class EditorLineaBases(UpdateView):
         return bases.objects.filter(linea=pk)
     
 
+def inicialfacturas(request):
+    """Esta rutina es para correr después de ingresar las facturas"""
+    return render(request,'bases-rutina-factura.html',context={})
+
+
+def rutinasfacturas(request):
+    c = connection.cursor()
+    c.execute('REFRESH MATERIALIZED VIEW cobranzas_view;REFRESH MATERIALIZED VIEW cobranzas_view_consolidada;REFRESH MATERIALIZED VIEW serie_cobranzas_view;REFRESH MATERIALIZED VIEW serie_mensual_generacion_total_view;')
+    return redirect('correcto-salida')
+
 #editar linea blotter
 #agregar y editar clientes
 #rutinas de refresco

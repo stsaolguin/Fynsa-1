@@ -1,13 +1,17 @@
+from re import template
+from django import forms
 from django.db import close_old_connections
 from django.views.generic.list import ListView
-from django.views.generic.edit import CreateView
+from django.views.generic.edit import CreateView, UpdateView
 from django.http.response import HttpResponse, HttpResponseRedirect
-from django.shortcuts import redirect, render
-from ordenes.formularios_ordenes import rfi_ingreso_orden_formulario,AgregaClientes
+from django.shortcuts import get_object_or_404, redirect, render
+from ordenes.formularios_ordenes import rfi_ingreso_orden_formulario,AgregaClientes,IngresoOrdenesRFIModelForm
 from RFI.models import rfi_bonos,clientes_rfi
 from ordenes.models import rfi_tsox, rfi_tsox_borrado
 from django.core import serializers
 import ast,time
+from django.urls import reverse_lazy
+from itertools import tee
 
 
 def rfi_ingreso_ordenes(request):
@@ -30,8 +34,6 @@ def rfi_ingreso_ordenes(request):
             e.isin = request.POST.get('isin')
             e.papel = request.POST.get('papel')
             e.cliente = request.POST.get('cliente')
-            # Acá consultamos si el cliente existe en la bd si no lo creamos
-            clientes_rfi.objects.get_or_create(fondo=e.cliente)
             e.rating = request.POST.getlist('rating')
             e.pais = request.POST.getlist('pais')
             e.duracion = request.POST.getlist('duracion')
@@ -92,6 +94,7 @@ def actualiza_status(request,orden_numero,estado):
     return HttpResponse(actualizacion,content_type='application/json')
 
 def busca_papeles(request):
+    print(request.POST)
     if request.POST:
         datos = {}
         paises = request.POST.getlist("paises") or None
@@ -100,6 +103,18 @@ def busca_papeles(request):
         duracion = request.POST.getlist("duracion") or None
         ytm = request.POST.getlist("ytm") or None
         payment_rank = request.POST.getlist("payment_rank") or None
+        paises2 = str(paises)
+        sector2 = str(sector)
+        rating2 = str(rating)
+        duracion2 = str(duracion)
+        ytm2 = str(ytm)
+        payment_rank2 = str(payment_rank)
+        datos['paises'] = paises2 = paises2.replace('["[\'','').replace('\']"]','')
+        datos['sector'] = sector2 = sector2.replace('["[\'','').replace('\']"]','')
+        datos['rating'] = rating2 = rating2.replace('["[\'','').replace('\']"]','')
+        datos['duracion'] = duracion2 = duracion2.replace('["[\'','').replace('\']"]','')
+        datos['ytm'] = ytm2 = ytm2.replace('["[\'','').replace('\']"]','')
+        datos['payment_rank'] = payment_rank2 = payment_rank2.replace('["[\'','').replace('\']"]','')
         pr = [d for d in ast.literal_eval(paises.pop())]
         sr = [e for e in ast.literal_eval(sector.pop())]
         rr = [f for f in ast.literal_eval(rating.pop())]
@@ -107,7 +122,6 @@ def busca_papeles(request):
         yr = [h for h in ast.literal_eval(ytm.pop())]
         pyr = [i for i in ast.literal_eval(payment_rank.pop())]
         resultado = []
-        
         comienzo = time.time()
         contador = 0
         conteo_bonos = 0
@@ -154,18 +168,30 @@ class CrearClienteCreateView(CreateView):
     #context_object_name = 'formulario'
     form_class = AgregaClientes
     template_name = "ordenes/ordenes-listar-clientes.html"
-   
-
-
     def form_valid(self, form):
         self.object = form
         self.object.save()
         return HttpResponseRedirect('ordenes/ordenes-agregar-exitoso.html')
 
 
+class rfi_ingreso_ordenes_modelform(CreateView):
+    model = rfi_tsox
+    form_class = IngresoOrdenesRFIModelForm
+    template_name = 'ordenes/rfi-ingreso-ordenes-modelform.html'
+    success_url = reverse_lazy('rfi_ingreso_ordenes_modelform')
+    def form_valid(self, form):
+        o = form.save(commit=False)
+        o.trader = str(self.request.user)
+        o.save()
+        return super().form_valid(form)
 
-
-
+class ordenes_updatea_orden(UpdateView):
+    model = rfi_tsox
+    form_class = IngresoOrdenesRFIModelForm
+    template_name = template_name = 'ordenes/rfi-ingreso-ordenes-modelform.html'
+    success_url = reverse_lazy('listado_ordenes')
     
+    def form_invalid(self, form):
+        print(form.errors)
+        return self.render_to_response(self.get_context_data(form=form))
     
-

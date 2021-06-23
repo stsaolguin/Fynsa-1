@@ -1,0 +1,142 @@
+{% include 'index.html' %}
+
+{% block contenido %}
+
+
+<div class="container mb-4">
+<h1>Modelform</h1>
+{{ form.non_field_errors }}
+  {{ form.subject.errors }}
+    {{ form.subject.label_tag }}
+    {{ form.subject }}
+    {% if form.subject.errors %}
+    <ol>
+    {% for error in form.subject.errors %}
+        <li><strong>{{ error|escape }}</strong></li>
+    {% endfor %}
+    </ol>
+{% endif %}
+       <form method="POST">
+        {% csrf_token %}
+    
+    <div class="row">
+        <div class="col-lg-6">
+            <label for="{{ form.cliente.id_for_label }}">Cliente:</label>
+            <input type="text" list="clientes" name="cliente" class="form-control" value="{{ form.cliente.value }}">
+            <datalist id="clientes">
+            {% for r,s in form.cliente.field.choices %}
+                 <option value="{{ r }}">
+            {% endfor %}
+            </datalist>
+          
+        </div>
+        <div class="col-lg-6">
+             <label for="{{ form.fecha_ingreso.id_for_label }}">Fecha:</label>
+            {{ form.fecha_ingreso }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-4">
+            <label for="{{ form.orden_tipo.id_for_label }}">Orden:</label>
+            {{ form.orden_tipo }}
+        </div>
+        <div class="col-lg-4">
+            <label for="{{ form.nominales.id_for_label }}">Nominales:</label>
+            {{ form.nominales }}
+        </div>
+        <div class="col-lg-4">
+            <label for="{{ form.precio.id_for_label }}">Precio Ordenado:</label>
+            {{ form.precio }}
+        </div>
+    </div>
+    <div class="row">
+    <div class="col-lg-6">
+          <label for="{{ form.isin.id_for_label }}">Isin:</label>
+           <input type="text" list="isin" id="id_isin" name ="isin" class="form-control" value="{{ form.isin.value }}">
+           {{ form.isin.errors }}
+            <datalist id="isin">
+            {% for r,s in form.isin.field.choices %}
+                 <option value="{{ r }}">
+            {% endfor %}
+            </datalist>
+
+             </div>
+    <div class="col-lg-6">
+           <label for="{{ form.precio.id_for_label }}">Papel:</label>
+          {{ form.papel }}
+    </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-3">
+                <label for="{{ form.rating.id_for_label }}">Rating:</label>
+                {{ form.rating }}
+        </div>
+        <div class="col-lg-3">
+            <label for="{{ form.duracion.id_for_label }}">Duración:</label>
+            {{ form.duracion }}
+        </div>
+        <div class="col-lg-3">
+            <label for="{{ form.payment_rank.id_for_label }}">Payment Rank:</label>
+            {{ form.payment_rank }}
+        </div>
+        <div class="col-lg-3">
+            <label for="{{ form.ytm.id_for_label }}">YTM:</label>
+            {{ form.ytm }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-9">
+            <label for="{{ form.sector.id_for_label }}">Sector:</label>
+            {{ form.sector }}
+        </div>
+        <div class="col-lg-3">
+            <label for="{{ form.pais.id_for_label }}">Country of risk:</label>
+            {{ form.pais }}
+        </div>
+    </div>
+    <div class="row">
+           
+            <label for="{{ form.notas.id_for_label }}">Notas:</label>
+            {{ form.notas }}
+         
+    </div> 
+    <div class="row">
+      <input type="submit" class="btn btn-primary mt-1" value="Cargar">
+    </div>
+    </form>
+</div>
+
+<script>
+function separador_miles(n){
+    var n_parts = n.toString();
+    var n_salida = n_parts.replace(/\B(?=(\d{3})+(?!\d))/g,".");
+    return n_salida
+    
+};
+var nominales = document.getElementById('id_nominales');
+nominales.addEventListener('change',d =>{
+     nominales.value = separador_miles(nominales.value);
+     });
+var isin = document.getElementById('id_isin');
+var papel = document.getElementById('id_papel');
+isin.addEventListener('change',d =>{
+    var nemo = isin.value;
+    var direccion_api = 'http://127.0.0.1:8000/logeado/rfl/ordenes/api/v1/' + nemo;
+    fetch(direccion_api)
+    .then(res => res.json())
+    .then(data => {
+    var nemo = data['0'].fields['security_name'];
+    papel.value = nemo;
+})
+   
+})
+
+
+
+
+
+</script>
+
+</div>
+
+{% endblock contenido %}
