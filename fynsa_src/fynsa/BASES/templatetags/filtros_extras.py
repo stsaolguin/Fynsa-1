@@ -13,3 +13,13 @@ def separador_miles(valor):
     return locale.currency(int(valor),grouping=True)
 
 #arreglar este filtro
+
+@register.filter(name='tiene_todos')
+def TieneTodos(lis,texto='Todos'):
+    for val in lis:
+        if val==texto:
+            return True
+        else:
+            return False
+
+
