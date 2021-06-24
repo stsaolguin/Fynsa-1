@@ -3,7 +3,8 @@
 {% block contenido %}
 <div class="container">
 <div class="row">
-  
+  <h1>T-sox.</h1>
+  <hr>
 
 </div>
 <div class="row">
@@ -66,12 +67,13 @@
       <a href="{% url 'borrar_ordenes' l.id %}" class="text-danger">Borrar</a>
         <form action="{% url 'buscador_papeles' %}" method="POST" target="_blank">
              {% csrf_token %}
-              <input type="hidden" name="paises" value="{{l.pais}}">
-              <input type="hidden" name="sector" value="{{l.sector}}">
-              <input type="hidden" name="ytm" value="{{l.ytm}}">
-              <input type="hidden" name="payment_rank" value="{{l.payment_rank}}">
-              <input type="hidden" name="duracion" value="{{l.duracion}}">
-              <input type="hidden" name="rating" value="{{l.rating}}">
+              <input type="hidden" name="cliente" value="{{ l.cliente }}">
+              <input type="hidden" name="paises" value="{{ l.pais }}">
+              <input type="hidden" name="sector" value="{{ l.sector }}">
+              <input type="hidden" name="ytm" value="{{ l.ytm }}">
+              <input type="hidden" name="payment_rank" value="{{ l.payment_rank }}">
+              <input type="hidden" name="duracion" value="{{ l.duracion }}">
+              <input type="hidden" name="rating" value="{{ l.rating }}">
               <input type="submit" class="btn btn-primary btn-sm" value="papeles">
           </form>
       

@@ -115,16 +115,20 @@ def busca_papeles(request):
         datos['duracion'] = duracion2 = duracion2.replace('["[\'','').replace('\']"]','')
         datos['ytm'] = ytm2 = ytm2.replace('["[\'','').replace('\']"]','')
         datos['payment_rank'] = payment_rank2 = payment_rank2.replace('["[\'','').replace('\']"]','')
-        pr = [d for d in ast.literal_eval(paises.pop())]
-        sr = [e for e in ast.literal_eval(sector.pop())]
-        rr = [f for f in ast.literal_eval(rating.pop())]
-        dr = [g for g in ast.literal_eval(duracion.pop())]
-        yr = [h for h in ast.literal_eval(ytm.pop())]
-        pyr = [i for i in ast.literal_eval(payment_rank.pop())]
+        datos['cliente'] = request.POST.get('cliente')
+        datos['trader'] = request.user
+        pr = [d for d in ast.literal_eval(paises.pop())] if not '''['Todos']''' in paises else None
+        sr = [e for e in ast.literal_eval(sector.pop())] if not '''['Todos']''' in sector else None
+        rr = [f for f in ast.literal_eval(rating.pop())] if not '''['Todos']''' in rating else None
+        dr = [g for g in ast.literal_eval(duracion.pop())] if not '''['Toda la curva']''' in duracion else None
+        yr = [h for h in ast.literal_eval(ytm.pop())] if not '''['Todos']''' in ytm else None
+        pyr = [i for i in ast.literal_eval(payment_rank.pop())] if not '''['Todos']''' in payment_rank else None
         resultado = []
         comienzo = time.time()
         contador = 0
         conteo_bonos = 0
+        #if pr is None and rr is None and rr is None and dr is None and yr is None and pyr is None:
+        #   busqueda = rfi_bonos.objects.all()
         for r in rr:
             for s in pr:
                 for t in sr:

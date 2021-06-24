@@ -1,9 +1,11 @@
+from django.views.generic.edit import ModelFormMixin
 from RFI.models import rfi_bonos
 from django.test import SimpleTestCase,TestCase
 from ordenes.formularios_ordenes import rfi_ingreso_orden_formulario
 from ordenes.models import rfi_tsox
 import ast
 import timeit
+from django.test import TestCase,Client
 '''
 class TestFormulario(SimpleTestCase):
     def setUp(self):
@@ -35,7 +37,7 @@ class TestFormulario(SimpleTestCase):
         self.assertIs(e.save(),True)
 
 '''
-
+'''
 class TestBuscadorDePapeles(TestCase):
     """ Este test es para determinar el tiempo de busqueda de papeles """
     def setUp(self):
@@ -83,3 +85,17 @@ class TestBuscadorDePapeles(TestCase):
         
 
 
+'''
+
+from django.urls import reverse
+from ordenes.views import rfi_ingreso_ordenes_modelform
+from fynsa.views import login_
+class TesteoUrls(TestCase):
+    def test_urls(self):
+        c = Client()
+        url = reverse('rfi_ingreso_ordenes_modelform')
+        url_login = reverse('login_')
+        log = c.post(url_login, {'usr':'gvera','pasw':'gonzalovera26'})
+        res = c.get(url)
+        print('************* Contenido ',res.content)
+        self.assertEqual(log.status_code,200)
