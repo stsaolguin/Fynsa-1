@@ -3,12 +3,20 @@ from django.core.exceptions import ValidationError
 from .models import *
 from django import forms
 from RFI.models import rfi_beta
+from datetime import datetime
 
+def ultima_fecha_bases():
+    return str(bases.objects.latest('fecha').fecha)
 
-ultima_fecha = bases.objects.latest('fecha')
-ultima_fecha_rfi = rfi_beta.objects.latest('fecha')
-ultima_fecha.refresh_from_db()
-ultima_fecha_rfi.refresh_from_db()
+def ultima_fecha_rfi():
+    return str(rfi_beta.objects.latest('fecha').fecha)
+
+def clientes_conciliaciones():
+    """ esta funcion es para las conciliaciones """
+    return clientes.objects.filter(factura=True).order_by('nombre')
+
+def clientes_total():
+    return clientes.objects.filter(factura=True).values_list('nombre','nombre')
 
 class f_bases(ModelForm):
     class Meta:
@@ -32,28 +40,27 @@ class f_bases(ModelForm):
 
 class f_fechas_comite(forms.Form):
     fecha_inicial = forms.DateField(widget=forms.DateInput(attrs={'class':'form-control mx-2','type':'date'}),label='fecha inicial', required=True, initial='2019-08-09')
-    fecha_final = forms.DateField(widget=forms.DateInput(attrs={'class':'form-control mx-2','type':'date'}),label='fecha final', required=True, initial=ultima_fecha)
+    fecha_final = forms.DateField(widget=forms.DateInput(attrs={'class':'form-control mx-2','type':'date'}),label='fecha final', required=True, initial=ultima_fecha_bases())
 
 class f_fechas_comite_rfi(forms.Form):
     fecha_inicial = forms.DateField(widget=forms.DateInput(attrs={'class':'form-control mx-2','type':'date'}),label='Fecha Inicial', required=True, initial='2021-01-01')
-    fecha_final = forms.DateField(widget=forms.DateInput(attrs={'class':'form-control mx-2','type':'date'}),label='Fecha Final', required=True, initial=rfi_beta.objects.latest('fecha'))
+    fecha_final = forms.DateField(widget=forms.DateInput(attrs={'class':'form-control mx-2','type':'date'}),label='Fecha Final', required=True, initial=ultima_fecha_rfi())
 
 class f_conciliaciones(forms.Form):
-    cliente = forms.ModelChoiceField(queryset=clientes.objects.filter(factura=True).order_by('nombre'),to_field_name='nombre')
+    cliente = forms.ModelChoiceField(queryset=clientes_conciliaciones(),to_field_name='nombre')
     fecha_inicial = forms.DateField(widget=forms.DateInput(attrs={'class':'form-control mx-2','type':'date'}),label='fecha inicial', required=True, initial='2019-08-09')
-    fecha_final = forms.DateField(widget=forms.DateInput(attrs={'class':'form-control mx-2','type':'date'}),label='fecha final', required=True, initial=ultima_fecha)
+    fecha_final = forms.DateField(widget=forms.DateInput(attrs={'class':'form-control mx-2','type':'date'}),label='fecha final', required=True, initial=ultima_fecha_bases())
     cliente.widget.attrs.update({'class':'form-control mx-2'})
 
 
-clientes=clientes.objects.filter(factura=True).values_list('nombre','nombre')
+#clientes=clientes.objects.filter(factura=True).values_list('nombre','nombre')
 
 
 class f_facturas_bases(ModelForm):
     model=facturas_bases
     class Meta:
-        #cliente
         widgets ={
-            'cliente' : Select(choices=clientes)
+            'cliente' : Select(choices=clientes_total())
         }
 
 class bases_ingreso_operaciones(ModelForm):
@@ -88,8 +95,6 @@ class bases_ingreso_operaciones(ModelForm):
         lista_de_errores = []
         if comprador==vendedor:
             lista_de_errores.append(ValidationError("vendedor y comprador no pueden ser el mismo, Ojo ahí!"))
-        if monto_vendedor > monto_comprador:
-            lista_de_errores.append(ValidationError("¿Lo estás vendiendo mas barato a lo que lo compraste?, Ojo!"))
         if len(lista_de_errores)>0:
             raise ValidationError(lista_de_errores)
         
@@ -134,7 +139,32 @@ class bases_ingreso_operaciones_depos(ModelForm):
         lista_de_errores = []
         if comprador==vendedor:
             lista_de_errores.append(ValidationError("vendedor y comprador no pueden ser el mismo, Ojo ahí!"))
-        if monto_vendedor > monto_comprador:
-            lista_de_errores.append(ValidationError("¿Lo estás vendiendo mas barato a lo que lo compraste?, Ojo!"))
         if len(lista_de_errores)>0:
             raise ValidationError(lista_de_errores)
+
+
+class BlotterModelForm(forms.ModelForm):
+    class Meta:
+        model = bases
+        exclude=[
+        'concate', 
+    'institucion_trader_buyer', 
+    'institucion_trader_seller',
+    'institucion_trader_participante_1',
+    'institucion_trader_participante_2', 
+    'tasa_buyer',
+    'tasa_seller',
+    'tipo_de_cambio',
+    'uf',
+    ]
+        
+
+    def clean_participante_1(self):
+        return self.cleaned_data['participante_1'] or None
+    def clean_participante_2(self):
+        return self.cleaned_data['participante_2'] or None
+    def clean_institucion_trader_participante_1(self):
+        return self.cleaned_data['institucion_trader_participante_1'] or None
+    def clean_institucion_trader_participante_2(self):
+        return self.cleaned_data['institucion_trader_participante_1'] or None
+    

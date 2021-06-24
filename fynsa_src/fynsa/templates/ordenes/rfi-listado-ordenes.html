@@ -1,0 +1,130 @@
+{% include 'index.html' %}
+
+{% block contenido %}
+<div class="container">
+<div class="row">
+  <h1>T-sox.</h1>
+  <hr>
+
+</div>
+<div class="row">
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">id</th>
+      <th scope="col">trader</th>
+      <th scope="col">cliente</th>
+      <th scope="col">orden</th>
+      <th scope="col">nominales</th>
+      <th scope="col">precio</th>
+      <th scope="col">caracteristicas</th>
+      <th scope="col">notas</th>
+      <th scope="col">status</th>
+      <th scope="col">acción</th>
+    </tr>
+  </thead>
+  <tbody>
+
+  {% for l in listado %}
+  {% if not 'Intención' in l.status %}
+        {% if 'cliente compra' in l.orden_tipo%}
+              <tr class="alert alert-success">
+        {% elif 'cliente vende' %}
+              <tr class="alert alert-danger">
+        {% endif %}
+  {% else %}
+    <tr class="alert alert-warning">
+  {% endif %}
+      <th scope="row">{{ l.id }}</th>
+      <td>{{ l.trader }}</td>
+      <td>{{ l.cliente }}</td>
+      <td>{{ l.orden_tipo }}</td>
+      <td>{{ l.nominales }}</td>
+      <td>{{ l.precio }}</td>
+      <td>
+      rating : {{ l.rating }}<br>
+      duración : {{ l.duracion }}<br>
+      Payment Rank : {{ l.payment_rank }}<br>
+      ytm : {{ l.ytm }}<br>
+      pais : {{ l.pais }}<br>
+      sector : {{ l.sector }}<br>
+      </td>
+      <td>{{ l.notas }}</td>
+      <td style="width: 14%">
+       <div id="estado_orden" type="hidden" value="{{ l.status }}"></div>
+            <select class="custom-select" id="{{l.id}}" onChange="capturar(this.value,this.id,this.parentNode.parentNode)">
+            {% if 'Intención' in l.status %}
+              <option class="alert alert-primary" value="Firme">Firme</option>
+              <option class="alert alert-warning" value="Intención" selected>Intención</option>
+            {% else %}
+            <option class="alert alert-primary" value="Firme" selected>Firme</option>
+            <option class="alert alert-warning" value="Intención">Intención</option>
+            {% endif%}
+            </select>
+      </td>
+      <td>
+      <a href="{% url 'editar_ordenes'  l.id  %}">Editar</a>
+      <a href="{% url 'borrar_ordenes' l.id %}" class="text-danger">Borrar</a>
+        <form action="{% url 'buscador_papeles' %}" method="POST" target="_blank">
+             {% csrf_token %}
+              <input type="hidden" name="cliente" value="{{ l.cliente }}">
+              <input type="hidden" name="paises" value="{{ l.pais }}">
+              <input type="hidden" name="sector" value="{{ l.sector }}">
+              <input type="hidden" name="ytm" value="{{ l.ytm }}">
+              <input type="hidden" name="payment_rank" value="{{ l.payment_rank }}">
+              <input type="hidden" name="duracion" value="{{ l.duracion }}">
+              <input type="hidden" name="rating" value="{{ l.rating }}">
+              <input type="submit" class="btn btn-primary btn-sm" value="papeles">
+          </form>
+      
+      
+
+      </td>
+    </tr>
+     {% endfor %}
+  </tbody>
+</table>
+</div>
+</div>
+<script>
+function capturar(e,f,g){
+  var clase_seminal = g.classList;
+  console.log(e,f,g);
+  console.log(clase_seminal);
+  
+  if (clase_seminal[0]=='alert-warning'){
+    console.log(clase_seminal)
+    console.log('dentro del seminal')
+    var estado_inicial = g.getElementsByTagName("td")[2];
+    var estado_inicial_texto = estado_inicial.innerText;
+    estado_inicial_texto == 'cliente vende' ? clase_inicial=['alert','alert-danger'] : clase_inicial=['alert','alert-success'];
+  if(e=='Intención'){
+    g.classList.remove(clase_inicial[0],clase_inicial[1]);
+    g.classList.add("alert","alert-warning");
+  } else if (e=='Firme'){
+    g.classList.remove("alert","alert-warning");
+    g.classList.add(clase_inicial[0],clase_inicial[1]);
+  };
+
+  }
+  else {
+  var estado_inicial = g.getElementsByTagName("td")[2];
+  var estado_inicial_texto = estado_inicial.innerText;
+  estado_inicial_texto == 'cliente vende' ? clase_inicial=['alert','alert-danger'] : clase_inicial=['alert','alert-success'];
+  if(e=='Intención'){
+    g.classList.remove(clase_inicial[0],clase_inicial[1]);
+    g.classList.add("alert","alert-warning");
+  } else if (e=='Firme'){
+    g.classList.remove("alert","alert-warning");
+    g.classList.add(clase_inicial[0],clase_inicial[1]);
+  };
+  };
+  
+    url = 'http://127.0.0.1:8000/logeado/rfl/ordenes/api/v1/actualiza-status/'+f+'/'+e;
+    fetch(url);
+
+};//fin de capturar, no borrar
+
+
+</script>
+{% endblock %}

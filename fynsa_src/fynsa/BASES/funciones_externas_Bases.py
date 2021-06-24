@@ -13,6 +13,7 @@ def limpiador_bases_interno(texto):
     texto = texto.replace(' ;',';').replace('; ',';')
     texto = texto.replace(' ; ',';')
     texto = texto.replace(';-;',';0;')
+    texto = texto.replace(u'\xa0',u'')
     texto_listo = io.StringIO(texto)
     encabezados_salida = ["fecha","fynsa","otc_tr","nemo","dias","monto","tipo_de_pago","buy","seller","trader_buy","trader_seller","tasa","valor_final","fee_buyer","fee_seller","fee_buyer_moneda","fee_seller_moneda","compra_depo","venta_depo","util_depo","valor_clp","fee_buyer_clp","fee_seller_clp","participante_1","participante_2","tipo_de_cambio","uf"]
     csv_entrada = csv.reader(texto_listo, delimiter = ';')

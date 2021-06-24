@@ -77,9 +77,6 @@ update "BASES_bases" set institucion_trader_participante_1='' where institucion_
 update "BASES_bases" set institucion_trader_participante_2='' where institucion_trader_participante_2 is null;
 update "BASES_bases" set concate=concat(fecha, fynsa, otc_tr, nemo, dias, monto, tipo_de_pago, buy, seller, trader_buy, trader_seller, tasa, valor_final, fee_buyer, fee_seller, fee_buyer_moneda, fee_seller_moneda, compra_depo, venta_depo, util_depo, valor_clp, fee_buyer_clp, fee_seller_clp, participante_1, participante_2) where concate='';
 
-
-
-
 select * from eq_der_rutinas();
 REFRESH MATERIALIZED VIEW cobranzas_view;
 REFRESH MATERIALIZED VIEW cobranzas_view_consolidada;

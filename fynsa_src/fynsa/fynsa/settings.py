@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'BASES',
     'RFI',
     'RFL',
+    'ordenes',
     
 ]
 

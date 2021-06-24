@@ -2912,6 +2912,69 @@ LANGUAGE SQL;
 
 select * from supercintas(6,8,'AA','UF','BE') where tasa is not null order by nemo desc;
 
+CREATE OR REPLACE FUNCTION limpia_bases() returns void
+AS
+$$
+UPDATE "BASES_bases" set dias=0 where dias is null;
+UPDATE "BASES_bases" set (fee_buyer_moneda,fee_seller_moneda)=('CLP','CLP') where (fee_buyer_moneda,fee_seller_moneda)=('clp','clp');
+UPDATE "BASES_bases" set fee_buyer=0 where fee_buyer is null;
+UPDATE "BASES_bases" set fee_seller=0 where fee_seller is null;
+UPDATE "BASES_bases" set fee_seller_moneda='CLP' where fee_seller_moneda is null;
+UPDATE "BASES_bases" set fee_buyer_moneda='CLP' where fee_buyer_moneda is null;
+UPDATE "BASES_bases" set fee_buyer_clp=fee_buyer where fee_buyer_clp is null and fee_buyer_moneda='CLP';
+UPDATE "BASES_bases" set fee_seller_clp=fee_seller where fee_seller_clp is null and fee_seller_moneda='CLP';
+UPDATE "BASES_bases" set fee_buyer_clp=fee_buyer*790 where fee_buyer_clp is null and fee_buyer_moneda='USD';
+UPDATE "BASES_bases" set fee_seller_clp=fee_seller*790 where fee_seller_clp is null and fee_seller_moneda='USD';
+UPDATE "BASES_bases" set compra_depo=0 where compra_depo is null;
+UPDATE "BASES_bases" set venta_depo=0 where venta_depo is null;
+UPDATE "BASES_bases" set util_depo=0 where util_depo is null;
+UPDATE "BASES_bases" set participante_1=0 where participante_1 is null;
+UPDATE "BASES_bases" set participante_2=0 where participante_2 is null;
+UPDATE "BASES_bases" set valor_clp=monto*28000 where valor_clp is null and nemo ilike 'BTU%' OR nemo ilike 'BCU%';
+UPDATE "BASES_bases" set valor_clp=monto where valor_clp is null and nemo ilike 'BTP%' OR nemo ilike 'BCP%';
+UPDATE "BASES_bases" set valor_clp=monto where valor_clp is null and nemo ilike 'F%';
+update "BASES_bases" set trader_seller='PABLO ARROYO' where trader_seller='P ARROYO';
+update "BASES_bases" set trader_seller='MIGUEL SARMIENTO' where trader_seller='MIGUE SARMIENTO';
+update "BASES_bases" set trader_seller='JORGE TROMBERT' where trader_seller='JORGE TROMBERG';
+update "BASES_bases" set trader_seller='IGNACIO SILVA' where trader_seller='IGNACIO ';
+update "BASES_bases" set trader_seller='GABRIELA VARGAS' where trader_seller='GABRIELA VARGAS ';
+update "BASES_bases" set trader_seller='FYNSA' where trader_seller='FYNSA ';
+update "BASES_bases" set trader_seller='FELIPE MENA' where trader_seller='FELIP MENA';
+update "BASES_bases" set trader_seller='DIEGO SOUPER' where trader_seller='DIEGO SUPER';
+UPDATE "BASES_bases" set buy='FM SURA' where buy='FM  SURA';
+UPDATE "BASES_bases" set buy='B HSBC' where buy='HSBC';
+UPDATE "BASES_bases" set buy='AFP AFC' where buy='AFC';
+UPDATE "BASES_bases" set seller='AFP AFC' where seller='AFC';
+UPDATE "BASES_bases" set buy='FM SCOTIABANK' where buy='FM SCOTIA';
+Update "BASES_bases" set seller='FM LARRAINVIAL' where seller='FM LV';
+Update "BASES_bases" set seller='FM LARRAINVIAL' where seller='FM LARRAIN VIAL';
+UPDATE "BASES_bases" set concate='' where concate is null;
+UPDATE "BASES_bases" set seller='CB SCOTIABANK' WHERE seller='CB SCOTIA';
+UPDATE "BASES_bases" a set buy=ltrim(a.buy,' ');
+UPDATE "BASES_bases" a set seller=ltrim(a.seller,' ');
+UPDATE "BASES_bases" a set buy=rtrim(a.buy,' ');
+UPDATE "BASES_bases" a set seller=rtrim(a.seller,' ');
+UPDATE "BASES_bases" a set participante_1=ltrim(a.participante_1,' ');
+UPDATE "BASES_bases" a set participante_2=ltrim(a.participante_2,' ');
+UPDATE "BASES_bases" a set participante_1=rtrim(a.participante_1,' ');
+UPDATE "BASES_bases" a set participante_2=rtrim(a.participante_2,' ');
+UPDATE "BASES_bases" set tipo_de_cambio=780 where tipo_de_cambio is null;
+UPDATE "BASES_bases" set valor_final=0 where valor_final is null;
+UPDATE "BASES_bases" set uf=0 where uf is null;
+update "BASES_bases" set seller='FM LARRAIN VIAL' WHERE seller='FM LARRAINVIAL';
+update "BASES_bases" set buy='FM LARRAIN VIAL' WHERE buy='FM LARRAINVIAL';
+UPDATE "BASES_bases" a set nemo=ltrim(nemo,' ');
+UPDATE "BASES_bases" a set nemo=rtrim(nemo,' ');
+update "BASES_bases" set institucion_trader_buyer=concat(buy,' - ',trader_buy) where institucion_trader_buyer is null;
+update "BASES_bases" set institucion_trader_seller=concat(seller,' - ',trader_seller) where institucion_trader_seller is null;
+update "BASES_bases" set institucion_trader_participante_1='' where institucion_trader_participante_1 is null;
+update "BASES_bases" set institucion_trader_participante_2='' where institucion_trader_participante_2 is null;
+update "BASES_bases" set tasa_buyer=0 where tasa_buyer=0 is null;
+update "BASES_bases" set tasa_seller=0 where tasa_seller=0 is null;
+update "BASES_bases" set concate=concat(fecha, fynsa, otc_tr, nemo, dias, monto, tipo_de_pago, buy, seller, trader_buy, trader_seller, tasa, valor_final, fee_buyer, fee_seller, fee_buyer_moneda, fee_seller_moneda, compra_depo, venta_depo, util_depo, valor_clp, fee_buyer_clp, fee_seller_clp, participante_1, participante_2) where concate='';
+$$
+LANGUAGE SQL;
+
 
 
 

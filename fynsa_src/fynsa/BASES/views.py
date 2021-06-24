@@ -1,4 +1,5 @@
 from django.http import HttpResponse
+from django.urls import reverse_lazy
 from django.utils.dateparse import parse_date
 from django.shortcuts import render,redirect
 from django.core import serializers
@@ -6,8 +7,11 @@ from BASES.models import bases,facturas_bases
 from .formularios_bases import *
 from RFL.models import actividad
 from .funciones_externas_Bases import *
-from django.views.generic import ListView
+from django.db.models import Q
+from django.views.generic.edit import UpdateView
+from django.db import connection
 import csv
+
 
 def comite_bases(request):
     fechas_ingreso=f_fechas_comite()
@@ -178,7 +182,7 @@ select 1 as linea,*,sum(porcentaje) over (order by porcentaje desc) as porcentaj
 def monto_mensual_cliente_views(request):
     producto = request.GET.get('selectorProductoMonto')
     agno = request.GET.get('selectorAgnoMonto')
-    montos = bases.objects.raw(''' select 1 as linea,* from eq_bases_montos_transados_mensual_cliente(false,%s,%s) order by cliente asc ''',[agno,producto])
+    montos = bases.objects.raw(''' select 1 as linea,* from eq_bases_montos_transados_mensual_cliente(true,%s,%s) order by cliente asc ''',[agno,producto])
     salida=[]
     response = HttpResponse(content_type='text/csv')
     p = 'BASES' if producto =='b' else 'DEPOSITOS'
@@ -196,7 +200,7 @@ def monto_mensual_cliente_views(request):
 def gen_mensual_cliente_views(request):
     producto = request.GET.get('selectorProductoGen')
     agno = request.GET.get('selectorAgnoGen')
-    generacion = bases.objects.raw(''' select 1 as linea,* from eq_bases_generacion_mensual_cliente(false,%s,%s) order by cliente asc ''',[agno,producto])
+    generacion = bases.objects.raw(''' select 1 as linea,* from eq_bases_generacion_mensual_cliente(true,%s,%s) order by cliente asc ''',[agno,producto])
     salida=[]
     response = HttpResponse(content_type='text/csv')
     p = 'BASES' if producto =='b' else 'DEPOSITOS'
@@ -241,9 +245,12 @@ def cargador_bases(request):
                 datos_error = {}
                 datos_error['error'] = err
                 return render(request,'errores.html',context=datos_error)
-            return redirect('ingreso_bases')
-       
-
+            salida_correcta={}
+            salida_correcta['bunch'] = c
+            c = connection.cursor()
+            c.execute('SELECT * from limpia_bases();')
+            #aca hay que agregar la rutina de limpieza.
+            return render(request,'bases-listado-blotter.html',context=salida_correcta)
     datos = {}
     datos['bf'] = cargador_bases_form()
     return render(request,'cargador-bases.html',context=datos)
@@ -292,7 +299,7 @@ def formulario_bases(request):
             f = bases_ingreso_operaciones_depos(data=datos)
             if f.is_valid():
                 para_grabar = f.save(commit=False)
-                para_grabar.save(using='pruebas')
+                para_grabar.save()
                 return render(request,'bases-salida-tickets.html',context=datos.dict())
             else:
                 diccionario_inicial = {}
@@ -308,8 +315,54 @@ def ListTodoBlotterBases(request):
     return render(request,'listar-blotter.html',context=datos)
 
 def EliminarFilaBlotter(request,linea):
-    print(linea)
-    #bases.objects.delete(linea=linea)
+    bases.objects.delete(linea=linea)
     return redirect('listar_blotter')
 
+def RutinasDeValidacion(request):
+    """ Esta vista ejecuta las rutinas de validación despues de la carga de los datos de bases """
+    datos = {}
+    datos['rutina_de_validacion'] = bases.objects.raw(''' SELECT 1 as linea, * from eq_der_rutinas(); ''' )
+    return render(request,'bases-rutina-validacion-salida.html',context=datos)
+
+def BuscadorBlotter(request):
+    datos={}
+    if request.method=='POST':
+        texto_a_buscar = request.POST.get('texto_a_buscar')
+        #texto_a_buscar = texto_a_buscar.upper()
+        
+        resultado = bases.objects.filter(
+            Q(buy__iexact=texto_a_buscar) |
+            Q(seller__iexact=texto_a_buscar) |
+            Q(participante_1__iexact=texto_a_buscar) |
+            Q(participante_2__iexact=texto_a_buscar) 
+            ).order_by('-fecha')
+        datos['texto_a_buscar'] = resultado
+        return render(request,'bases-editor-lineas.html',context=datos)
+    return render(request,'bases-editor-lineas.html',context=datos)
+
+def correcto(request):
+    return render(request,'correcto.html')
+
+class EditorLineaBases(UpdateView):
+    form_class = BlotterModelForm
+    template_name = 'bases-actualiza-blotter.html'
+    success_url = reverse_lazy('correcto-salida')
+    def get_queryset(self):
+        pk = self.kwargs.get("pk")
+        return bases.objects.filter(linea=pk)
     
+
+def inicialfacturas(request):
+    """Esta rutina es para correr después de ingresar las facturas"""
+    return render(request,'bases-rutina-factura.html',context={})
+
+
+def rutinasfacturas(request):
+    c = connection.cursor()
+    c.execute('REFRESH MATERIALIZED VIEW cobranzas_view;REFRESH MATERIALIZED VIEW cobranzas_view_consolidada;REFRESH MATERIALIZED VIEW serie_cobranzas_view;REFRESH MATERIALIZED VIEW serie_mensual_generacion_total_view;')
+    return redirect('correcto-salida')
+
+#editar linea blotter
+#agregar y editar clientes
+#rutinas de refresco
+

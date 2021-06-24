@@ -1,0 +1,17 @@
+{% include 'index.html' %}
+
+{% block contenido %}
+
+<div class="container my-2">
+<div class="h1">Ingreso de clientes nuevos</div>
+<div class="row">
+<div class="d-flex justify-content-center">
+        <form method="post">{% csrf_token %}
+
+                {{ form }}
+
+                <input class='btn btn-success' type="submit" value="Guardar">
+        </form>
+</div>
+</div>
+{% endblock contenido %}

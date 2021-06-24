@@ -1,0 +1,20 @@
+{% include 'index.html' %}
+
+{% block contenido %}
+<div class="container">
+
+            <h4>Instrucciones.</h4>
+            <p>Una vez ingresadas, desde el admin, las facturas que envía Josephine a través de un excel (hay que pedírselo). Hay que correr esta rutina de validación.
+            Con las que se hacen el gráfico de las cobranzas y deudas.</p>
+            <p>Este proceso toma tiempo.</p>
+
+            <a href="{% url 'rutinas_facturas' %}" class="btn btn-success">Ejecutar</a>
+</div>
+
+
+{% endblock contenido %}
+
+
+
+
+
