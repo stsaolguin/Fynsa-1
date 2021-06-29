@@ -36,3 +36,15 @@ class rfi_tsox_borrado(models.Model):
 	ytm = ArrayField(models.CharField(max_length=100),null=True,blank=True)
 	notas = models.TextField(null=True,blank=True)
 	status = models.TextField(null=True,blank=True)
+
+class fondo(models.Model):
+	nombre_fondo = models.TextField(null=True,blank=True)
+	duracion_fondo = ArrayField(models.CharField(max_length=100),null=True,blank=True)
+	sector_fondo = ArrayField(models.CharField(max_length=100),null=True,blank=True)
+	ytm_fondo = ArrayField(models.CharField(max_length=100),null=True,blank=True)
+	risk_fondo = ArrayField(models.CharField(max_length=100),null=True,blank=True)
+	cntry_of_risk_fondo = ArrayField(models.CharField(max_length=100),null=True,blank=True)
+	trader_fondo = models.TextField(null=True,blank=True)
+	tamano_fondo = models.BigIntegerField(null=True,blank=True)
+	notas_fondo = models.TextField(null=True,blank=True)
+

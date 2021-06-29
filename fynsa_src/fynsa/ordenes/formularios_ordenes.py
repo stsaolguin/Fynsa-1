@@ -1,4 +1,5 @@
-from ordenes.models import rfi_tsox
+from django.db.models.expressions import F
+from ordenes.models import rfi_tsox,fondo
 from django import forms
 from django.forms import ModelForm, fields
 from django.forms.models import model_to_dict
@@ -118,3 +119,30 @@ class IngresoOrdenesRFIModelForm(ModelForm):
         nominales = self.cleaned_data['nominales']
         nominales = nominales.replace('.','').replace(',','.')
         return nominales
+
+class FondoOrdenes(ModelForm):
+    def __init__(self,*args,**kwargs):
+        super(FondoOrdenes,self).__init__(*args,**kwargs)
+        self.fields['nombre_fondo'].widget.attrs = {'class':'form-control'}
+        self.fields['duracion_fondo'].widget.attrs = {'class':'form-control'}
+        self.fields['sector_fondo'].widget.attrs = {'class':'form-control'}
+        self.fields['ytm_fondo'].widget.attrs = {'class':'form-control'}
+        self.fields['risk_fondo'].widget.attrs = {'class':'form-control'}
+        self.fields['cntry_of_risk_fondo'].widget.attrs = {'class':'form-control'}
+        self.fields['trader_fondo'].widget.attrs = {'class':'form-control'}
+        self.fields['tamano_fondo'].widget.attrs = {'class':'form-control'}
+        self.fields['notas_fondo'].widget.attrs = {'class':'form-control'}
+
+    nombre_fondo = forms.CharField(label="Nombre Fondo")
+    duracion_fondo = forms.MultipleChoiceField(choices=[('Toda la curva','Toda la curva'),('x<=3','x<=3'),('3<x<=5','3<x<=5'),('x>5','x>5')],initial='Toda la curva',required=False)
+    sector_fondo = forms.MultipleChoiceField(choices=lista_sector(),initial='Todos',required=False)
+    ytm_fondo = forms.MultipleChoiceField(choices=[('Todos','Todos'),('0 a 100','0 a 100'),('101 a 200','101 a 200'),('201 a 300','201 a 300'),('301 a 400','301 a 400'),('sobre 400','sobre 400')],initial='Todos',required=False)
+    risk_fondo = forms.MultipleChoiceField(choices = [('Todos','Todos'),('IG','IG'),('HY','HY')],initial='Todos',required=False)
+    cntry_of_risk_fondo = forms.MultipleChoiceField(choices = listado_cntry(),initial='Todos',required=False) 
+    trader_fondo = forms.CharField(required=False)
+    tamano_fondo = forms.CharField(label='Tamaño del fondo (en Millones).',required=False)
+    notas_fondo = forms.CharField(required=False)
+
+    class Meta:
+        model = fondo
+        fields = '__all__'

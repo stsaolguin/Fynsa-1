@@ -1,0 +1,30 @@
+{% include 'index.html' %}
+
+{% block contenido %}
+
+<div class="container">
+    <table class="table">
+  <thead>
+    <tr>
+      <th scope="col">Nombre del Fondo</th>
+      <th scope="col">Acción</th>
+    </tr>
+  </thead>
+  <tbody>
+        {% for o in object_list %}
+    <tr>
+      <th scope="row">{{ o.nombre_fondo }}</th>
+      <th scope="row">
+      <a href="{% url 'updatea_fondo' o.id %}">editar</a>
+      </th>
+    </tr>
+      {% endfor %}
+  </tbody>
+</table>
+     
+</div>
+
+{% endblock contenido %}
+
+
+

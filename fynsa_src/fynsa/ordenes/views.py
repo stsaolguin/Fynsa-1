@@ -5,9 +5,9 @@ from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView, UpdateView
 from django.http.response import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
-from ordenes.formularios_ordenes import rfi_ingreso_orden_formulario,AgregaClientes,IngresoOrdenesRFIModelForm
+from ordenes.formularios_ordenes import rfi_ingreso_orden_formulario,AgregaClientes,IngresoOrdenesRFIModelForm,lista_sector,listado_cntry,FondoOrdenes
 from RFI.models import rfi_bonos,clientes_rfi
-from ordenes.models import rfi_tsox, rfi_tsox_borrado
+from ordenes.models import fondo, rfi_tsox, rfi_tsox_borrado,fondo
 from django.core import serializers
 import ast,time
 from django.urls import reverse_lazy
@@ -129,28 +129,47 @@ def busca_papeles(request):
         conteo_bonos = 0
         #if pr is None and rr is None and rr is None and dr is None and yr is None and pyr is None:
         #   busqueda = rfi_bonos.objects.all()
-        for r in rr:
-            for s in pr:
-                for t in sr:
-                    for u in dr:
-                        for v in yr:
-                            for w in pyr:
-                                contador+=1
-                                busqueda = rfi_bonos.objects.filter(risk=r,cntry_of_risk=s,industria=t,dur_text=u,yas_bond_text=v,payment_rank=w)
-                                if busqueda.exists():
-                                    conteo_bonos+=int(len(busqueda))
-                                    resultado.append(busqueda)
-                                    
-
-        final = time.time()
-        tiempo_total = final-comienzo
-       
-        datos['resultado'] = resultado
-        datos['iteraciones'] = contador 
-        datos['tiempo'] = tiempo_total
-        datos['conteo_bonos'] = conteo_bonos
-        return render(request,'ordenes/ordenes-salida-papeles.html',context=datos)
-    return HttpResponse("TODO BIEN!")
+        if request.POST.get('papeles')=='papeles':
+            for r in rr:
+                for s in pr:
+                    for t in sr:
+                        for u in dr:
+                            for v in yr:
+                                for w in pyr:
+                                    contador+=1
+                                    busqueda = rfi_bonos.objects.filter(risk=r,cntry_of_risk=s,industria=t,dur_text=u,yas_bond_text=v,payment_rank=w)
+                                    if busqueda.exists():
+                                        conteo_bonos+=int(len(busqueda))
+                                        resultado.append(busqueda)
+            final = time.time()
+            tiempo_total = final-comienzo
+        
+            datos['resultado'] = resultado
+            datos['iteraciones'] = contador 
+            datos['tiempo'] = tiempo_total
+            datos['conteo_bonos'] = conteo_bonos
+            return render(request,'ordenes/ordenes-salida-papeles.html',context=datos)
+                                        
+        elif request.POST.get('fondos')=='fondos':
+            for r in rr:
+                for s in pr:
+                    for t in sr:
+                        for u in dr:
+                            for v in yr:
+                                for w in pyr:
+                                    contador+=1
+                                    busqueda = rfi_bonos.objects.filter(risk=r,cntry_of_risk=s,industria=t,dur_text=u,yas_bond_text=v,payment_rank=w)
+                                    if busqueda.exists():
+                                        conteo_bonos+=int(len(busqueda))
+                                        resultado.append(busqueda)
+            final = time.time()
+            tiempo_total = final-comienzo
+            datos['resultado'] = resultado
+            datos['iteraciones'] = contador 
+            datos['tiempo'] = tiempo_total
+            datos['conteo_bonos'] = conteo_bonos
+            return render(request,'ordenes/ordenes-salida-fondos.html',context=datos)
+    return HttpResponse("Hay un error!")
 
 def EditarOrden(request,numero):
     """Para que funcione bien esta función hay que cambiar el formulario de ingreso de ordenes a modelform"""
@@ -192,10 +211,26 @@ class rfi_ingreso_ordenes_modelform(CreateView):
 class ordenes_updatea_orden(UpdateView):
     model = rfi_tsox
     form_class = IngresoOrdenesRFIModelForm
-    template_name = template_name = 'ordenes/rfi-ingreso-ordenes-modelform.html'
+    template_name = 'ordenes/rfi-ingreso-ordenes-modelform.html'
     success_url = reverse_lazy('listado_ordenes')
     
     def form_invalid(self, form):
         print(form.errors)
         return self.render_to_response(self.get_context_data(form=form))
+
+
+class ordenes_crea_fondo(CreateView):
+    model = fondo
+    form_class = FondoOrdenes
+    template_name = 'ordenes/ordenes-crea-fondo.html'
+    success_url = reverse_lazy('correcto-salida')
     
+class ordenes_lista_fondos(ListView):
+    model = fondo
+    template_name ='ordenes/ordenes-listado-fondos.html'
+
+class ordenes_updatea_fondo(UpdateView):
+    model = fondo
+    form_class = FondoOrdenes
+    template_name = 'ordenes/ordenes-crea-fondo.html'
+    success_url = reverse_lazy('correcto-salida')
