@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
+from BASES.models import ejecutivos
 
 class rfi_tsox(models.Model):
 	fecha_ingreso = models.DateField()
@@ -44,7 +45,9 @@ class fondo(models.Model):
 	ytm_fondo = ArrayField(models.CharField(max_length=100),null=True,blank=True)
 	risk_fondo = ArrayField(models.CharField(max_length=100),null=True,blank=True)
 	cntry_of_risk_fondo = ArrayField(models.CharField(max_length=100),null=True,blank=True)
-	trader_fondo = models.TextField(null=True,blank=True)
-	tamano_fondo = models.BigIntegerField(null=True,blank=True)
+	trader_fondo = models.TextField(null=True,blank=True)#trader externo, contraparte
+	tamano_fondo = models.BigIntegerField(null=True,blank=True,default=0)
 	notas_fondo = models.TextField(null=True,blank=True)
+	ejecutivo = models.ForeignKey(ejecutivos,on_delete=models.CASCADE)
+
 

@@ -22,7 +22,7 @@
     <div class="row">
         <div class="col-lg-6">
             <label for="{{ form.cliente.id_for_label }}">Cliente:</label>
-            <input type="text" list="clientes" name="cliente" class="form-control" value="{{ form.cliente.value }}">
+            <input type="text" list="clientes" name="cliente" class="form-control" value="{{ form.cliente.value | default_if_none:'' }}">
             <datalist id="clientes">
             {% for r,s in form.cliente.field.choices %}
                  <option value="{{ r }}">
@@ -52,7 +52,7 @@
     <div class="row">
     <div class="col-lg-6">
           <label for="{{ form.isin.id_for_label }}">Isin:</label>
-           <input type="text" list="isin" id="id_isin" name ="isin" class="form-control" value="{{ form.isin.value }}">
+           <input type="text" list="isin" id="id_isin" name ="isin" class="form-control" value="{{ form.isin.value | default_if_none:'' }}">
            {{ form.isin.errors }}
             <datalist id="isin">
             {% for r,s in form.isin.field.choices %}

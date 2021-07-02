@@ -1,5 +1,5 @@
 from django.contrib import admin
-from BASES.models import facturas_bases,bases,clientes
+from BASES.models import facturas_bases,bases,clientes,ejecutivos
 from .formularios_bases import f_facturas_bases
 
 class FacturasBasesAdmin(admin.ModelAdmin):
@@ -14,8 +14,12 @@ class BlotterBasesAdmin(admin.ModelAdmin):
 class ClientesBasesAdmin(admin.ModelAdmin):
     list_display = ['nombre']
 
+class EjecutivosAdmin(admin.ModelAdmin):
+    list_display = ['ejecutivo','mesa']
+
 admin.site.register(facturas_bases, FacturasBasesAdmin)
 admin.site.register(bases, BlotterBasesAdmin)
 admin.site.register(clientes, ClientesBasesAdmin)
+admin.site.register(ejecutivos, EjecutivosAdmin)
 
 

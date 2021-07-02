@@ -1,5 +1,5 @@
 {% include 'index.html' %}
-
+{% load filtros_extras %}
 {% block contenido %}
 
 <div class="container">
@@ -7,15 +7,31 @@
   <thead>
     <tr>
       <th scope="col">Nombre del Fondo</th>
+      <th scope="col">Ejecutivo</th>
+      <th scope="col">Características</th>
       <th scope="col">Acción</th>
     </tr>
   </thead>
   <tbody>
         {% for o in object_list %}
-    <tr>
-      <th scope="row">{{ o.nombre_fondo }}</th>
       <th scope="row">
-      <a href="{% url 'updatea_fondo' o.id %}">editar</a>
+      {{ o.nombre_fondo }}
+      </th>
+      <th scope="row">
+      {{ o.ejecutivo.ejecutivo }}
+      </th>
+      <th>
+      {% if not o.risk_fondo|tiene_todos %} Rating : {{ o.risk_fondo }}<br> {% endif %}
+      {% if not o.duracion_fondo|tiene_todos:'Toda la curva' %} Duración : {{ o.duracion_fondo }}<br> {% endif %}
+      {% if not o.ytm_fondo|tiene_todos %} Ytm : {{ o.ytm_fondo }}<br> {% endif %}
+      {% if not o.cntry_of_risk_fondo|tiene_todos %} Pais : {{ o.cntry_of_risk_fondo }}<br> {% endif %}
+      {% if not o.sector_fondo|tiene_todos %} Sector : {{ o.sector_fondo }}<br> {% endif %}
+      </th>
+
+      </th>
+      <th scope="row">
+      <a href="{% url 'updatea_fondo' o.id %}">Editar</a>
+      <a href="{% url 'borra_fondo' o.id %}" class="text-danger">Borrar</a>
       </th>
     </tr>
       {% endfor %}

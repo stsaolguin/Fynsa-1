@@ -19,13 +19,21 @@
         {{ form.trader_fondo }}
         {{ form.trader_fondo.errors }}
     </div>
-    <div class="col-lg-6">
+        <div class="col-lg-6">
+        {{ form.ejecutivo.label }}
+        {{ form.ejecutivo }}
+        {{ form.ejecutivo.errors }}
+    </div>
+
+</div>
+<div class="row">
+    <div class="col-lg-12">
         {{ form.tamano_fondo.label }}
         {{ form.tamano_fondo }}
         {{ form.tamano_fondo.errors }}
     </div>
 </div>
-            <div class="row">
+<div class="row">
 <div class="col-lg-3">
                 {{ form.duracion_fondo.label }}
                 {{ form.duracion_fondo }}

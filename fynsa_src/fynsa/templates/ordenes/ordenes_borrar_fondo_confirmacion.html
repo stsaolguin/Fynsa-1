@@ -1,0 +1,12 @@
+{% include 'index.html' %}
+
+{% block contenido %}
+<div class="container">
+<form method="post">{% csrf_token %}
+    <h3>Seguro que quieres borrar "{{ object.nombre_fondo }}"?</h3>
+    <input type="submit" value="Confirmar!" class="btn btn-danger mx-1">
+    <a href="{% url 'listar_fondo' %}" class="btn btn-secondary mx-1">Cancelar</a>
+</form>
+</div>
+
+{% endblock contenido %}

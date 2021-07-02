@@ -130,5 +130,10 @@ class serie_generacion_mensual_por_cliente(models.Model):
     prov_bases = models.BigIntegerField(null=True, blank=True)
     prov_depos = models.BigIntegerField(null=True, blank=True)
     
+class ejecutivos(models.Model):
+    ejecutivo = models.TextField(null=True,blank=True)
+    mesa = models.TextField(null=True,blank=True)
 
+    def __str__(self):
+        return self.ejecutivo
 

@@ -2,10 +2,10 @@ from re import template
 from django import forms
 from django.db import close_old_connections
 from django.views.generic.list import ListView
-from django.views.generic.edit import CreateView, UpdateView
+from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.http.response import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
-from ordenes.formularios_ordenes import rfi_ingreso_orden_formulario,AgregaClientes,IngresoOrdenesRFIModelForm,lista_sector,listado_cntry,FondoOrdenes
+from ordenes.formularios_ordenes import AgregaClientes,IngresoOrdenesRFIModelForm,lista_sector,listado_cntry,FondoOrdenes
 from RFI.models import rfi_bonos,clientes_rfi
 from ordenes.models import fondo, rfi_tsox, rfi_tsox_borrado,fondo
 from django.core import serializers
@@ -13,10 +13,10 @@ import ast,time
 from django.urls import reverse_lazy
 from itertools import tee
 
-
 def rfi_ingreso_ordenes(request):
     
     if request.method=='POST':
+        '''Esta vista ya no sirve'''
         print(request.POST)
         f = rfi_ingreso_orden_formulario(request.POST)
         print(f.errors)
@@ -218,19 +218,42 @@ class ordenes_updatea_orden(UpdateView):
         print(form.errors)
         return self.render_to_response(self.get_context_data(form=form))
 
+class ordenes_borra_orden(DeleteView):
+    model = rfi_tsox
+    template_name = 'ordenes/ordenes_borrar_orden_confirmacion.html'
+    success_url = reverse_lazy('listado_ordenes')
+    def post(self,request,*args,**kwargs):
+        q = rfi_tsox.objects.filter(id=kwargs['pk'])
+        for r in q.values():
+            s = rfi_tsox_borrado.objects.create(**r)
+            if not request.POST.get('notas') == '':
+                notas = request.POST.get('notas')
+                s.notas = notas
+                s.save()
+        return self.delete(request,*args,**kwargs)
 
 class ordenes_crea_fondo(CreateView):
     model = fondo
     form_class = FondoOrdenes
     template_name = 'ordenes/ordenes-crea-fondo.html'
-    success_url = reverse_lazy('correcto-salida')
+    success_url = reverse_lazy('listar_fondo')
     
 class ordenes_lista_fondos(ListView):
     model = fondo
+    ordering = 'nombre_fondo'
     template_name ='ordenes/ordenes-listado-fondos.html'
 
 class ordenes_updatea_fondo(UpdateView):
     model = fondo
     form_class = FondoOrdenes
     template_name = 'ordenes/ordenes-crea-fondo.html'
-    success_url = reverse_lazy('correcto-salida')
+    success_url = reverse_lazy('listar_fondo')
+
+class ordenes_borrar_fondo(DeleteView):
+    model = fondo
+    template_name = 'ordenes/ordenes_borrar_fondo_confirmacion.html'
+    success_url = reverse_lazy('listar_fondo')
+
+
+def salida_fondos(request):
+    return render(request,'ordenes/pruebas-ordenes-salida-fondos.html',context={})
