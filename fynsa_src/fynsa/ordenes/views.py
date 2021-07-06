@@ -7,7 +7,7 @@ from django.http.response import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 from ordenes.formularios_ordenes import AgregaClientes,IngresoOrdenesRFIModelForm,lista_sector,listado_cntry,FondoOrdenes
 from RFI.models import rfi_bonos,clientes_rfi
-from ordenes.models import fondo, rfi_tsox, rfi_tsox_borrado,fondo
+from ordenes.models import fondo, rfi_tsox, rfi_tsox_borrado,fondo,fondo_salida
 from django.core import serializers
 import ast,time
 from django.urls import reverse_lazy
@@ -93,8 +93,15 @@ def actualiza_status(request,orden_numero,estado):
     actualizacion = serializers.serialize('json',q)
     return HttpResponse(actualizacion,content_type='application/json')
 
+def actualiza_status_fondo(request,orden_numero_fondo,estatus):
+    """ Función para actualizar el estatus a intencion a firme"""
+    fondo_salida.objects.filter(id=orden_numero_fondo).update(status_asignado=estatus)
+    q = fondo_salida.objects.filter(id=orden_numero_fondo)
+    actualizacion = serializers.serialize('json',q)
+    return HttpResponse(actualizacion,content_type='application/json')
+
 def busca_papeles(request):
-    print(request.POST)
+    
     if request.POST:
         datos = {}
         paises = request.POST.getlist("paises") or None
@@ -103,6 +110,8 @@ def busca_papeles(request):
         duracion = request.POST.getlist("duracion") or None
         ytm = request.POST.getlist("ytm") or None
         payment_rank = request.POST.getlist("payment_rank") or None
+        unico_orden = request.POST.get("unico_orden")
+        datos['cliente'] = request.POST.get("cliente")
         paises2 = str(paises)
         sector2 = str(sector)
         rating2 = str(rating)
@@ -149,25 +158,20 @@ def busca_papeles(request):
             datos['tiempo'] = tiempo_total
             datos['conteo_bonos'] = conteo_bonos
             return render(request,'ordenes/ordenes-salida-papeles.html',context=datos)
-                                        
+        #acá abajo empieza el proceso de los fondos                                
         elif request.POST.get('fondos')=='fondos':
-            for r in rr:
-                for s in pr:
-                    for t in sr:
-                        for u in dr:
-                            for v in yr:
-                                for w in pyr:
-                                    contador+=1
-                                    busqueda = rfi_bonos.objects.filter(risk=r,cntry_of_risk=s,industria=t,dur_text=u,yas_bond_text=v,payment_rank=w)
-                                    if busqueda.exists():
-                                        conteo_bonos+=int(len(busqueda))
-                                        resultado.append(busqueda)
+            if not fondo_salida.objects.filter(orden_asignada=unico_orden).exists():
+                q = fondo.objects.filter(duracion_fondo__contains=dr,sector_fondo__contains=sr,ytm_fondo__contains=yr,risk_fondo__contains=rr,cntry_of_risk_fondo__contains=pr)
+                s = rfi_tsox.objects.get(pk=unico_orden)
+                for r in q:                
+                    fondo_salida.objects.create(orden_asignada = s,fondo_asignado = r)
+
+            datos['resultado'] = q = fondo_salida.objects.filter(orden_asignada=unico_orden)
             final = time.time()
             tiempo_total = final-comienzo
-            datos['resultado'] = resultado
             datos['iteraciones'] = contador 
             datos['tiempo'] = tiempo_total
-            datos['conteo_bonos'] = conteo_bonos
+            datos['conteo_bonos'] = len(q)
             return render(request,'ordenes/ordenes-salida-fondos.html',context=datos)
     return HttpResponse("Hay un error!")
 
@@ -257,3 +261,18 @@ class ordenes_borrar_fondo(DeleteView):
 
 def salida_fondos(request):
     return render(request,'ordenes/pruebas-ordenes-salida-fondos.html',context={})
+
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from ordenes.models import rfi_tsox
+
+@receiver(post_save, sender=rfi_tsox)
+def my_handler(sender, **kwargs):
+    j = kwargs['instance']    
+    if fondo_salida.objects.filter(orden_asignada=j.id).exists():
+        fondo_salida.objects.filter(orden_asignada=j.id).delete()
+        q = fondo.objects.filter(duracion_fondo__contains=j.duracion,sector_fondo__contains=j.sector,ytm_fondo__contains=j.ytm,risk_fondo__contains=j.rating,cntry_of_risk_fondo__contains=j.pais)
+        s = rfi_tsox.objects.get(pk=j.id)
+        for r in q:
+            fondo_salida.objects.create(orden_asignada = s,fondo_asignado=r)
+               

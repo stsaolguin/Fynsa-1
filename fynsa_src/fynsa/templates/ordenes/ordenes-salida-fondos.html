@@ -1,40 +1,65 @@
 {% include 'index.html' %}
 
 {% block contenido %}
-
 <div class="container">
-    <div class="display-4">Resultado de los Fondos que hacen match.</div>
-    <hr>
-    <div class="lead d-flex flex-row-reverse small">{{iteraciones}} iteraciones en {{ tiempo }} s.</div>
-    <div class="row">
-    <ul>
-   <li>paises : {{ paises }}</li> 
-   <li>sector : {{ sector }}</li> 
-   <li>rating : {{ rating }}</li> 
-   <li>duracion : {{ duracion }}</li> 
-   <li>ytm : {{ ytm }}</li> 
-   <li>payment_rank : {{ payment_rank }}</li> 
-   </ul>
-    </div>
+<div class="h1">Resultado de fondos</div>
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">fondo</th>
+      <th scope="col">ejecutivo</th>
+      <th scope="col">status</th>
+      <th scope="col">notas</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for r in resultado %}
+    <tr>
+      <th scope="row">{{ r.id }}</th>
+      <td>{{ r.fondo_asignado.nombre_fondo }}</td>
+      <td>{{ r.fondo_asignado.ejecutivo }}</td>
 
-    {% if not resultado %}
-    <div class="lead mb-2">No Hay Fondos que se ajustan a tu búsqueda</div>
-
-    {% else %}
-    
-    <div class="lead mb-2">Hay {{conteo_bonos}} fondos que se ajustan a tu búsqueda:</div>
-    
-            <ol>
-            {% for res in resultado %}
-            {% for r in res %}
-            <li>{{ r.security_name }} - {{ r.isin }}
-            {% endfor %}
-    
+      <td>
+        <select class="form-control form-control-sm bg-success text-white" id="status_fondo_{{ r.id }}" data-valor ='{{ r.status_asignado }}' onChange="capturar_status(this.value,this.id,{{ r.id }})">
+            <option class="bg-success text-white" value = "Checking">Checking</option>
+            <option class="bg-warning text-dark" value = "Not Responding">Not Responding</option>
+            <option class="bg-danger text-white" value = "Fuera!">Fuera!</option>
+            </select>
+      </td>
+      <td>
+      <textarea class="form-control" name="notas_fondo" id="" cols="30" rows="1">{{ r.notas_asignado }}</textarea>
+        <input class="btn btn-success mt-1" value="guardar">
+      </td>
+    </tr>
     {% endfor %}
-        </ol>
-    {% endif %}
-
+  </tbody>
+</table>
 </div>
+
+<script>
+const selector = {'Checking':'form-control form-control-sm bg-success text-white','Not Responding':'form-control form-control-sm bg-warning text-dark','Fuera!':'form-control form-control-sm bg-danger text-white'};
+function capturar_status(a,b,c){
+  var seleccion = document.getElementById(b);
+  seleccion.className=''
+  var texto = selector[a];
+  seleccion.className = selector[a];
+    var  url = 'http://127.0.0.1:8000/logeado/rfl/ordenes/api/v1/actualiza-status-fondos/'+ c + '/' + a;
+    fetch(url);
+    };
+  var sls = document.getElementsByTagName('select');
+  for (var i=0; i < sls.length;i++){
+    inicial = sls[i].getAttribute('data-valor');
+    for(var j=0; j < sls[i].options.length;j++){
+      if(sls[i].options[j].value == inicial){
+        sls[i].options[j].selected = true;
+      };
+    };
+    sls[i].className = '';
+    sls[i].className = selector[sls[i].value];
+  };
+</script>
+
 
 
 

@@ -50,4 +50,9 @@ class fondo(models.Model):
 	notas_fondo = models.TextField(null=True,blank=True)
 	ejecutivo = models.ForeignKey(ejecutivos,on_delete=models.CASCADE)
 
-
+class fondo_salida(models.Model):
+	orden_asignada = models.ForeignKey(rfi_tsox,on_delete=models.CASCADE)
+	fondo_asignado = models.ForeignKey(fondo,on_delete=models.CASCADE)
+	status_asignado = models.TextField(null=True,blank=True)
+	notas_asignado = models.TextField(null=True,blank=True)
+	

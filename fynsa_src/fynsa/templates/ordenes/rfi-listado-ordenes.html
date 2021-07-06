@@ -67,6 +67,7 @@
       <a href="{% url 'borrar_ordenes' l.id %}" class="text-danger">Borrar</a>
         <form action="{% url 'buscador_papeles' %}" method="POST" target="_blank">
              {% csrf_token %}
+              <input type="hidden" name="unico_orden" value="{{ l.id }}">
               <input type="hidden" name="cliente" value="{{ l.cliente }}">
               <input type="hidden" name="paises" value="{{ l.pais }}">
               <input type="hidden" name="sector" value="{{ l.sector }}">
