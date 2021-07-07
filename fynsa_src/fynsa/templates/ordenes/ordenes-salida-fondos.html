@@ -3,6 +3,23 @@
 {% block contenido %}
 <div class="container">
 <div class="h1">Resultado de fondos</div>
+<div class="row">
+<h4>Datos orden {{ unico_orden }}:</h4><br>
+<ul>
+  <li><strong>trader : {{ user }}</strong>
+  <li>cliente : {{ cliente }}
+  <li>paises : {{ paises }}
+  <li>sector : {{ sector }}
+  <li>rating : {{ rating }}
+  <li>duracion : {{ duracion }}
+  <li>ytm : {{ ytm }}
+  
+</ul>
+
+</div>
+<div class="row">
+aca va el buscador
+</div>
 <table class="table">
   <thead>
     <tr>
@@ -28,8 +45,11 @@
             </select>
       </td>
       <td>
-      <textarea class="form-control" name="notas_fondo" id="" cols="30" rows="1">{{ r.notas_asignado }}</textarea>
-        <input class="btn btn-success mt-1" value="guardar">
+      <form method="post" id="actualiza_notas_formulario_{{r.id}}">{% csrf_token %}
+        <input type="hidden" name="id_fondo" value="{{r.id}}">
+          <textarea type="text" class="form-control" name="notas_fondo" id="notas_fondo_{{r.id}}" cols="30" rows="1" form = "actualiza_notas_formulario_{{r.id}}">{{ r.notas_asignado }}</textarea>
+          <input class="btn btn-success mt-1" name="boton_notas_fondo_{{r.id}}" onclick = GuardarDatos({{r.id}}) value="Guardar">
+        </form>
       </td>
     </tr>
     {% endfor %}
@@ -58,6 +78,36 @@ function capturar_status(a,b,c){
     sls[i].className = '';
     sls[i].className = selector[sls[i].value];
   };
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+};
+  function GuardarDatos(numero_fondo){
+    var id_a_buscar = 'actualiza_notas_formulario_' + numero_fondo;
+    var formulario = new FormData(document.getElementById(id_a_buscar));
+    var url = "{% url 'actualiza_notas_fondos' %}";
+    console.log(url);
+    fetch(url,{
+      method : 'POST',
+      body : formulario,
+      headers : {
+        'X-CSRFToken': getCookie('csrftoken')
+        }
+      } 
+    );
+  };
+  
 </script>
 
 

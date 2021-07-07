@@ -100,6 +100,18 @@ def actualiza_status_fondo(request,orden_numero_fondo,estatus):
     actualizacion = serializers.serialize('json',q)
     return HttpResponse(actualizacion,content_type='application/json')
 
+def actualiza_notas_fondo(request):
+    print('Dentro de actualiza notas fondo')
+    print(request.POST)
+    if request.POST:
+        numero_fondo = request.POST.get('id_fondo')
+        notas = request.POST.get('notas_fondo')
+        fondo_salida.objects.filter(id=numero_fondo).update(notas_asignado=notas)
+        q = fondo_salida.objects.filter(id=numero_fondo)
+        salida = serializers.serialize('json',q)
+        return HttpResponse(salida,content_type='application/json')
+    return HttpResponse('Error')
+    
 def busca_papeles(request):
     
     if request.POST:
@@ -110,7 +122,7 @@ def busca_papeles(request):
         duracion = request.POST.getlist("duracion") or None
         ytm = request.POST.getlist("ytm") or None
         payment_rank = request.POST.getlist("payment_rank") or None
-        unico_orden = request.POST.get("unico_orden")
+        datos['unico_orden'] = unico_orden = request.POST.get("unico_orden")
         datos['cliente'] = request.POST.get("cliente")
         paises2 = str(paises)
         sector2 = str(sector)
@@ -166,12 +178,13 @@ def busca_papeles(request):
                 for r in q:                
                     fondo_salida.objects.create(orden_asignada = s,fondo_asignado = r)
 
-            datos['resultado'] = q = fondo_salida.objects.filter(orden_asignada=unico_orden)
+            datos['resultado'] = q = fondo_salida.objects.filter(orden_asignada=unico_orden).order_by("id")
             final = time.time()
             tiempo_total = final-comienzo
             datos['iteraciones'] = contador 
             datos['tiempo'] = tiempo_total
             datos['conteo_bonos'] = len(q)
+            print(datos)
             return render(request,'ordenes/ordenes-salida-fondos.html',context=datos)
     return HttpResponse("Hay un error!")
 
