@@ -3,6 +3,7 @@ from django import forms
 from django.db import close_old_connections
 from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
+from django.contrib.messages.views import SuccessMessageMixin
 from django.http.response import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 from ordenes.formularios_ordenes import AgregaClientes,IngresoOrdenesRFIModelForm,lista_sector,listado_cntry,FondoOrdenes
@@ -83,7 +84,7 @@ def security_name_api(request,isin):
 def listado_ordenes(request):
     """ Lista las ordenes puestas en pantalla """
     datos = {}
-    datos['listado'] = rfi_tsox.objects.all().order_by('id')
+    datos['listado'] = rfi_tsox.objects.all().order_by('-id')
     return render(request,'ordenes/rfi-listado-ordenes.html',context=datos)
 
 def actualiza_status(request,orden_numero,estado):
@@ -214,11 +215,12 @@ class CrearClienteCreateView(CreateView):
         return HttpResponseRedirect('ordenes/ordenes-agregar-exitoso.html')
 
 
-class rfi_ingreso_ordenes_modelform(CreateView):
+class rfi_ingreso_ordenes_modelform(SuccessMessageMixin,CreateView):
     model = rfi_tsox
     form_class = IngresoOrdenesRFIModelForm
     template_name = 'ordenes/rfi-ingreso-ordenes-modelform.html'
     success_url = reverse_lazy('rfi_ingreso_ordenes_modelform')
+    success_message = "Orden agregada exitosamente"
     def form_valid(self, form):
         o = form.save(commit=False)
         o.trader = str(self.request.user)

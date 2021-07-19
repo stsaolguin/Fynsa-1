@@ -3,11 +3,12 @@ from ordenes.models import rfi_tsox,fondo
 from django import forms
 from django.forms import ModelForm, fields
 from django.forms.models import model_to_dict
-from django.forms.widgets import SelectMultiple
+from django.forms.widgets import RadioSelect, SelectMultiple
 from RFI.models import PruebaArrayModel,clientes_rfi,rfi_bonos
 from ordenes.models import fondo
 from BASES.models import ejecutivos
 import datetime
+from django.core.exceptions import ValidationError
 
 #estas listas son las que se usan para buscar si están todos los ítemes dentro de las listas pais,sector,etc.
 
@@ -139,7 +140,19 @@ class IngresoOrdenesRFIModelForm(ModelForm):
     def clean_nominales(self):
         nominales = self.cleaned_data['nominales']
         nominales = nominales.replace('.','').replace(',','.')
-        return nominales
+        if nominales=='':
+            raise ValidationError('Falta el campo nominales.')
+        else:
+            return nominales            
+
+    def clean_precio(self):
+        precio = self.cleaned_data['precio']
+        precio = precio.replace(',','.')
+        if precio=='':
+            raise ValidationError('Falta el campo precio.')
+        else:
+            return precio
+                    
     def clean_rating(self):
         rating = self.cleaned_data['rating']
         if 'Todos' in rating:

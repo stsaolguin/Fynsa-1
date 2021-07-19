@@ -17,10 +17,12 @@
 </ul>
 
 </div>
-<div class="row">
-aca va el buscador
+<div class="row alert alert-warning d-flex justify-content-center">
+<div class="col-lg-4">
+  <input type="text" class="form-control my-2" name="filtro" id="filtro" onkeyup="FiltroTabla()" placeholder="Buscar...">
+  </div>
 </div>
-<table class="table">
+<table class="table" id="tabla_salida">
   <thead>
     <tr>
       <th scope="col">#</th>
@@ -107,7 +109,28 @@ function getCookie(name) {
       } 
     );
   };
-  
+
+  function FiltroTabla() {
+  // Declare variables
+  var input, filter, table, tr, td, i, txtValue;
+  input = document.getElementById("filtro");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("tabla_salida");
+  tr = table.getElementsByTagName("tr");
+
+  // Loop through all table rows, and hide those who don't match the search query
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[1]; //cambiando el numero busca por el trader o por el fondo.
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        tr[i].style.display = "none";
+      }
+    }
+  }
+}
 </script>
 
 

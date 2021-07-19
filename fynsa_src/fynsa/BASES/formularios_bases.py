@@ -6,9 +6,12 @@ from RFI.models import rfi_beta
 from datetime import datetime
 
 def ultima_fecha_bases():
-    return str(bases.objects.latest('fecha').fecha)
+    bases.refresh_from_db
+    a = bases.objects.latest('fecha').fecha
+    return str(a)
 
 def ultima_fecha_rfi():
+    rfi_beta.refresh_from_db
     return str(rfi_beta.objects.latest('fecha').fecha)
 
 def clientes_conciliaciones():
