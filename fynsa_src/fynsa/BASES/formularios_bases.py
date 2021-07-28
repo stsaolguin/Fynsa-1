@@ -13,6 +13,7 @@ def ultima_fecha_bases():
 def ultima_fecha_rfi():
     rfi_beta.refresh_from_db
     return str(rfi_beta.objects.latest('fecha').fecha)
+    
 
 def clientes_conciliaciones():
     """ esta funcion es para las conciliaciones """
@@ -170,4 +171,4 @@ class BlotterModelForm(forms.ModelForm):
         return self.cleaned_data['institucion_trader_participante_1'] or None
     def clean_institucion_trader_participante_2(self):
         return self.cleaned_data['institucion_trader_participante_1'] or None
-    
+ 

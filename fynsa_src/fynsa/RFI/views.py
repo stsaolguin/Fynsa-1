@@ -4,6 +4,7 @@ from RFI.models import rfi_beta
 from RFI.models import rfi_generacion_comite_temporal as comite
 from BASES.formularios_bases import f_fechas_comite_rfi
 from django.utils.dateparse import parse_date
+from .formularios_rfi import cargador_rfi_beta_form
 
     
 #estas de abajo hay que borrarlas
@@ -114,3 +115,7 @@ def rfi_comite_cliente(request,cliente):
     datos['cliente'] = cliente
     return render(request,'comite-rfi-salida-cliente.html',datos)
 
+def rfi_cargador_datos(request):
+    datos = {}
+    datos['rfi_beta_csv'] = cargador_rfi_beta_form()
+    return render(request,'cargador-rfi.html',datos)
