@@ -17,7 +17,7 @@ class ClientesBasesAdmin(admin.ModelAdmin):
 class EjecutivosAdmin(admin.ModelAdmin):
     list_display = ['ejecutivo','mesa']
 
-#admin.site.register(facturas_bases, FacturasBasesAdmin)
+admin.site.register(facturas_bases, FacturasBasesAdmin)
 admin.site.register(bases, BlotterBasesAdmin)
 admin.site.register(clientes, ClientesBasesAdmin)
 admin.site.register(ejecutivos, EjecutivosAdmin)
