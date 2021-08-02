@@ -1,0 +1,82 @@
+{% include 'index.html' %}
+
+{% block contenido %}
+<div class="container my-3">
+
+    <h1> Crea/Edita Fondo</h1>
+
+        <form method="post">{% csrf_token %}
+        <div class="row">
+            <div class="col-lg-12">
+                {{ form.nombre_fondo.label }}
+                {{ form.nombre_fondo }}
+                {{ form.nombre_fondo.errors }}
+            </div>
+        </div>
+<div class="row">
+    <div class="col-lg-6">
+        {{ form.trader_fondo.label }}
+        {{ form.trader_fondo }}
+        {{ form.trader_fondo.errors }}
+    </div>
+        <div class="col-lg-6">
+        {{ form.ejecutivo.label }}
+        {{ form.ejecutivo }}
+        {{ form.ejecutivo.errors }}
+    </div>
+
+</div>
+<div class="row">
+    <div class="col-lg-12">
+        {{ form.tamano_fondo.label }}
+        {{ form.tamano_fondo }}
+        {{ form.tamano_fondo.errors }}
+    </div>
+</div>
+<div class="row">
+<div class="col-lg-3">
+                {{ form.duracion_fondo.label }}
+                {{ form.duracion_fondo }}
+                {{ form.duracion_fondo.errors }}
+</div>
+<div class="col-lg-3">
+                {{ form.sector_fondo.label }}
+                {{ form.sector_fondo }}
+                {{ form.sector_fondo.errors }}
+</div>
+<div class="col-lg-3">
+                {{ form.ytm_fondo.label }}
+                {{ form.ytm_fondo }}
+                {{ form.ytm_fondo.errors }}
+</div>
+<div class="col-lg-3">
+                {{ form.risk_fondo.label }}
+                {{ form.risk_fondo }}
+                {{ form.risk_fondo.errors }}
+</div>
+</div>
+<div class="row">
+    <div class="col-lg-6">
+                    {{ form.notas_fondo.label }}
+                    {{ form.notas_fondo }}
+                    {{ form.notas_fondo.errors }}
+    </div>
+    <div class="col-lg-6">
+                    {{ form.cntry_of_risk_fondo.label }}
+                    {{ form.cntry_of_risk_fondo }}
+                    {{ form.cntry_of_risk_fondo.errors }}
+    </div>
+</div>
+<div class="row">
+    <input type="submit" class="btn btn-success mt-3" value="Crear/editar">
+</div>
+        </form>
+</div>
+
+
+{% endblock contenido %}
+
+
+
+
+

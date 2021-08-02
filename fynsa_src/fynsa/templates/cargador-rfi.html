@@ -1,0 +1,23 @@
+{% extends "index.html" %}
+
+{% block contenido %}
+
+
+<div class="container my-4">
+            <div class="row">
+                        <div class="d-flex justify-content-center">
+                        
+                                <form method="POST" enctype="multipart/form-data">
+
+                                    <div class="form-inline">
+                                        {% csrf_token %}
+                                        {{ rfi_beta_csv }}                                
+                                        <input type="submit" class="btn btn-primary" value="Generar"> 
+                                    </div>
+                                </form>
+                    
+                        
+                        </div>
+            </div>
+</div>
+{% endblock %}

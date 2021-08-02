@@ -7,6 +7,7 @@ class rfi_beta(models.Model):
     linea=models.AutoField(primary_key=True)
     fecha = models.DateField()
     ejecutivo = models.CharField(max_length=7,null=True)
+    cliente = models.TextField(blank = True,null=True)
     papel = models.TextField()
     cusip = models.TextField(null=True)
     operacion = models.TextField(choices=[('venta','venta'),('compra','compra')])

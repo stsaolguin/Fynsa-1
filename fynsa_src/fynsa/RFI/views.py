@@ -1,9 +1,13 @@
+from django.core.checks.messages import Error
 from django.http.response import HttpResponse
 from django.shortcuts import render
 from RFI.models import rfi_beta
 from RFI.models import rfi_generacion_comite_temporal as comite
 from BASES.formularios_bases import f_fechas_comite_rfi
 from django.utils.dateparse import parse_date
+from .formularios_rfi import cargador_rfi_beta_form
+from .funciones_externas import limpia_rfi
+import io
 
     
 #estas de abajo hay que borrarlas
@@ -92,13 +96,9 @@ or (b.categoria='DLR' and c.categoria='DLR')
         fila=[]
         fila = [v for k,v in h.items()]
         for i,item in enumerate(fila):
-            
             if fila[i] is None:
-               
                fila[i]=0
-
         tabla.append(fila)
-    
     datos['cross'] = tabla
     datos['metas']=rfi_beta.objects.raw(''' select 1 as linea,date_trunc('month',fecha)::date as mensual,sum(ingreso_mesa) FILTER (WHERE vendedor='FYNSA' or comprador='FYNSA') as ingreso_banca_privada,sum(ingreso_mesa) FILTER (WHERE vendedor!='FYNSA' and comprador!='FYNSA') as ingreso_resto from "RFI_rfi_beta" group by mensual order by mensual asc; ''')
     datos['generacion_mensual'] = rfi_beta.objects.raw('''select 1 as linea,mes,"2014","2015","2016","2017","2018","2019","2020",COALESCE("2021",0) as "2021",COALESCE("2022",0) as "2022" FROM crosstab('select date_part(''month'',fecha) as mes,date_part(''YEAR'',fecha) as agno, sum(ingreso_mesa)
@@ -114,3 +114,20 @@ def rfi_comite_cliente(request,cliente):
     datos['cliente'] = cliente
     return render(request,'comite-rfi-salida-cliente.html',datos)
 
+def rfi_cargador_datos(request):
+    datos = {}
+    datos['rfi_beta_csv'] = cargador_rfi_beta_form()
+    if request.method=='POST':
+        formulario = cargador_rfi_beta_form(request.POST,request.FILES)
+        if formulario.is_valid():
+            try:
+                datos_crudos = request.FILES['rfi_beta']
+                datos_crudos_salida = io.TextIOWrapper(datos_crudos.file,encoding='utf-8-sig')
+                datos_salida = limpia_rfi(datos_crudos_salida)
+                for r in datos_salida:
+                    fila = rfi_beta(**r)
+                    fila.save()
+            except:
+                return HttpResponse('Un error ha ocurrido')
+
+    return render(request,'cargador-rfi.html',datos)

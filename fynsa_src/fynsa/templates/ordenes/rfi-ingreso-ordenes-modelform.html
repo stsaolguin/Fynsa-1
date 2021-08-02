@@ -4,25 +4,27 @@
 
 
 <div class="container mb-4">
-<h1>Modelform</h1>
-{{ form.non_field_errors }}
-  {{ form.subject.errors }}
-    {{ form.subject.label_tag }}
-    {{ form.subject }}
-    {% if form.subject.errors %}
-    <ol>
-    {% for error in form.subject.errors %}
-        <li><strong>{{ error|escape }}</strong></li>
-    {% endfor %}
-    </ol>
-{% endif %}
+
+<h1>Ingreso de Órdenes.</h1>
+{% comment %} errores {% endcomment %}
+            {% for f in form %}
+                 {% if f.errors %}
+                <div class="alert alert-danger" role="alert">
+                {{f.errors}} 
+                </div>
+                {% endif %}
+            {% endfor %}
+
+{% comment %} Mensajes {% endcomment %}
+
+
        <form method="POST">
         {% csrf_token %}
     
     <div class="row">
         <div class="col-lg-6">
             <label for="{{ form.cliente.id_for_label }}">Cliente:</label>
-            <input type="text" list="clientes" name="cliente" class="form-control" value="{{ form.cliente.value }}">
+            <input type="text" list="clientes" name="cliente" class="form-control" value="{{ form.cliente.value | default_if_none:'' }}">
             <datalist id="clientes">
             {% for r,s in form.cliente.field.choices %}
                  <option value="{{ r }}">
@@ -52,7 +54,7 @@
     <div class="row">
     <div class="col-lg-6">
           <label for="{{ form.isin.id_for_label }}">Isin:</label>
-           <input type="text" list="isin" id="id_isin" name ="isin" class="form-control" value="{{ form.isin.value }}">
+           <input type="text" list="isin" id="id_isin" name ="isin" class="form-control" value="{{ form.isin.value | default_if_none:'' }}">
            {{ form.isin.errors }}
             <datalist id="isin">
             {% for r,s in form.isin.field.choices %}
@@ -130,12 +132,22 @@ isin.addEventListener('change',d =>{
 })
    
 })
-
-
-
-
-
 </script>
+
+{% if messages %}
+    {% for message in messages %}
+    <script>
+    swal.fire({
+        "titulo" :"Bien!",
+        "text" : "{{ message }}",
+        "icon" : "success"
+    })
+        
+    </script>
+        
+    
+    {% endfor %}
+{% endif %}
 
 </div>
 

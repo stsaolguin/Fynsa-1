@@ -1,0 +1,144 @@
+{% include 'index.html' %}
+
+{% block contenido %}
+<div class="container">
+<div class="h1">Resultado de fondos</div>
+<div class="row">
+<h4>Datos orden {{ unico_orden }}:</h4><br>
+<ul>
+  <li><strong>trader : {{ user }}</strong>
+  <li>cliente : {{ cliente }}
+  <li>paises : {{ paises }}
+  <li>sector : {{ sector }}
+  <li>rating : {{ rating }}
+  <li>duracion : {{ duracion }}
+  <li>ytm : {{ ytm }}
+  
+</ul>
+
+</div>
+<div class="row alert alert-warning d-flex justify-content-center">
+<div class="col-lg-4">
+  <input type="text" class="form-control my-2" name="filtro" id="filtro" onkeyup="FiltroTabla()" placeholder="Buscar...">
+  </div>
+</div>
+<table class="table" id="tabla_salida">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">fondo</th>
+      <th scope="col">ejecutivo</th>
+      <th scope="col">status</th>
+      <th scope="col">notas</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for r in resultado %}
+    <tr>
+      <th scope="row">{{ r.id }}</th>
+      <td>{{ r.fondo_asignado.nombre_fondo }}</td>
+      <td>{{ r.fondo_asignado.ejecutivo }}</td>
+
+      <td>
+        <select class="form-control form-control-sm bg-success text-white" id="status_fondo_{{ r.id }}" data-valor ='{{ r.status_asignado }}' onChange="capturar_status(this.value,this.id,{{ r.id }})">
+            <option class="bg-success text-white" value = "Checking">Checking</option>
+            <option class="bg-warning text-dark" value = "Not Responding">Not Responding</option>
+            <option class="bg-danger text-white" value = "Fuera!">Fuera!</option>
+            </select>
+      </td>
+      <td>
+      <form method="post" id="actualiza_notas_formulario_{{r.id}}">{% csrf_token %}
+        <input type="hidden" name="id_fondo" value="{{r.id}}">
+          <textarea type="text" class="form-control" name="notas_fondo" id="notas_fondo_{{r.id}}" cols="30" rows="1" form = "actualiza_notas_formulario_{{r.id}}">{{ r.notas_asignado }}</textarea>
+          <input class="btn btn-success mt-1" name="boton_notas_fondo_{{r.id}}" onclick = GuardarDatos({{r.id}}) value="Guardar">
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+
+<script>
+const selector = {'Checking':'form-control form-control-sm bg-success text-white','Not Responding':'form-control form-control-sm bg-warning text-dark','Fuera!':'form-control form-control-sm bg-danger text-white'};
+function capturar_status(a,b,c){
+  var seleccion = document.getElementById(b);
+  seleccion.className=''
+  var texto = selector[a];
+  seleccion.className = selector[a];
+    var  url = 'http://127.0.0.1:8000/logeado/rfl/ordenes/api/v1/actualiza-status-fondos/'+ c + '/' + a;
+    fetch(url);
+    };
+  var sls = document.getElementsByTagName('select');
+  for (var i=0; i < sls.length;i++){
+    inicial = sls[i].getAttribute('data-valor');
+    for(var j=0; j < sls[i].options.length;j++){
+      if(sls[i].options[j].value == inicial){
+        sls[i].options[j].selected = true;
+      };
+    };
+    sls[i].className = '';
+    sls[i].className = selector[sls[i].value];
+  };
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+};
+  function GuardarDatos(numero_fondo){
+    var id_a_buscar = 'actualiza_notas_formulario_' + numero_fondo;
+    var formulario = new FormData(document.getElementById(id_a_buscar));
+    var url = "{% url 'actualiza_notas_fondos' %}";
+    console.log(url);
+    fetch(url,{
+      method : 'POST',
+      body : formulario,
+      headers : {
+        'X-CSRFToken': getCookie('csrftoken')
+        }
+      } 
+    );
+  };
+
+  function FiltroTabla() {
+  // Declare variables
+  var input, filter, table, tr, td, i, txtValue;
+  input = document.getElementById("filtro");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("tabla_salida");
+  tr = table.getElementsByTagName("tr");
+
+  // Loop through all table rows, and hide those who don't match the search query
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[1]; //cambiando el numero busca por el trader o por el fondo.
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        tr[i].style.display = "none";
+      }
+    }
+  }
+}
+</script>
+
+
+
+
+{% endblock contenido %}
+
+
+
+
+
