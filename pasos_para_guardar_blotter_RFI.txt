@@ -29,6 +29,7 @@ update "RFI_rfi_beta" set papel=replace(papel,'⅞','7/8');
 update "RFI_rfi_beta" set papel=replace(papel,'⅜','3/8');
 update "RFI_rfi_beta" set papel=replace(papel,'¼','1/4');
 update "RFI_rfi_beta" set papel=replace(papel,'⅝','5/8');
+update "RFI_rfi_beta" set papel=replace(papel,'⅛','1/8');
 
 
 ver si hay clientes nuevos. Hay que hacer lo mismo por el lado comprador

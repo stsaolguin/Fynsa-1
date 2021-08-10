@@ -43,17 +43,26 @@ class f_bases(ModelForm):
     
 
 class f_fechas_comite(forms.Form):
+    def __init__(self,*args,**kwarg):
+        super(f_fechas_comite,self).__init__(*args,**kwarg)
+        self.fields['fecha_final'].initial=ultima_fecha_bases()
     fecha_inicial = forms.DateField(widget=forms.DateInput(attrs={'class':'form-control mx-2','type':'date'}),label='fecha inicial', required=True, initial='2019-08-09')
-    fecha_final = forms.DateField(widget=forms.DateInput(attrs={'class':'form-control mx-2','type':'date'}),label='fecha final', required=True, initial=ultima_fecha_bases())
+    fecha_final = forms.DateField(widget=forms.DateInput(attrs={'class':'form-control mx-2','type':'date'}),label='fecha final', required=True)
 
 class f_fechas_comite_rfi(forms.Form):
+    def __init__(self,*args,**kwarg):
+        super(f_fechas_comite_rfi,self).__init__(*args,**kwarg)
+        self.fields['fecha_final'].initial=ultima_fecha_rfi()
     fecha_inicial = forms.DateField(widget=forms.DateInput(attrs={'class':'form-control mx-2','type':'date'}),label='Fecha Inicial', required=True, initial='2021-01-01')
-    fecha_final = forms.DateField(widget=forms.DateInput(attrs={'class':'form-control mx-2','type':'date'}),label='Fecha Final', required=True, initial=ultima_fecha_rfi())
+    fecha_final = forms.DateField(widget=forms.DateInput(attrs={'class':'form-control mx-2','type':'date'}),label='Fecha Final', required=True)
 
 class f_conciliaciones(forms.Form):
+    def __init__(self,*args,**kwarg):
+        super(f_conciliaciones,self).__init__(*args,**kwarg)
+        self.fields['fecha_final'].initial=ultima_fecha_bases()
     cliente = forms.ModelChoiceField(queryset=clientes_conciliaciones(),to_field_name='nombre')
     fecha_inicial = forms.DateField(widget=forms.DateInput(attrs={'class':'form-control mx-2','type':'date'}),label='fecha inicial', required=True, initial='2019-08-09')
-    fecha_final = forms.DateField(widget=forms.DateInput(attrs={'class':'form-control mx-2','type':'date'}),label='fecha final', required=True, initial=ultima_fecha_bases())
+    fecha_final = forms.DateField(widget=forms.DateInput(attrs={'class':'form-control mx-2','type':'date'}),label='fecha final', required=True)
     cliente.widget.attrs.update({'class':'form-control mx-2'})
 
 

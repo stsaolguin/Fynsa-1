@@ -139,42 +139,45 @@ def busca_papeles(request):
         datos['payment_rank'] = payment_rank2 = payment_rank2.replace('["[\'','').replace('\']"]','')
         datos['cliente'] = request.POST.get('cliente')
         datos['trader'] = request.user
-        pr = [d for d in ast.literal_eval(paises.pop())] if not '''['Todos']''' in paises else None
-        sr = [e for e in ast.literal_eval(sector.pop())] if not '''['Todos']''' in sector else None
-        rr = [f for f in ast.literal_eval(rating.pop())] if not '''['Todos']''' in rating else None
-        dr = [g for g in ast.literal_eval(duracion.pop())] if not '''['Toda la curva']''' in duracion else None
-        yr = [h for h in ast.literal_eval(ytm.pop())] if not '''['Todos']''' in ytm else None
-        pyr = [i for i in ast.literal_eval(payment_rank.pop())] if not '''['Todos']''' in payment_rank else None
+        #procesado de las listas
+        paises_lista = ast.literal_eval(paises[0])
+        sector_lista = ast.literal_eval(sector[0])
+        rating_lista = ast.literal_eval(rating[0])
+        duracion_lista = ast.literal_eval(duracion[0])
+        ytm_lista = ast.literal_eval(ytm[0])
+        payment_rank_lista = ast.literal_eval(payment_rank[0])
         resultado = []
         comienzo = time.time()
         contador = 0
         conteo_bonos = 0
-        #if pr is None and rr is None and rr is None and dr is None and yr is None and pyr is None:
-        #   busqueda = rfi_bonos.objects.all()
         if request.POST.get('papeles')=='papeles':
-            for r in rr:
-                for s in pr:
-                    for t in sr:
-                        for u in dr:
-                            for v in yr:
-                                for w in pyr:
-                                    contador+=1
-                                    busqueda = rfi_bonos.objects.filter(risk=r,cntry_of_risk=s,industria=t,dur_text=u,yas_bond_text=v,payment_rank=w)
-                                    if busqueda.exists():
-                                        conteo_bonos+=int(len(busqueda))
-                                        resultado.append(busqueda)
-            final = time.time()
-            tiempo_total = final-comienzo
+            busqueda = rfi_bonos.objects.filter(
+                bb_composite__in = rating_lista,
+                cntry_of_risk__in = paises_lista,
+                industria__in = sector_lista,
+                dur_text__in = duracion_lista,
+                yas_bond_text__in = ytm_lista,
+                payment_rank__in = payment_rank_lista
+                ) 
+            if busqueda.exists():
+                final = time.time()
+                tiempo_total = final-comienzo
+                datos['tiempo'] = tiempo_total
+                datos['conteo_bonos'] = busqueda.count()
         
-            datos['resultado'] = resultado
-            datos['iteraciones'] = contador 
-            datos['tiempo'] = tiempo_total
-            datos['conteo_bonos'] = conteo_bonos
+            datos['resultado'] = busqueda
+            
             return render(request,'ordenes/ordenes-salida-papeles.html',context=datos)
+
         #acá abajo empieza el proceso de los fondos                                
         elif request.POST.get('fondos')=='fondos':
             if not fondo_salida.objects.filter(orden_asignada=unico_orden).exists():
-                q = fondo.objects.filter(duracion_fondo__contains=dr,sector_fondo__contains=sr,ytm_fondo__contains=yr,risk_fondo__contains=rr,cntry_of_risk_fondo__contains=pr)
+                q = fondo.objects.filter(
+                    duracion_fondo__icontains = duracion_lista,
+                    sector_fondo__icontains = sector_lista,
+                    ytm_fondo__icontains = ytm_lista,
+                    risk_fondo__icontains = rating_lista,
+                    cntry_of_risk_fondo__icontains = paises_lista)
                 s = rfi_tsox.objects.get(pk=unico_orden)
                 for r in q:                
                     fondo_salida.objects.create(orden_asignada = s,fondo_asignado = r)
