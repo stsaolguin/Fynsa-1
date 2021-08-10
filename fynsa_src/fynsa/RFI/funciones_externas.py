@@ -37,6 +37,7 @@ def limpia_rfi(datos_rfi):
     texto = re.sub(';\s+;',';;',texto)
     texto = re.sub(';\s+',';',texto)
     texto = re.sub('\s+;',';',texto)
+    texto = texto.replace(')','').replace('(','-')
     texto_listo = StringIO(texto)
     encabezados_salida = [
         "fecha",

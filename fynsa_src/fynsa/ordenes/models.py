@@ -55,4 +55,18 @@ class fondo_salida(models.Model):
 	fondo_asignado = models.ForeignKey(fondo,on_delete=models.CASCADE)
 	status_asignado = models.TextField(null=True,blank=True)
 	notas_asignado = models.TextField(null=True,blank=True)
+
+class carteras_bbg(models.Model):
+	fondo = models.TextField(null=True,blank=True)
+	sector = models.TextField(null=True,blank=True)
+	nemo  = models.TextField(null=True,blank=True)
+	weight = models.DecimalField(null=True,blank=True,max_digits=6,decimal_places=3)
+	mkt_val = models.BigIntegerField(null=True,blank=True) 
+	pos_val = models.BigIntegerField(null=True,blank=True) # a este campo hay que truncarle los decimales
+	px_close = models.DecimalField(null=True,blank=True,max_digits=6,decimal_places=3) 
+	crncy = models.TextField(null=True,blank=True)
+	isin = models.TextField(null=True,blank=True)
+	ejecutivo = models.TextField(null=True,blank=True)
+ 
+	
 	

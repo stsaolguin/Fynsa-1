@@ -16,7 +16,7 @@
    <li>payment_rank : {{ payment_rank }}</li> 
    </ul>
     </div>
-
+    
     {% if not resultado %}
     <div class="lead mb-2">No Hay papeles que se ajustan a tu búsqueda</div>
 
@@ -26,11 +26,8 @@
     
             <ol>
             {% for res in resultado %}
-            {% for r in res %}
-            <li>{{ r.security_name }} - {{ r.isin }}
-            {% endfor %}
-    
-    {% endfor %}
+            <li>{{ res.security_name }} - {{ res.ising }}
+             {% endfor %}
         </ol>
     {% endif %}
 
