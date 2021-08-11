@@ -139,5 +139,5 @@ def rfi_cargador_datos(request):
                     messages.add_message(request,messages.INFO,'TODO BIEN, PERO HAY QUE AGREGAR LOS SIGUIENTES CLIENTES DESDE EL ADMIN : {}'.format(listado))        
             messages.add_message(request,messages.INFO,'CARGA CORRECTA!')
             
-
+    #ultimo agregado
     return render(request,'cargador-rfi.html',datos)
