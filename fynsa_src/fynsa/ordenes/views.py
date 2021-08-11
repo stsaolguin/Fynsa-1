@@ -102,8 +102,7 @@ def actualiza_status_fondo(request,orden_numero_fondo,estatus):
     return HttpResponse(actualizacion,content_type='application/json')
 
 def actualiza_notas_fondo(request):
-    print('Dentro de actualiza notas fondo')
-    print(request.POST)
+    #Dentro de actualiza notas fondo
     if request.POST:
         numero_fondo = request.POST.get('id_fondo')
         notas = request.POST.get('notas_fondo')

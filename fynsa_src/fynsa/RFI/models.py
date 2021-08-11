@@ -28,8 +28,8 @@ class rfi_beta(models.Model):
     fecha_subido = models.DateTimeField(auto_now=True, null=True)
     
 
-    def __str__(self):
-        return str(self.fecha)
+#    def __str__(self):
+#        return str(self.fecha)
 
 class clientes_rfi(models.Model):
     fondo = models.TextField(null=True,blank=True)
