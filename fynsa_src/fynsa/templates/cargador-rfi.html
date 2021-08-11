@@ -4,6 +4,7 @@
 
 
 <div class="container my-4">
+<div class="display-4">Cargador rápido blotter RFI</div>
             <div class="row">
                         <div class="d-flex justify-content-center">
                         
@@ -12,12 +13,20 @@
                                     <div class="form-inline">
                                         {% csrf_token %}
                                         {{ rfi_beta_csv }}                                
-                                        <input type="submit" class="btn btn-primary" value="Generar"> 
+                                        <input type="submit" class="btn btn-primary" value="Cargar"> 
                                     </div>
                                 </form>
                     
                         
                         </div>
             </div>
+
+        {% if messages %}
+            <ul class="alert alert-info">
+                {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
 </div>
 {% endblock %}

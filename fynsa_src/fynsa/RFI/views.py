@@ -1,4 +1,4 @@
-from django.core.checks.messages import Error
+from django.contrib import messages
 from django.http.response import HttpResponse
 from django.shortcuts import render
 from RFI.models import rfi_beta
@@ -7,6 +7,7 @@ from BASES.formularios_bases import f_fechas_comite_rfi
 from django.utils.dateparse import parse_date
 from .formularios_rfi import cargador_rfi_beta_form
 from .funciones_externas import limpia_rfi
+from django.db import connection
 import io
 
     
@@ -126,8 +127,17 @@ def rfi_cargador_datos(request):
                 datos_salida = limpia_rfi(datos_crudos_salida)
                 for r in datos_salida:
                     fila = rfi_beta(**r)
-                    fila.save()
+                    #fila.save()
             except:
-                return HttpResponse('Un error ha ocurrido')
+                return HttpResponse(' Un error ha ocurrido, revisa el csv')
+            clientes_nuevos = rfi_beta.objects.raw('''select 1 as linea,comprador from "RFI_rfi_beta" where comprador not in (select fondo from "RFI_clientes_rfi") UNION select 1 as linea,vendedor from "RFI_rfi_beta" where vendedor not in (select fondo from "RFI_clientes_rfi")''')
+            for r in clientes_nuevos:
+                print(r.comprador)
+                if r.comprador != '<Cell 9, 0>':
+                    listado = ''
+                    listado += str(r.comprador)
+                    messages.add_message(request,messages.INFO,'TODO BIEN, PERO HAY QUE AGREGAR LOS SIGUIENTES CLIENTES DESDE EL ADMIN : {}'.format(listado))        
+            messages.add_message(request,messages.INFO,'CARGA CORRECTA!')
+            
 
     return render(request,'cargador-rfi.html',datos)
