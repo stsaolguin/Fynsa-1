@@ -10,14 +10,15 @@ import datetime
 from django.core.exceptions import ValidationError
 
 #estas listas son las que se usan para buscar si están todos los ítemes dentro de las listas pais,sector,etc.
-
+#Si 
 l_sector = [x.industria for x in rfi_bonos.objects.all().distinct('industria')]
 l_paymentRank = [x.payment_rank for x in rfi_bonos.objects.all().distinct('payment_rank')]
 l_cntry = [x.cntry_of_risk for x in rfi_bonos.objects.all().distinct('cntry_of_risk')]
-l_rating = ['IG','HY']
+l_rating = ['AAA','AA+','AA','AA-','A+','A','A-','BBB+','BBB','BBB-','BB+','BB','BB-','B+','B','B-','CCC+','CCC','CCC-','CC','C','D']
 l_duracion = ['x<=3','3<x<=5','x>5']
-l_ytm = ['0 a 100','101 a 200','201 a 300','301 a 400','sobre 400']
+l_ytm = ['0 a 100','101 a 200','201 a 300','301 a 400','sobre 401']
 
+####
 def lista_sector():
     listado = [(x.industria,x.industria) for x in rfi_bonos.objects.all().distinct('industria')]
     listado.insert(0,('Todos','Todos'))
@@ -115,7 +116,7 @@ class IngresoOrdenesRFIModelForm(ModelForm):
     def clean_rating(self):
         rating = self.cleaned_data['rating']
         if 'Todos' in rating:
-            return ['AAA','AA+','AA','AA-','A+','A','A-','BBB+','BBB','BBB-','BB+''BB','BB-','B+','B','B-','CCC+','CCC','CCC-','CC','C','D']
+            return ['AAA','AA+','AA','AA-','A+','A','A-','BBB+','BBB','BBB-','BB+','BB','BB-','B+','B','B-','CCC+','CCC','CCC-','CC','C','D']
         else:
             return rating
     def clean_duracion(self):
@@ -190,7 +191,7 @@ class FondoOrdenes(ModelForm):
     def clean_risk_fondo(self):
         rating = self.cleaned_data['risk_fondo']
         if 'Todos' in rating:
-            return ['AAA','AA+','AA','AA-','A+','A','A-','BBB+','BBB','BBB-','BB+''BB','BB-','B+','B','B-','CCC+','CCC','CCC-','CC','C','D']
+            return ['AAA','AA+','AA','AA-','A+','A','A-','BBB+','BBB','BBB-','BB+','BB','BB-','B+','B','B-','CCC+','CCC','CCC-','CC','C','D']
         else:
             return rating
     def clean_duracion_fondo(self):

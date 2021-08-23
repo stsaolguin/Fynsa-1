@@ -8,7 +8,7 @@ from django.http.response import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 from ordenes.formularios_ordenes import AgregaClientes,IngresoOrdenesRFIModelForm,lista_sector,listado_cntry,FondoOrdenes
 from RFI.models import rfi_bonos,clientes_rfi
-from ordenes.models import fondo, rfi_tsox, rfi_tsox_borrado,fondo,fondo_salida
+from ordenes.models import fondo, holders_salida, rfi_tsox, rfi_tsox_borrado,fondo,fondo_salida,carteras_bbg,intenciones_pasadas_salida
 from django.core import serializers
 import ast,time
 from django.urls import reverse_lazy
@@ -94,12 +94,28 @@ def actualiza_status(request,orden_numero,estado):
     actualizacion = serializers.serialize('json',q)
     return HttpResponse(actualizacion,content_type='application/json')
 
-def actualiza_status_fondo(request,orden_numero_fondo,estatus):
-    """ Función para actualizar el estatus a intencion a firme"""
-    fondo_salida.objects.filter(id=orden_numero_fondo).update(status_asignado=estatus)
-    q = fondo_salida.objects.filter(id=orden_numero_fondo)
-    actualizacion = serializers.serialize('json',q)
-    return HttpResponse(actualizacion,content_type='application/json')
+def actualiza_status_fondo(request,orden_numero_fondo,estatus,tipo):
+    """ Función para actualizar el estatus de las salida de los matcheos"""
+    print(orden_numero_fondo,estatus,tipo)
+    if tipo == 'fondo':
+        fondo_salida.objects.filter(id=orden_numero_fondo).update(status_asignado = estatus)
+        q = fondo_salida.objects.filter(id=orden_numero_fondo)
+        actualizacion = serializers.serialize('json',q)
+        return HttpResponse(actualizacion,content_type='application/json')
+    elif tipo == 'intencion':
+        print('pasando por aca')
+        intenciones_pasadas_salida.objects.filter(id=orden_numero_fondo).update(status_intencion_asignada = estatus)
+        q = intenciones_pasadas_salida.objects.filter(id=orden_numero_fondo)
+        actualizacion = serializers.serialize('json',q)
+        return HttpResponse(actualizacion,content_type='application/json')
+    elif tipo == 'holder':
+        holders_salida.objects.filter(id=orden_numero_fondo).update(status_holder_asignada = estatus)
+        q = holders_salida.objects.filter(id=orden_numero_fondo)
+        actualizacion = serializers.serialize('json',q)
+        return HttpResponse(actualizacion,content_type='application/json')
+    
+        
+
 
 def actualiza_notas_fondo(request):
     #Dentro de actualiza notas fondo
@@ -138,6 +154,8 @@ def busca_papeles(request):
         datos['payment_rank'] = payment_rank2 = payment_rank2.replace('["[\'','').replace('\']"]','')
         datos['cliente'] = request.POST.get('cliente')
         datos['trader'] = request.user
+        isin = request.POST.get("isin")
+        security_name = request.POST.get("security_name")
         #procesado de las listas
         paises_lista = ast.literal_eval(paises[0])
         sector_lista = ast.literal_eval(sector[0])
@@ -170,24 +188,49 @@ def busca_papeles(request):
 
         #acá abajo empieza el proceso de los fondos                                
         elif request.POST.get('fondos')=='fondos':
+            s = rfi_tsox.objects.get(pk=unico_orden)
             if not fondo_salida.objects.filter(orden_asignada=unico_orden).exists():
                 q = fondo.objects.filter(
-                    duracion_fondo__icontains = duracion_lista,
-                    sector_fondo__icontains = sector_lista,
-                    ytm_fondo__icontains = ytm_lista,
-                    risk_fondo__icontains = rating_lista,
-                    cntry_of_risk_fondo__icontains = paises_lista)
-                s = rfi_tsox.objects.get(pk=unico_orden)
+                    duracion_fondo__contains = duracion_lista,
+                    sector_fondo__contains = sector_lista,
+                    ytm_fondo__contains = ytm_lista,
+                    risk_fondo__contains = rating_lista,
+                    cntry_of_risk_fondo__contains = paises_lista)
                 for r in q:                
                     fondo_salida.objects.create(orden_asignada = s,fondo_asignado = r)
 
+            #acá hay que filtrar por holders
+            if not holders_salida.objects.filter(orden_asignada = unico_orden).exists():
+                #primero traemos los holders que tienen ese isin
+                q = carteras_bbg.objects.filter(isin = isin) 
+                for r in q:
+                    #... y luego los grabamos en el objeto
+                    holders_salida.objects.create(orden_asignada = s, holder_asignada = r)
+                
+
+                #holders_por_nemo = carteras_bbg.objects.filter(nemo = security_name) 
+            
+            #acá filtramos en las intenciones
+            if not intenciones_pasadas_salida.objects.filter(orden_asignada = unico_orden).exists():
+                #traemos las intenciones pasadas que tienen ese isin
+                q = rfi_tsox_borrado.objects.filter(isin = isin)
+                for r in q:
+                    intenciones_pasadas_salida.objects.create(orden_asignada = s, intencion_pasada_asignada = r)
+
+                
+                papeles_intenciones_isin = rfi_tsox_borrado.objects.filter(isin = isin).order_by('-fecha_ingreso')
+                #papeles_intenciones_nemo = rfi_tsox_borrado.objects.filter(papel = security_name).order_by('-fecha_ingreso')
+                
             datos['resultado'] = q = fondo_salida.objects.filter(orden_asignada=unico_orden).order_by("id")
+            datos['holders_por_isin'] = holders_salida.objects.filter(orden_asignada=unico_orden).order_by("id")
+            datos['papeles_intenciones_isin'] = intenciones_pasadas_salida.objects.filter(orden_asignada=unico_orden).order_by("id")
             final = time.time()
             tiempo_total = final-comienzo
             datos['iteraciones'] = contador 
             datos['tiempo'] = tiempo_total
             datos['conteo_bonos'] = len(q)
-            print(datos)
+            datos['papel'] = security_name
+            datos['isin'] = isin
             return render(request,'ordenes/ordenes-salida-fondos.html',context=datos)
     return HttpResponse("Hay un error!")
 

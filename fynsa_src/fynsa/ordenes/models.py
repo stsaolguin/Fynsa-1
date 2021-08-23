@@ -56,6 +56,12 @@ class fondo_salida(models.Model):
 	status_asignado = models.TextField(null=True,blank=True)
 	notas_asignado = models.TextField(null=True,blank=True)
 
+class intenciones_pasadas_salida(models.Model):
+	orden_asignada = models.ForeignKey(rfi_tsox,on_delete = models.CASCADE)
+	intencion_pasada_asignada = models.ForeignKey(rfi_tsox_borrado,on_delete = models.CASCADE)
+	status_intencion_asignada = models.TextField(null = True, blank= True)
+	notas_intencion_asignada = models.TextField(null = True, blank= True)
+
 class carteras_bbg(models.Model):
 	fondo = models.TextField(null=True,blank=True)
 	sector = models.TextField(null=True,blank=True)
@@ -69,4 +75,9 @@ class carteras_bbg(models.Model):
 	ejecutivo = models.TextField(null=True,blank=True)
  
 	
+class holders_salida(models.Model):
+	orden_asignada = models.ForeignKey(rfi_tsox,on_delete = models.CASCADE)
+	holder_asignada = models.ForeignKey(carteras_bbg,on_delete = models.CASCADE)
+	status_holder_asignada = models.TextField(null = True, blank= True)
+	notas_holder_asignada = models.TextField(null = True, blank= True)
 	

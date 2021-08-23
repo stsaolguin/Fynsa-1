@@ -132,7 +132,6 @@ def rfi_cargador_datos(request):
                 return HttpResponse(' Un error ha ocurrido, revisa el csv')
             clientes_nuevos = rfi_beta.objects.raw('''select 1 as linea,comprador from "RFI_rfi_beta" where comprador not in (select fondo from "RFI_clientes_rfi") UNION select 1 as linea,vendedor from "RFI_rfi_beta" where vendedor not in (select fondo from "RFI_clientes_rfi")''')
             for r in clientes_nuevos:
-                print(r.comprador)
                 if r.comprador != '<Cell 9, 0>':
                     listado = ''
                     listado += str(r.comprador)

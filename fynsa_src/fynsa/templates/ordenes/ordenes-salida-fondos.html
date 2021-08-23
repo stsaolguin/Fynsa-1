@@ -1,78 +1,123 @@
 {% include 'index.html' %}
 
 {% block contenido %}
-<div class="container">
-<div class="h1">Resultado de fondos</div>
-<div class="row">
-<h4>Datos orden {{ unico_orden }}:</h4><br>
-<ul>
-  <li><strong>trader : {{ user }}</strong>
-  <li>cliente : {{ cliente }}
-  <li>paises : {{ paises }}
-  <li>sector : {{ sector }}
-  <li>rating : {{ rating }}
-  <li>duracion : {{ duracion }}
-  <li>ytm : {{ ytm }}
-  
-</ul>
+  <div class="container">
+      <div class="h1">Resultado de fondos</div>
+      <div class="row">
+      <h4>Datos orden {{ unico_orden }}:</h4><br>
+      <ul>
+        <li><strong>trader : {{ user }}</strong>
+        <li><strong>papel : {{ papel }}</strong>
+        <li><strong>isin : {{ isin }}</strong>
+        <li>cliente : {{ cliente }}
+        <li>paises : {{ paises }}
+        <li>sector : {{ sector }}
+        <li>rating : {{ rating }}
+        <li>duracion : {{ duracion }}
+        <li>ytm : {{ ytm }}
+        
+      </ul>
 
-</div>
-<div class="row alert alert-warning d-flex justify-content-center">
-<div class="col-lg-4">
-  <input type="text" class="form-control my-2" name="filtro" id="filtro" onkeyup="FiltroTabla()" placeholder="Buscar...">
+      </div>
+        {% comment %} Acá comienza el filtro {% endcomment %}
+        <div class="row alert alert-warning d-flex justify-content-center">
+              <div class="col-lg-4">
+                      <input type="text" class="form-control my-2" name="filtro" id="filtro" onkeyup="FiltroTabla()" placeholder="Buscar...">
+              </div>
+        </div>
   </div>
-</div>
+<div class="container-fluid">
 <div class="row">
-<div class="col-lg-4">
-<table class="table" id="tabla_salida">
-  <thead>
-    <tr>
-      <th scope="col">#</th>
-      <th scope="col">fondo</th>
-      <th scope="col">ejecutivo</th>
-      <th scope="col">status</th>
-      <th scope="col">notas</th>
-    </tr>
-  </thead>
-  <tbody>
-  {% for r in resultado %}
-    <tr>
-      <th scope="row">{{ r.id }}</th>
-      <td>{{ r.fondo_asignado.nombre_fondo }}</td>
-      <td>{{ r.fondo_asignado.ejecutivo }}</td>
+  <div class="col-lg-6">
+                        <table class="table" id="tabla_salida">
+                          <thead>
+                            <tr>
+                              <th scope="col">#</th>
+                              <th scope="col">fondo</th>
+                              <th scope="col">ejecutivo</th>
+                              <th scope="col">status</th>
+                              <th scope="col">notas</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                          {% for r in resultado %}
+                            <tr>
+                              <th scope="row">{{ r.id }}</th>
+                              <td>{{ r.fondo_asignado.nombre_fondo }}</td>
+                              <td>{{ r.fondo_asignado.ejecutivo }}</td>
 
-      <td>
-        <select class="form-control form-control-sm bg-success text-white" id="status_fondo_{{ r.id }}" data-valor ='{{ r.status_asignado }}' onChange="capturar_status(this.value,this.id,{{ r.id }})">
-            <option class="bg-success text-white" value = "Checking">Checking</option>
-            <option class="bg-warning text-dark" value = "Not Responding">Not Responding</option>
-            <option class="bg-danger text-white" value = "Fuera!">Fuera!</option>
-            </select>
-      </td>
-      <td>
-      <form method="post" id="actualiza_notas_formulario_{{r.id}}">{% csrf_token %}
-        <input type="hidden" name="id_fondo" value="{{r.id}}">
-          <textarea type="text" class="form-control" name="notas_fondo" id="notas_fondo_{{r.id}}" cols="30" rows="1" form = "actualiza_notas_formulario_{{r.id}}">{{ r.notas_asignado }}</textarea>
-          <input class="btn btn-success mt-1" name="boton_notas_fondo_{{r.id}}" onclick = GuardarDatos({{r.id}}) value="Guardar">
-        </form>
-      </td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+                              <td>
+                                <select class="form-control form-control-sm bg-success text-white" id="status_fondo_{{ r.id }}" data-valor ='{{ r.status_asignado }}' onChange="capturar_status(this.value,this.id,{{ r.id }},'fondo')">
+                                    <option class="bg-success text-white" value = "Checking">Checking</option>
+                                    <option class="bg-warning text-dark" value = "Not Responding">Not Responding</option>
+                                    <option class="bg-danger text-white" value = "Fuera!">Fuera!</option>
+                                    </select>
+                              </td>
+                              <td>
+                              <form method="post" id="actualiza_notas_formulario_{{r.id}}">{% csrf_token %}
+                                <input type="hidden" name="id_fondo" value="{{r.id}}">
+                                  <textarea type="text" class="form-control" name="notas_fondo" id="notas_fondo_{{r.id}}" cols="30" rows="1" form = "actualiza_notas_formulario_{{r.id}}">{{ r.notas_asignado }}</textarea>
+                                  <input class="btn btn-success mt-1" name="boton_notas_fondo_{{r.id}}" onclick = GuardarDatos({{r.id}}) value="Guardar">
+                                </form>
+                              </td>
+                            </tr>
+                            {% endfor %}
+                          </tbody>
+                        </table>
+  </div>
+
+              <div class="col-lg-6">
+                      <h4>Itenciones pasadas</h4>
+                          {% if not papeles_intenciones_isin %}
+                          <p> Sorry, nadie tuvo intenciones con este papel </p>
+                          {% else %}
+                              <ul>
+                              {% for s in papeles_intenciones_isin %}
+                                <li>{{ s.intencion_pasada_asignada.cliente }} - {{ s.intencion_pasada_asignada.fecha_ingreso }} - {{ s.intencion_pasada_asignada.orden_tipo }} - {{ s.intencion_pasada_asignada.nominales }} - {{ s.intencion_pasada_asignada.precio }}
+                                <select class="form-control form-control-sm bg-success text-white" data-valor ='{{ s.status_intencion_asignada }}' id="status_intencion_{{ s.id }}" onChange="capturar_status(this.value,this.id,{{ s.id }},'intencion')">
+                                    <option class="bg-success text-white" value = "Checking">Checking</option>
+                                    <option class="bg-warning text-dark" value = "Not Responding">Not Responding</option>
+                                    <option class="bg-danger text-white" value = "Fuera!">Fuera!</option>
+                                    </select>
+                              {% endfor %}
+                              </ul>
+                          {% endif %}
+                          <hr>
+                          <hr>
+                    <h4>Holders</h4>
+                        {% if not holders_por_isin %}
+                        <p> Sorry, nadie tiene este papel </p>
+                        {% else %}
+                            <ul>
+                            {% for r in holders_por_isin %}
+                              <li>{{ r.holder_asignada.fondo }}
+                                <select class="form-control form-control-sm bg-success text-white" data-valor ='{{ r.status_holder_asignada }}' id="status_holder_{{ r.id }}" onChange="capturar_status(this.value,this.id,{{ r.id }},'holder')">
+                                    <option class="bg-success text-white" value = "Checking">Checking</option>
+                                    <option class="bg-warning text-dark" value = "Not Responding">Not Responding</option>
+                                    <option class="bg-danger text-white" value = "Fuera!">Fuera!</option>
+                                </select>
+                            {% endfor %}  
+                        </ul>
+
+              {% endif %}
+              
+        
+
+        </div>
 </div>
-<div class="col-lg-4">papeles nomintativos</div>
-<div class="col-lg-4">intenciones</div>
 </div>
 </div>
+
 
 <script>
 const selector = {'Checking':'form-control form-control-sm bg-success text-white','Not Responding':'form-control form-control-sm bg-warning text-dark','Fuera!':'form-control form-control-sm bg-danger text-white'};
-function capturar_status(a,b,c){
+function capturar_status(a,b,c,d){
   var seleccion = document.getElementById(b);
+  console.log(a,b,c,d);
   seleccion.className=''
   var texto = selector[a];
   seleccion.className = selector[a];
-    var  url = 'http://127.0.0.1:8000/logeado/rfl/ordenes/api/v1/actualiza-status-fondos/'+ c + '/' + a;
+    var  url = 'http://127.0.0.1:8000/logeado/rfl/ordenes/api/v1/actualiza-status-fondos/'+ c + '/' + a + '/' + d;
     fetch(url);
     };
   var sls = document.getElementsByTagName('select');
