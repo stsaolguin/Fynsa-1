@@ -19,7 +19,7 @@ urlpatterns = [
     path('ingreso-ordenes-rfi-arreglo', views.rfi_prueba_arreglo, name='#'),
     path('api/v1/<str:isin>', views.security_name_api, name='api_security_name'),
     path('api/v1/actualiza-status/<str:orden_numero>/<str:estado>', views.actualiza_status, name='actualiza_status'),
-    path('api/v1/actualiza-status-fondos/<str:orden_numero_fondo>/<str:estatus>', views.actualiza_status_fondo, name='actualiza_status_fondos'),
+    path('api/v1/actualiza-status-fondos/<str:orden_numero_fondo>/<str:estatus>/<str:tipo>', views.actualiza_status_fondo, name='actualiza_status_fondos'),
     path('api/v1/actualiza-notas-fondos/', views.actualiza_notas_fondo, name='actualiza_notas_fondos'),
     path('listado-ordenes-rfi/papeles', views.busca_papeles, name='buscador_papeles'),
     ]
