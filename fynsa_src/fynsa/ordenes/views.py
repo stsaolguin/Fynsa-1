@@ -243,7 +243,7 @@ def EditarOrden(request,numero):
     return render(request,'ordenes/rfi-ingreso-ordenes.html',context=datos)
 
 def BorrarOrden(request,numero):
-    """ Esta función tiene por objectivo borrar la orden y copiarla a otra tabla, no la borra totalmente, la saca."""
+    """ Pero no está en uso. Esta función tiene por objectivo borrar la orden definitivamente o mandarla a intenciones."""
     q = rfi_tsox.objects.filter(id=numero)
     for r in q.values():
         rfi_tsox_borrado.objects.create(**r)
@@ -287,13 +287,16 @@ class ordenes_borra_orden(DeleteView):
     template_name = 'ordenes/ordenes_borrar_orden_confirmacion.html'
     success_url = reverse_lazy('listado_ordenes')
     def post(self,request,*args,**kwargs):
-        q = rfi_tsox.objects.filter(id=kwargs['pk'])
-        for r in q.values():
-            s = rfi_tsox_borrado.objects.create(**r)
-            if not request.POST.get('notas') == '':
-                notas = request.POST.get('notas')
-                s.notas = notas
-                s.save()
+        print('pase por acá')
+        if request.POST.get('accion') == 'Mover a intención':
+            q = rfi_tsox.objects.filter(id=kwargs['pk'])
+            for r in q.values():
+                s = rfi_tsox_borrado.objects.create(**r)
+                if not request.POST.get('notas') == '':
+                    notas = request.POST.get('notas')
+                    s.notas = notas
+                    s.save()
+            return self.delete(request,*args,**kwargs)
         return self.delete(request,*args,**kwargs)
 
 class ordenes_crea_fondo(CreateView):
