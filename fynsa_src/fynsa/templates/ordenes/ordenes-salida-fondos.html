@@ -73,7 +73,7 @@
                           {% else %}
                               <ul>
                               {% for s in papeles_intenciones_isin %}
-                                <li>{{ s.intencion_pasada_asignada.cliente }} - {{ s.intencion_pasada_asignada.fecha_ingreso }} - {{ s.intencion_pasada_asignada.orden_tipo }} - {{ s.intencion_pasada_asignada.nominales }} - {{ s.intencion_pasada_asignada.precio }}
+                                <li>{{ s.intencion_pasada_asignada.cliente }} - {{ s.intencion_pasada_asignada.isin }} / {{ s.intencion_pasada_asignada.papel }}- {{ s.intencion_pasada_asignada.fecha_ingreso }} - {{ s.intencion_pasada_asignada.orden_tipo }} - {{ s.intencion_pasada_asignada.nominales }} - {{ s.intencion_pasada_asignada.precio }}
                                 <select class="form-control form-control-sm bg-success text-white" data-valor ='{{ s.status_intencion_asignada }}' id="status_intencion_{{ s.id }}" onChange="capturar_status(this.value,this.id,{{ s.id }},'intencion')">
                                     <option class="bg-success text-white" value = "Checking">Checking</option>
                                     <option class="bg-warning text-dark" value = "Not Responding">Not Responding</option>
@@ -117,7 +117,7 @@ function capturar_status(a,b,c,d){
   seleccion.className=''
   var texto = selector[a];
   seleccion.className = selector[a];
-    var  url = 'http://127.0.0.1:8000/logeado/rfl/ordenes/api/v1/actualiza-status-fondos/'+ c + '/' + a + '/' + d;
+    var  url = '/logeado/rfl/ordenes/api/v1/actualiza-status-fondos/'+ c + '/' + a + '/' + d;
     fetch(url);
     };
   var sls = document.getElementsByTagName('select');

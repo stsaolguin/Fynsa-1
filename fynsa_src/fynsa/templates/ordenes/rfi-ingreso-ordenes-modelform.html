@@ -121,14 +121,27 @@ nominales.addEventListener('change',d =>{
      });
 var isin = document.getElementById('id_isin');
 var papel = document.getElementById('id_papel');
+var duracion_selector = document.getElementById('id_duracion');
+var payment_rank_selector = document.getElementById('id_payment_rank');
+var rating_selector = document.getElementById('id_rating');
+var sector_selector = document.getElementById('id_sector');
+var ytm_selector = document.getElementById('id_ytm');
+var ctry_selector = document.getElementById('id_pais');
 isin.addEventListener('change',d =>{
     var nemo = isin.value;
-    var direccion_api = 'http://127.0.0.1:8000/logeado/rfl/ordenes/api/v1/' + nemo;
+    var direccion_api = '/logeado/rfl/ordenes/api/v1/' + nemo;
     fetch(direccion_api)
     .then(res => res.json())
     .then(data => {
+        console.log(data);
     var nemo = data['0'].fields['security_name'];
     papel.value = nemo;
+    duracion_selector.value = data['0'].fields['dur_text'];
+    payment_rank_selector.value = data['0'].fields['payment_rank'];
+    rating_selector.value = data['0'].fields['bb_composite'];
+    sector_selector.value = data['0'].fields['industria'];
+    ytm_selector.value = data['0'].fields['yas_bond_text'];
+    ctry_selector.value = data['0'].fields['cntry_of_risk'];
 })
    
 })
