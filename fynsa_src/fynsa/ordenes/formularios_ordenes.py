@@ -2,9 +2,7 @@ from django.db.models.expressions import F, OrderBy
 from ordenes.models import rfi_tsox,fondo
 from django import forms
 from django.forms import ModelForm, fields
-from django.forms.models import model_to_dict
-from django.forms.widgets import RadioSelect, SelectMultiple
-from RFI.models import PruebaArrayModel,clientes_rfi,rfi_bonos
+from RFI.models import clientes_rfi,rfi_bonos
 from BASES.models import ejecutivos
 import datetime
 from django.core.exceptions import ValidationError
@@ -14,7 +12,7 @@ from django.core.exceptions import ValidationError
 l_sector = [x.industria for x in rfi_bonos.objects.all().distinct('industria')]
 l_paymentRank = [x.payment_rank for x in rfi_bonos.objects.all().distinct('payment_rank')]
 l_cntry = [x.cntry_of_risk for x in rfi_bonos.objects.all().distinct('cntry_of_risk')]
-l_rating = ['AAA','AA+','AA','AA-','A+','A','A-','BBB+','BBB','BBB-','BB+','BB','BB-','B+','B','B-','CCC+','CCC','CCC-','CC','C','D']
+l_rating = ['AAA','AA+','AA','AA-','A+','A','A-','BBB+','BBB','BBB-','BB+','BB','BB-','B+','B','B-','CCC+','CCC','CCC-','CC','C','D','NR']
 l_duracion = ['x<=3','3<x<=5','x>5']
 l_ytm = ['0 a 100','101 a 200','201 a 300','301 a 400','sobre 401']
 
@@ -37,7 +35,7 @@ def listado_cntry():
     listado.insert(0,('Todos','Todos'))
     return listado
 def listado_ratings():
-    listado = [('Todos','Todos'),('AAA','AAA'),('AA+','AA+'),('AA','AA'),('AA-','AA-'),('A+','A+'),('A','A'),('A-','A-'),('BBB+','BBB+'),('BBB','BBB'),('BBB-','BBB-'),('BB+','BB+'),('BB','BB'),('BB-','BB-'),('B+','B+'),('B','B'),('B-','B-'),('CCC+','CCC+'),('CCC','CCC'),('CCC-','CCC-'),('CC','CC'),('C','C'),('D','D')]
+    listado = [('Todos','Todos'),('AAA','AAA'),('AA+','AA+'),('AA','AA'),('AA-','AA-'),('A+','A+'),('A','A'),('A-','A-'),('BBB+','BBB+'),('BBB','BBB'),('BBB-','BBB-'),('BB+','BB+'),('BB','BB'),('BB-','BB-'),('B+','B+'),('B','B'),('B-','B-'),('CCC+','CCC+'),('CCC','CCC'),('CCC-','CCC-'),('CC','CC'),('C','C'),('D','D'),('NR','NR')]
     return listado
     
 def dia_actual():
@@ -109,14 +107,14 @@ class IngresoOrdenesRFIModelForm(ModelForm):
         precio = self.cleaned_data['precio']
         precio = precio.replace(',','.')
         if precio=='':
-            raise ValidationError('Falta el campo precio.')
+            return 0
         else:
             return precio
                     
     def clean_rating(self):
         rating = self.cleaned_data['rating']
         if 'Todos' in rating:
-            return ['AAA','AA+','AA','AA-','A+','A','A-','BBB+','BBB','BBB-','BB+','BB','BB-','B+','B','B-','CCC+','CCC','CCC-','CC','C','D']
+            return ['AAA','AA+','AA','AA-','A+','A','A-','BBB+','BBB','BBB-','BB+','BB','BB-','B+','B','B-','CCC+','CCC','CCC-','CC','C','D','NR']
         else:
             return rating
     def clean_duracion(self):
@@ -164,6 +162,7 @@ class FondoOrdenes(ModelForm):
         self.fields['tamano_fondo'].widget.attrs = {'class':'form-control'}
         self.fields['notas_fondo'].widget.attrs = {'class':'form-control'}
         self.fields['ejecutivo'].widget.attrs = {'class':'form-control'}
+        self.fields['pais_fondo'].widget.attrs = {'class':'form-control'}
 
     
     nombre_fondo = forms.CharField(label="Nombre Fondo")
@@ -175,6 +174,7 @@ class FondoOrdenes(ModelForm):
     trader_fondo = forms.CharField(label='Trader de el fondo (Ellos)',required=False)
     tamano_fondo = forms.CharField(label='Tamaño del fondo (en Millones).',required=False)
     notas_fondo = forms.CharField(required=False)
+    pais_fondo = forms.CharField(required=False)
     ejecutivo = forms.ModelChoiceField(label='Ejecutivo del fondo (Nosotros)',queryset=listado_ejecutivos('RFI'))
 
     #acá habría que poner un metodo para limpiar el tamaño del fondo. Si viene vacío, asume 0.
@@ -191,7 +191,7 @@ class FondoOrdenes(ModelForm):
     def clean_risk_fondo(self):
         rating = self.cleaned_data['risk_fondo']
         if 'Todos' in rating:
-            return ['AAA','AA+','AA','AA-','A+','A','A-','BBB+','BBB','BBB-','BB+','BB','BB-','B+','B','B-','CCC+','CCC','CCC-','CC','C','D']
+            return ['AAA','AA+','AA','AA-','A+','A','A-','BBB+','BBB','BBB-','BB+','BB','BB-','B+','B','B-','CCC+','CCC','CCC-','CC','C','D','NR']
         else:
             return rating
     def clean_duracion_fondo(self):

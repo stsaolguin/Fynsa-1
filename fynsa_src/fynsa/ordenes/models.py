@@ -47,6 +47,7 @@ class fondo(models.Model):
 	cntry_of_risk_fondo = ArrayField(models.CharField(max_length=100),null=True,blank=True)
 	trader_fondo = models.TextField(null=True,blank=True)#trader externo, contraparte
 	tamano_fondo = models.BigIntegerField(null=True,blank=True,default=0)
+	pais_fondo = models.TextField(null=True,blank=True)
 	notas_fondo = models.TextField(null=True,blank=True)
 	ejecutivo = models.ForeignKey(ejecutivos,on_delete=models.CASCADE)
 

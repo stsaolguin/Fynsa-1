@@ -13,6 +13,7 @@ from django.core import serializers
 import ast,time
 from django.urls import reverse_lazy
 from itertools import tee
+from django.db.models import Q
 
 def rfi_ingreso_ordenes(request):
     
@@ -213,11 +214,11 @@ def busca_papeles(request):
             #acá filtramos en las intenciones
             if not intenciones_pasadas_salida.objects.filter(orden_asignada = unico_orden).exists():
                 #traemos las intenciones pasadas que tienen ese isin
-                q = rfi_tsox_borrado.objects.filter(isin = isin)
+                q = rfi_tsox_borrado.objects.filter(Q(isin = isin) | Q(papel__iexact = security_name))
+                #traemos las intenciones pasadas que tienen ese security_name
+                                
                 for r in q:
                     intenciones_pasadas_salida.objects.create(orden_asignada = s, intencion_pasada_asignada = r)
-
-                
                 papeles_intenciones_isin = rfi_tsox_borrado.objects.filter(isin = isin).order_by('-fecha_ingreso')
                 #papeles_intenciones_nemo = rfi_tsox_borrado.objects.filter(papel = security_name).order_by('-fecha_ingreso')
                 
@@ -287,7 +288,6 @@ class ordenes_borra_orden(DeleteView):
     template_name = 'ordenes/ordenes_borrar_orden_confirmacion.html'
     success_url = reverse_lazy('listado_ordenes')
     def post(self,request,*args,**kwargs):
-        print('pase por acá')
         if request.POST.get('accion') == 'Mover a intención':
             q = rfi_tsox.objects.filter(id=kwargs['pk'])
             for r in q.values():
