@@ -5,7 +5,7 @@
 <div class="container">
         <div class="row alert alert-warning d-flex justify-content-center">
               <div class="col-lg-4">
-                      <input type="text" class="form-control my-2" name="filtro" id="filtro" onkeyup="FiltroTabla()" placeholder="Buscar...">
+                      <input type="text" class="form-control my-2" name="filtro" id="filtro" onkeyup="FiltroTabla()" placeholder="Buscar pais o ejecutivo...">
               </div>
         </div>
 
@@ -26,7 +26,7 @@
       {{ o.nombre_fondo }}
       </td>
       <td scope="row">
-      {{ o.pais }}
+      {{ o.pais_fondo }}
       </td>
       <td scope="row">
       {{ o.ejecutivo.ejecutivo }}
@@ -62,9 +62,11 @@ function FiltroTabla() {
   
 for (i = 0; i < tr.length; i++) {
     td = tr[i].getElementsByTagName("td")[2];//cambiando el numero busca por el trader o por el fondo.
-    if (td) {
-      txtValue = td.textContent || td.innerText;
-      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+    td2 = tr[i].getElementsByTagName("td")[1];// filtra el país.
+    if (td || td2) {
+      txtValue = td.textContent || td.innerText || td2.textContent || td2.innerText;
+      txtValue_pais = td2.textContent || td2.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1 || txtValue_pais.toUpperCase().indexOf(filter) > -1) {
         tr[i].style.display = "";
       } else {
         tr[i].style.display = "none";

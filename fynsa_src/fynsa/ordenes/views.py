@@ -192,11 +192,11 @@ def busca_papeles(request):
             s = rfi_tsox.objects.get(pk=unico_orden)
             if not fondo_salida.objects.filter(orden_asignada=unico_orden).exists():
                 q = fondo.objects.filter(
-                    duracion_fondo__contains = duracion_lista,
-                    sector_fondo__contains = sector_lista,
-                    ytm_fondo__contains = ytm_lista,
-                    risk_fondo__contains = rating_lista,
-                    cntry_of_risk_fondo__contains = paises_lista)
+                    duracion_fondo__overlap = duracion_lista,
+                    sector_fondo__overlap = sector_lista,
+                    ytm_fondo__overlap = ytm_lista,
+                    risk_fondo__overlap = rating_lista,
+                    cntry_of_risk_fondo__overlap  = paises_lista)
                 for r in q:                
                     fondo_salida.objects.create(orden_asignada = s,fondo_asignado = r)
 

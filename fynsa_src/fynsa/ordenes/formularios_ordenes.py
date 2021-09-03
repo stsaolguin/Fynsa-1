@@ -225,3 +225,33 @@ class FondoOrdenes(ModelForm):
             return [x.cntry_of_risk for x in rfi_bonos.objects.all().distinct('cntry_of_risk')]
         else:
             return pais
+
+
+class EditorBonos(ModelForm):
+    def __init__(self,*args,**kwargs):
+        super(EditorBonos,self).__init__(*args,**kwargs)
+        self.fields['cusip'].widget.attrs = {'class':'form-control'}
+        self.fields['security_name'].widget.attrs = {'class':'form-control'}
+        self.fields['short_name'].widget.attrs = {'class':'form-control'}
+        self.fields['bb_composite'].widget.attrs = {'class':'form-control'}
+        self.fields['payment_rank'].widget.attrs = {'class':'form-control'}
+        self.fields['cntry_of_risk'].widget.attrs = {'class':'form-control'}
+        self.fields['yas_mod_dur'].widget.attrs = {'class':'form-control'}
+        self.fields['yas_bond_yld'].widget.attrs = {'class':'form-control'}
+        self.fields['classificacion'].widget.attrs = {'class':'form-control'}
+        self.fields['industria'].widget.attrs = {'class':'form-control'}
+        self.fields['ising'].widget.attrs = {'class':'form-control'}
+        self.fields['risk'].widget.attrs = {'class':'form-control'}
+        self.fields['dur_text'].widget.attrs = {'class':'form-control'}
+        self.fields['tasa'].widget.attrs = {'class':'form-control'}
+        self.fields['fecha_subida'].widget.attrs = {'class':'form-control'}
+        self.fields['maturity'].widget.attrs = {'class':'form-control'}
+        self.fields['yas_bond_porcentaje'].widget.attrs = {'class':'form-control'}
+        self.fields['yas_bond_text'].widget.attrs = {'class':'form-control'}
+   
+    class Meta:
+        model = rfi_bonos
+        fields = '__all__'
+
+    cusip = forms.CharField(label = 'Cusip (ojo con los espacios en blanco al final)')
+    duracion_fondo = forms.CharField(label = 'Cusip (ojo con los espacios en blanco al final)')

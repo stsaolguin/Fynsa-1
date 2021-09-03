@@ -1,13 +1,12 @@
 {% include 'index.html' %}
 {% load filtros_extras %}
 {% block contenido %}
-<div class="container">
-<div class="row">
+<div class="container-fluid">
+<div class="row mx-5">
   <h1>T-sox.</h1>
   <hr>
-
 </div>
-<div class="row">
+<div class="row  mx-5">
 <table class="table">
   <thead>
     <tr>
@@ -46,13 +45,25 @@
       </td>
       <td>{{ l.nominales }}</td>
       <td>{{ l.precio }}</td>
-      <td>
-      {% if not l.rating|tiene_todos %} Rating : {{ l.rating }}<br> {% endif %}
-      {% if not l.duracion|tiene_todos:'Toda la curva' %} Duración : {{ l.duracion }}<br> {% endif %}
-      {% if not l.payment_rank|tiene_todos %} Payment rank : {{ l.payment_rank }}<br> {% endif %}
-      {% if not l.ytm|tiene_todos %} Ytm : {{ l.ytm }}<br> {% endif %}
-      {% if not l.pais|tiene_todos %} Pais : {{ l.pais }}<br> {% endif %}
-      {% if not l.sector|tiene_todos %} Sector : {{ l.sector }}<br> {% endif %}
+      <td style = "width:300px;">
+      <p>
+          <button class="btn btn-success" type="button" data-toggle="collapse" data-target="#collapseExample_{{ l.id }}" aria-expanded="false" aria-controls="collapseExample_{{ l.id }}">
+           características
+          </button>
+        </p>
+
+        <div class="collapse" id="collapseExample_{{ l.id }}">
+          <div class="card card-body">
+                {% if not l.rating|tiene_todos %} Rating : {{ l.rating }}<br> {% endif %}
+                {% if not l.duracion|tiene_todos:'Toda la curva' %} Duración : {{ l.duracion }}<br> {% endif %}
+                {% if not l.payment_rank|tiene_todos %} Payment rank : {{ l.payment_rank }}<br> {% endif %}
+                {% if not l.ytm|tiene_todos %} Ytm : {{ l.ytm }}<br> {% endif %}
+                {% if not l.pais|tiene_todos %} Pais : {{ l.pais }}<br> {% endif %}
+                {% if not l.sector|tiene_todos %} Sector : {{ l.sector }}<br> {% endif %}
+          </div>
+      </div>
+      
+
       </td>
       <td>{{ l.notas }}</td>
       <td style="width: 14%">
@@ -85,9 +96,6 @@
               <input type="submit" class="btn btn-primary btn-sm" name="papeles" value="papeles">
               <input type="submit" class="btn btn-info btn-sm mt-1" name="fondos" value="fondos">
           </form>
-      
-      
-
       </td>
     </tr>
      {% endfor %}
@@ -129,7 +137,7 @@ function capturar(e,f,g){
   };
   };
   
-    url = 'http://127.0.0.1:8000/logeado/rfl/ordenes/api/v1/actualiza-status/'+f+'/'+e;
+    url = '/logeado/rfl/ordenes/api/v1/actualiza-status/'+f+'/'+e;
     fetch(url);
 
 };//fin de capturar, no borrar
