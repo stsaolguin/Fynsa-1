@@ -120,7 +120,7 @@ def conciliaciones_views(request):
     fecha_inicial=request.GET.get('fecha_inicial')
     fecha_final=request.GET.get('fecha_final')
 
-    conciliaciones = bases.objects.raw(''' select 1 as linea,fecha,otc_tr,nemo,monto,tipo_de_pago,buy,seller,trader_buy,trader_seller,
+    conciliaciones = bases.objects.raw(''' select 1 as linea,fecha,otc_tr,nemo,monto,tipo_de_pago,buy,seller,trader_buy,trader_seller,tasa,
 sum(
 	CASE WHEN buy ilike %s THEN
 	fee_buyer_clp
@@ -136,7 +136,7 @@ sum(
 	END)as fe_seller_clp
 from "BASES_bases"
 where (buy ilike %s or seller ilike %s) AND (fee_seller_clp<>0 or fee_buyer_clp<>0) and fecha between %s and %s
-group by fecha,otc_tr,nemo,monto,tipo_de_pago,buy,seller,trader_buy,trader_seller
+group by fecha,otc_tr,nemo,monto,tipo_de_pago,buy,seller,trader_buy,trader_seller,tasa
 order by fecha asc;''',[cliente,cliente,cliente,cliente,fecha_inicial,fecha_final])
     
     salida=[]

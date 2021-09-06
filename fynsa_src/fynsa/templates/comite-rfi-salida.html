@@ -149,7 +149,7 @@ function rfi_generacion() {
         var row = tabla.getSelection()[0].row;
         var cli = data.getValue(row,2);
         // alert(cli);
-        window.open('http://127.0.0.1:8000/logeado/rfi/comite-rfi/proceso/'+ cli);
+        window.open('/logeado/rfi/comite-rfi/proceso/'+ cli);
         
       });
     };
@@ -477,7 +477,10 @@ function rfi_generacion() {
           height:600,
           legend:{position:'bottom'},
           chartArea:{left:'20%',top:80,width:'80%',height:'75%'},
-          colors:['#A9DDB1','#A9DDB1','#A9DDB1','#A9DDB1','#A9DDB1','#A9DDB1','#595AA2','#F88383'],        
+          colors:['#A9DDB1','#A9DDB1','#A9DDB1','#A9DDB1','#A9DDB1','#A9DDB1','#595AA2','#F88383'],
+          vAxis : {viewWindow : {max : 350000}},
+          explorer : { actions :  ['dragToZoom', 'rightClickToReset']},
+          
           
           
       };
