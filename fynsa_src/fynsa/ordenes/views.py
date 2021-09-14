@@ -6,7 +6,7 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.http.response import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
-from ordenes.formularios_ordenes import AgregaClientes,IngresoOrdenesRFIModelForm,lista_sector,listado_cntry,FondoOrdenes
+from ordenes.formularios_ordenes import AgregaClientes,IngresoOrdenesRFIModelForm,lista_sector,listado_cntry,FondoOrdenes,BuscadorEditorBonosForm,EditorBonos
 from RFI.models import rfi_bonos,clientes_rfi
 from ordenes.models import fondo, holders_salida, rfi_tsox, rfi_tsox_borrado,fondo,fondo_salida,carteras_bbg,intenciones_pasadas_salida
 from django.core import serializers
@@ -14,6 +14,8 @@ import ast,time
 from django.urls import reverse_lazy
 from itertools import tee
 from django.db.models import Q
+
+
 
 def rfi_ingreso_ordenes(request):
     
@@ -288,15 +290,25 @@ class ordenes_borra_orden(DeleteView):
     template_name = 'ordenes/ordenes_borrar_orden_confirmacion.html'
     success_url = reverse_lazy('listado_ordenes')
     def post(self,request,*args,**kwargs):
-        if request.POST.get('accion') == 'Mover a intención':
+        if request.POST.get('accion') == 'Intención operado Fynsa':
             q = rfi_tsox.objects.filter(id=kwargs['pk'])
             for r in q.values():
                 s = rfi_tsox_borrado.objects.create(**r)
                 if not request.POST.get('notas') == '':
                     notas = request.POST.get('notas')
                     s.notas = notas
+                    s.status = 'operado Fynsa'
                     s.save()
             return self.delete(request,*args,**kwargs)
+        elif request.POST.get('accion') == 'Intención operado Away':
+            q = rfi_tsox.objects.filter(id=kwargs['pk'])
+            for r in q.values():
+                s = rfi_tsox_borrado.objects.create(**r)
+                if not request.POST.get('notas') == '':
+                    notas = request.POST.get('notas')
+                    s.notas = notas
+                    s.status = 'operado Away'
+                    s.save()
         return self.delete(request,*args,**kwargs)
 
 class ordenes_crea_fondo(CreateView):
@@ -339,3 +351,46 @@ def my_handler(sender, **kwargs):
         for r in q:
             fondo_salida.objects.create(orden_asignada = s,fondo_asignado=r)
                
+from BASES.formularios_bases import cargador_bases_form2
+def prueba_lectura_carpeta(request):
+    f = cargador_bases_form2()
+    if request.method =='POST':
+        f = cargador_bases_form2(request.POST,request.FILES)
+        archivos = request.FILES.getlist('ruta')
+        if f.is_valid():
+            for archivo in archivos:
+                if archivo.name[0]=='V':
+                    print(archivo.name)
+                    #for r in archivo.readlines():
+                        #print(r)
+                                
+            return HttpResponse(f)
+    return render(request,'ordenes/pruebas-lectura-carpeta.html',context={'formulario':f })
+
+
+def buscador_intenciones(request):
+    return render(request,'ordenes/ordenes-buscador-intenciones.html',context={})
+
+
+def buscador_bonos(request):
+    f = BuscadorEditorBonosForm()
+    return render(request,'ordenes/ordenes-buscador-bonos.html',context={'formulario':f})
+
+def ordenes_updatea_bono(request):
+    if request.method == 'POST':
+        isin = request.POST.get('isin_security_name')
+        f = BuscadorEditorBonosForm(request.POST)
+        if f.is_valid():
+            q = rfi_bonos.objects.get(ising = isin)
+            formulario_bono = EditorBonos(instance=q)
+            return render(request,'ordenes/ordenes-crea-edita-bono.html',context={'form':formulario_bono})
+        else:
+            return HttpResponse('formulario no valido')
+            
+
+
+           
+    
+
+
+

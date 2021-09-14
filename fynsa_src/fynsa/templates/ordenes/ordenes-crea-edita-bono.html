@@ -1,0 +1,73 @@
+{% include 'index.html' %}
+
+{% block contenido %}
+
+<div class="container-fluid">
+<form method=='POST'>{% csrf_token %}
+
+{{ form.cusip.label }}
+{{ form.cusip }}
+{{ form.cusip.errors }}
+
+{{ form.security_name.label }}
+{{ form.security_name }}
+{{ form.security_name.errors }}
+
+{{ form.short_name.label }}
+{{ form.short_name }}
+{{ form.short_name.errors }}
+
+{{ form.bb_composite.label }}
+{{ form.bb_composite }}
+{{ form.bb_composite.errors }}
+
+{{ form.payment_rank.label }}
+{{ form.payment_rank }}
+{{ form.payment_rank.errors }}
+
+{{ form.cntry_of_risk.label }}
+{{ form.cntry_of_risk }}
+{{ form.cntry_of_risk.errors }}
+
+{{ form.yas_mod_dur.label }}
+{{ form.yas_mod_dur }}
+{{ form.yas_mod_dur.errors }}
+
+{{ form.yas_bond_yld.label }}
+{{ form.yas_bond_yld }}
+{{ form.yas_bond_yld.errors }}
+
+{{ form.classificacion.label }}
+{{ form.classificacion }}
+{{ form.classificacion.errors }}
+
+{{ form.industria.label }}
+{{ form.industria }}
+{{ form.industria.errors }}
+
+{{ form.ising.label }}
+{{ form.ising }}
+{{ form.ising.errors }}
+{{ form.risk.label }}
+{{ form.risk }}
+{{ form.risk.errors }}
+{{ form.dur_text.label }}
+{{ form.dur_text }}
+{{ form.dur_text.errors }}
+{{ form.tasa.label }}
+{{ form.tasa }}
+{{ form.tasa.errors }}
+{{ form.maturity.label }}
+{{ form.maturity }}
+{{ form.maturity.errors }}
+{{ form.yas_bond_porcentaje.label }}
+{{ form.yas_bond_porcentaje }}
+{{ form.yas_bond_porcentaje.errors }}
+{{ form.yas_bond_text.label }}
+{{ form.yas_bond_text }}
+{{ form.yas_bond_text.errors }}
+
+</form>
+</div>
+
+{% endblock contenido %}

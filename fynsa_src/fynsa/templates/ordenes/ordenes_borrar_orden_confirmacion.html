@@ -3,10 +3,11 @@
 {% block contenido %}
 <div class="container">
 <form method="post">{% csrf_token %}
-    <h3>Porqué quieres borrar la orden número "{{ object.id }}"?</h3>
+    <h3>¿Porqué quieres borrar la orden número "{{ object.id }}"?</h3>
     <textarea rows="3" type="text" class="form-control mb-3" name="notas"></textarea>
-    <input type="submit" name = "accion" value="Mover a intención" class="btn btn-warning mx-1">
-    <input type="submit" name = "accion" value="eliminar definitivamente" class="btn btn-danger mx-1">
+    <input type="submit" name = "accion" value="Intención operado Fynsa" class="btn btn-warning mx-1">
+    <input type="submit" name = "accion" value="Intención operado Away" class="btn btn-warning mx-1">
+    <input type="submit" name = "accion" value="Eliminar definitivamente" class="btn btn-danger mx-1">
     <a href="{% url 'listado_ordenes' %}" class="btn btn-secondary mx-1">Cancelar</a>
 </form>
 </div>

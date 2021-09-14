@@ -7,12 +7,17 @@
 
         <form method="post">{% csrf_token %}
         <div class="row">
-            <div class="col-lg-7">
+            <div class="col-lg-6">
                 {{ form.nombre_fondo.label }}
                 {{ form.nombre_fondo }}
                 {{ form.nombre_fondo.errors }}
             </div>
-            <div class="col-lg-5">
+            <div class="col-lg-3">
+                {{ form.ticker_fondo.label }}
+                {{ form.ticker_fondo }}
+                {{ form.ticker_fondo.errors }}
+            </div>
+            <div class="col-lg-3">
                 {{ form.pais_fondo.label }}
                 {{ form.pais_fondo }}
                 {{ form.pais_fondo.errors }}
@@ -32,11 +37,17 @@
 
 </div>
 <div class="row">
-    <div class="col-lg-12">
+    <div class="col-lg-6">
         {{ form.tamano_fondo.label }}
         {{ form.tamano_fondo }}
         {{ form.tamano_fondo.errors }}
     </div>
+    <div class="col-lg-6">
+        {{ form.email_fondo.label }}
+        {{ form.email_fondo }}
+        {{ form.email_fondo.errors }}
+    </div>
+    
 </div>
 <div class="row">
 <div class="col-lg-3">

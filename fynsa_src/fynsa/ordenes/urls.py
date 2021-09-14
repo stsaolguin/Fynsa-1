@@ -22,4 +22,8 @@ urlpatterns = [
     path('api/v1/actualiza-status-fondos/<str:orden_numero_fondo>/<str:estatus>/<str:tipo>', views.actualiza_status_fondo, name='actualiza_status_fondos'),
     path('api/v1/actualiza-notas-fondos/', views.actualiza_notas_fondo, name='actualiza_notas_fondos'),
     path('listado-ordenes-rfi/papeles', views.busca_papeles, name='buscador_papeles'),
+    path('prueba-lectura-carpeta', views.prueba_lectura_carpeta, name='prueba_lectura_carpeta'), #esta es una prueba de lectura de carpetas
+    path('buscador-bonos', views.buscador_bonos, name='ordenes_buscador_bonos'), #esta es una prueba de lectura de carpetas
+    path('editor-bonos', views.ordenes_updatea_bono, name='editor_bonos'), 
+    path('buscador-intenciones', views.buscador_intenciones, name='ordenes_buscador_intenciones'), #esta es una prueba de lectura de carpetas
     ]

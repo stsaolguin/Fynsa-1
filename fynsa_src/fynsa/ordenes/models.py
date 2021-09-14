@@ -50,6 +50,9 @@ class fondo(models.Model):
 	pais_fondo = models.TextField(null=True,blank=True)
 	notas_fondo = models.TextField(null=True,blank=True)
 	ejecutivo = models.ForeignKey(ejecutivos,on_delete=models.CASCADE)
+	email_fondo = models.TextField(null=True,blank=True)
+	ticker_fondo = models.TextField(null=True,blank=True)
+	
 
 class fondo_salida(models.Model):
 	orden_asignada = models.ForeignKey(rfi_tsox,on_delete=models.CASCADE)

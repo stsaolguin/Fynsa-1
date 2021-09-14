@@ -42,7 +42,6 @@ def dia_actual():
     return datetime.date.today()
 
 def listado_ejecutivos(mesa):
-    #listado = [(x.ejecutivo,x.ejecutivo) for x in ejecutivos.objects.filter(mesa=mesa).order_by('ejecutivo')]
     return ejecutivos.objects.filter(mesa=mesa).order_by('ejecutivo')
 
 class AgregaClientes(ModelForm):
@@ -75,11 +74,12 @@ class IngresoOrdenesRFIModelForm(ModelForm):
         self.fields['cliente'].widget.attrs = {'class':'form-control'}
         self.fields['isin'].widget.attrs = {'class':'form-control'}
         self.fields['cliente'].choices = [(x.nombre_fondo,x.nombre_fondo) for x in fondo.objects.all().order_by('nombre_fondo')]
+        self.fields['isin'].choices = listado_isin()
         
     cliente = forms.ChoiceField()
     fecha_ingreso = forms.DateField(widget=forms.DateInput(format='%Y-%m-%d',attrs={'class':'form-control','type':'date'}),initial = dia_actual())
     orden_tipo = forms.ChoiceField(choices = [('cliente compra','cliente compra'),('cliente vende','cliente vende')])
-    isin = forms.ChoiceField(choices=listado_isin(),required=False)
+    isin = forms.ChoiceField(required=False)
     papel = forms.CharField(required=False)
     rating = forms.MultipleChoiceField(choices = listado_ratings(),initial='Todos',required=False)
     duracion = forms.MultipleChoiceField(choices=[('Toda la curva','Toda la curva'),('x<=3','x<=3'),('3<x<=5','3<x<=5'),('x>5','x>5')],initial='Toda la curva',required=False)
@@ -162,7 +162,9 @@ class FondoOrdenes(ModelForm):
         self.fields['tamano_fondo'].widget.attrs = {'class':'form-control'}
         self.fields['notas_fondo'].widget.attrs = {'class':'form-control'}
         self.fields['ejecutivo'].widget.attrs = {'class':'form-control'}
-        self.fields['pais_fondo'].widget.attrs = {'class':'form-control'}
+        self.fields['pais_fondo'].widget.attrs = {'class':'form-control','placeholder':'Nomenclatura Bloomberg'}
+        self.fields['ticker_fondo'].widget.attrs = {'class':'form-control','placeholder':'ej.- CCLACDI Equity'}
+        self.fields['email_fondo'].widget.attrs = {'class':'form-control','placeholder':'algo@ejemplo.com'}
 
     
     nombre_fondo = forms.CharField(label="Nombre Fondo")
@@ -171,10 +173,12 @@ class FondoOrdenes(ModelForm):
     ytm_fondo = forms.MultipleChoiceField(choices=[('Todos','Todos'),('0 a 100','0 a 100'),('101 a 200','101 a 200'),('201 a 300','201 a 300'),('301 a 400','301 a 400'),('sobre 401','sobre 401')],initial='Todos',required=False)
     risk_fondo = forms.MultipleChoiceField(choices =listado_ratings(),initial='Todos',required=False)
     cntry_of_risk_fondo = forms.MultipleChoiceField(choices = listado_cntry(),initial='Todos',required=False) 
-    trader_fondo = forms.CharField(label='Trader de el fondo (Ellos)',required=False)
+    trader_fondo = forms.CharField(label='Trader del fondo (Ellos)',required=False)
     tamano_fondo = forms.CharField(label='Tamaño del fondo (en Millones).',required=False)
     notas_fondo = forms.CharField(required=False)
     pais_fondo = forms.CharField(required=False)
+    ticker_fondo = forms.CharField(required=False)
+    email_fondo = forms.CharField(required=False)
     ejecutivo = forms.ModelChoiceField(label='Ejecutivo del fondo (Nosotros)',queryset=listado_ejecutivos('RFI'))
 
     #acá habría que poner un metodo para limpiar el tamaño del fondo. Si viene vacío, asume 0.
@@ -238,7 +242,7 @@ class EditorBonos(ModelForm):
         self.fields['cntry_of_risk'].widget.attrs = {'class':'form-control'}
         self.fields['yas_mod_dur'].widget.attrs = {'class':'form-control'}
         self.fields['yas_bond_yld'].widget.attrs = {'class':'form-control'}
-        self.fields['classificacion'].widget.attrs = {'class':'form-control'}
+        self.fields['classification'].widget.attrs = {'class':'form-control'}
         self.fields['industria'].widget.attrs = {'class':'form-control'}
         self.fields['ising'].widget.attrs = {'class':'form-control'}
         self.fields['risk'].widget.attrs = {'class':'form-control'}
@@ -254,4 +258,19 @@ class EditorBonos(ModelForm):
         fields = '__all__'
 
     cusip = forms.CharField(label = 'Cusip (ojo con los espacios en blanco al final)')
-    duracion_fondo = forms.CharField(label = 'Cusip (ojo con los espacios en blanco al final)')
+    bb_composite = forms.ChoiceField(required=False,choices=listado_ratings)
+    payment_rank = forms.ChoiceField(required=False,choices=lista_paymentRank())
+    cntry_of_risk = forms.ChoiceField(required=False,choices=listado_cntry())
+    industria = forms.ChoiceField(required=False,choices=lista_sector())
+    dur_text = forms.ChoiceField(required=False,choices=[('x<=3','x<=3'),('3<x<=5','3<x<=5'),('x>5','x>5')])
+    yas_bond_text = forms.ChoiceField(required=False,choices=[('0 a 100','0 a 100'),('101 a 200','101 a 200'),('201 a 300','201 a 300'),('301 a 400','301 a 400'),('sobre 401','sobre 401')])
+    
+
+class BuscadorEditorBonosForm(forms.Form):
+    def __init__(self,*args, **kwargs):
+        super(BuscadorEditorBonosForm,self).__init__(*args, **kwargs)
+        self.fields['isin_security_name'].choices = [(x.ising,x.ising) for x in rfi_bonos.objects.all().order_by('ising')]
+       
+    isin_security_name = forms.CharField()
+    isin_security_name.widget.attrs = {'class':'form-control'}
+    

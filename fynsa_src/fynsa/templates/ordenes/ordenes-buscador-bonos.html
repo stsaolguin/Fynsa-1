@@ -1,0 +1,29 @@
+{% include 'index.html' %}
+
+{% block contenido %}
+<div class="container-fluid">
+        <h1>EDITOR BONOS</h1>
+        <p>Si el bono no aparece, hay que agregarlo en el botón "agregar bono"</p>
+    <div class="row">
+        <div class="col-lg-6">
+        <form method="POST" action="{% url 'editor_bonos' %}">{% csrf_token %}
+            <label for="{{ formulario.isin_security_name.id_for_label }}">Isin:</label>
+            <input type="text" list="isin" id="id_isin" name ="isin_security_name" class = "form-control" value="{{ formulario.isin_security_name.value | default_if_none:'' }}">
+            {{ formulario.isin_security_name.errors }}
+                <datalist id="isin">
+                {% for r,s in formulario.isin_security_name.field.choices %}
+                    <option value="{{ r }}">
+                {% endfor %}
+                </datalist>
+
+        </div>
+        <div class="col-lg-3">
+        <input type="submit" class="btn btn-primary" name="botón" value="Editor">
+        </div>
+        <div class="col-lg-3">
+        <input type="submit" class="btn btn-warning" name="botón" value="Agregar Bono">
+        </div>
+    </div>
+    </form>
+        
+{% endblock %}

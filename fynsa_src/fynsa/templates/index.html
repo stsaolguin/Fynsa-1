@@ -53,8 +53,8 @@
                                                                                 {% comment %} <a class="nav-link" href="{% url 'crear_clientes_rfi' %}">Cliente Nuevo</a> {% endcomment %}
                                                                                 <a class="nav-link" href="{% url 'crear_fondo' %}">Fondo Nuevo</a>
                                                                                 <a class="nav-link" href="{% url 'listar_fondo' %}">Lista Fondos</a>
-                                                                                <a class="nav-link" href="#">Intenciones</a>
-                                                                                <a class="nav-link" href="#">Bonos</a>
+                                                                                <a class="nav-link" href="{% url 'ordenes_buscador_intenciones' %}">Buscador Intenciones</a>
+                                                                                <a class="nav-link" href="{% url 'ordenes_buscador_bonos' %}">Editor Bonos</a>
                                                                 </div>
                                                 </li>
                                                 {% endif%}
