@@ -79,7 +79,7 @@
             </select>
       </td>
       <td>
-      <a href="{% url 'editar_ordenes'  l.id  %}">Editar</a>
+      {% comment %} <a href="{% url 'editar_ordenes'  l.id  %}">Editar</a> {% endcomment %}
       <a href="{% url 'borrar_ordenes' l.id %}" class="text-danger">Borrar</a>
         <form action="{% url 'buscador_papeles' %}" method="POST" target="_blank">
              {% csrf_token %}

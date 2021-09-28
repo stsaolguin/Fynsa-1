@@ -25,5 +25,6 @@ urlpatterns = [
     path('prueba-lectura-carpeta', views.prueba_lectura_carpeta, name='prueba_lectura_carpeta'), #esta es una prueba de lectura de carpetas
     path('buscador-bonos', views.buscador_bonos, name='ordenes_buscador_bonos'), #esta es una prueba de lectura de carpetas
     path('editor-bonos', views.ordenes_updatea_bono, name='editor_bonos'), 
+    path('graba-bonos', views.ordenes_graba_bono, name='graba_bonos'), 
     path('buscador-intenciones', views.buscador_intenciones, name='ordenes_buscador_intenciones'), #esta es una prueba de lectura de carpetas
     ]

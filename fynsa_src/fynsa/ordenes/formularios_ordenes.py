@@ -106,7 +106,7 @@ class IngresoOrdenesRFIModelForm(ModelForm):
     def clean_precio(self):
         precio = self.cleaned_data['precio']
         precio = precio.replace(',','.')
-        if precio=='':
+        if precio == '':
             return 0
         else:
             return precio
@@ -236,36 +236,40 @@ class EditorBonos(ModelForm):
         super(EditorBonos,self).__init__(*args,**kwargs)
         self.fields['cusip'].widget.attrs = {'class':'form-control'}
         self.fields['security_name'].widget.attrs = {'class':'form-control'}
-        self.fields['short_name'].widget.attrs = {'class':'form-control'}
         self.fields['bb_composite'].widget.attrs = {'class':'form-control'}
         self.fields['payment_rank'].widget.attrs = {'class':'form-control'}
         self.fields['cntry_of_risk'].widget.attrs = {'class':'form-control'}
-        self.fields['yas_mod_dur'].widget.attrs = {'class':'form-control'}
-        self.fields['yas_bond_yld'].widget.attrs = {'class':'form-control'}
-        self.fields['classification'].widget.attrs = {'class':'form-control'}
+        self.fields['yas_mod_dur'].widget.attrs = {'class':'form-control','placeholder':'0.00'}
+        self.fields['yas_bond_yld'].widget.attrs = {'class':'form-control','placeholder':'0.00'}
         self.fields['industria'].widget.attrs = {'class':'form-control'}
         self.fields['ising'].widget.attrs = {'class':'form-control'}
-        self.fields['risk'].widget.attrs = {'class':'form-control'}
-        self.fields['dur_text'].widget.attrs = {'class':'form-control'}
-        self.fields['tasa'].widget.attrs = {'class':'form-control'}
-        self.fields['fecha_subida'].widget.attrs = {'class':'form-control'}
-        self.fields['maturity'].widget.attrs = {'class':'form-control'}
-        self.fields['yas_bond_porcentaje'].widget.attrs = {'class':'form-control'}
-        self.fields['yas_bond_text'].widget.attrs = {'class':'form-control'}
+        
    
     class Meta:
         model = rfi_bonos
-        fields = '__all__'
+        fields = ['security_name','ising','bb_composite','payment_rank','cntry_of_risk','industria','yas_bond_yld','yas_mod_dur']
+        
+        
+    security_name = forms.CharField(label = "Security Name del bono (*): ",required=True)
+    cusip = forms.CharField(label = "Cusip del bono (*): ",required=True)
+    ising = forms.CharField(label = 'Isin (*): ')
+    bb_composite = forms.ChoiceField(label = "BB composite del bono (*): ",required=True,choices=listado_ratings)
+    payment_rank = forms.ChoiceField(label = "Payment Rank del bono (*): ",required=True,choices=lista_paymentRank())
+    cntry_of_risk = forms.ChoiceField(label = "Country of Risk del bono (*): ",required=True,choices=listado_cntry())
+    industria = forms.ChoiceField(label = "Industria del bono (*): ",required=True,choices=lista_sector())
+    yas_bond_yld = forms.CharField(label = "YTM del bono (*): ",required=True) #esta hay que multiplicarla por 100 -> yas_bond_porcentaje -> yas_bond_text
+    yas_mod_dur = forms.CharField(label = "Duración del bono (*): ",required=True)
 
-    cusip = forms.CharField(label = 'Cusip (ojo con los espacios en blanco al final)')
-    bb_composite = forms.ChoiceField(required=False,choices=listado_ratings)
-    payment_rank = forms.ChoiceField(required=False,choices=lista_paymentRank())
-    cntry_of_risk = forms.ChoiceField(required=False,choices=listado_cntry())
-    industria = forms.ChoiceField(required=False,choices=lista_sector())
-    dur_text = forms.ChoiceField(required=False,choices=[('x<=3','x<=3'),('3<x<=5','3<x<=5'),('x>5','x>5')])
-    yas_bond_text = forms.ChoiceField(required=False,choices=[('0 a 100','0 a 100'),('101 a 200','101 a 200'),('201 a 300','201 a 300'),('301 a 400','301 a 400'),('sobre 401','sobre 401')])
-    
+    def clean_yas_bond_yld(self):
+        yas_bond_yld = self.cleaned_data['yas_bond_yld']
+        yas_bond_yld_listo = yas_bond_yld.replace(',','.')
+        return yas_bond_yld_listo
+    def clean_yas_mod_dur(self):
+        yas_mod_dur = self.cleaned_data['yas_mod_dur']
+        yas_mod_dur_listo = yas_mod_dur.replace(',','.')
+        return yas_mod_dur_listo
 
+        
 class BuscadorEditorBonosForm(forms.Form):
     def __init__(self,*args, **kwargs):
         super(BuscadorEditorBonosForm,self).__init__(*args, **kwargs)

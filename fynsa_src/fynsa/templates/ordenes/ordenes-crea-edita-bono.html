@@ -2,71 +2,75 @@
 
 {% block contenido %}
 
-<div class="container-fluid">
-<form method=='POST'>{% csrf_token %}
+<div class="container">
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
 
-{{ form.cusip.label }}
-{{ form.cusip }}
-{{ form.cusip.errors }}
 
-{{ form.security_name.label }}
-{{ form.security_name }}
-{{ form.security_name.errors }}
+<form method='POST' action={% url 'graba_bonos' %}>{% csrf_token %}
+<input type="submit" value='Guardar' class='btn btn-success'>
 
-{{ form.short_name.label }}
-{{ form.short_name }}
-{{ form.short_name.errors }}
+<div class="row">
+    <div class="col-lg-4">
+        {{ form.ising.label }}
+        {{ form.ising }}
+        {{ form.ising.errors }}
+    </div>
 
-{{ form.bb_composite.label }}
-{{ form.bb_composite }}
-{{ form.bb_composite.errors }}
+    <div class="col-lg-4">
+        {{ form.cusip.label }}
+        {{ form.cusip }}
+        {{ form.cusip.errors }}
+    </div>
 
-{{ form.payment_rank.label }}
-{{ form.payment_rank }}
-{{ form.payment_rank.errors }}
+    <div class="col-lg-4">
+        {{ form.security_name.label }}
+        {{ form.security_name }}
+        {{ form.security_name.errors }}
+    </div>
+</div>
 
-{{ form.cntry_of_risk.label }}
-{{ form.cntry_of_risk }}
-{{ form.cntry_of_risk.errors }}
+<div class="row">
+    <div class="col-lg-4">
+        {{ form.bb_composite.label }}
+        {{ form.bb_composite }}
+        {{ form.bb_composite.errors }}
+    </div>
 
-{{ form.yas_mod_dur.label }}
-{{ form.yas_mod_dur }}
-{{ form.yas_mod_dur.errors }}
+    <div class="col-lg-4">
+        {{ form.payment_rank.label }}
+        {{ form.payment_rank }}
+        {{ form.payment_rank.errors }}
+    </div>
 
-{{ form.yas_bond_yld.label }}
-{{ form.yas_bond_yld }}
-{{ form.yas_bond_yld.errors }}
-
-{{ form.classificacion.label }}
-{{ form.classificacion }}
-{{ form.classificacion.errors }}
-
-{{ form.industria.label }}
-{{ form.industria }}
-{{ form.industria.errors }}
-
-{{ form.ising.label }}
-{{ form.ising }}
-{{ form.ising.errors }}
-{{ form.risk.label }}
-{{ form.risk }}
-{{ form.risk.errors }}
-{{ form.dur_text.label }}
-{{ form.dur_text }}
-{{ form.dur_text.errors }}
-{{ form.tasa.label }}
-{{ form.tasa }}
-{{ form.tasa.errors }}
-{{ form.maturity.label }}
-{{ form.maturity }}
-{{ form.maturity.errors }}
-{{ form.yas_bond_porcentaje.label }}
-{{ form.yas_bond_porcentaje }}
-{{ form.yas_bond_porcentaje.errors }}
-{{ form.yas_bond_text.label }}
-{{ form.yas_bond_text }}
-{{ form.yas_bond_text.errors }}
-
+    <div class="col-lg-4">
+        {{ form.cntry_of_risk.label }}
+        {{ form.cntry_of_risk }}
+        {{ form.cntry_of_risk.errors }}    
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-4">
+    {{ form.yas_mod_dur.label }}
+    {{ form.yas_mod_dur }}
+    {{ form.yas_mod_dur.errors }}
+    </div>
+    <div class="col-lg-4">
+    {{ form.yas_bond_yld.label }}
+    {{ form.yas_bond_yld }}
+    {{ form.yas_bond_yld.errors }}
+    </div>
+    <div class="col-lg-4">
+    {{ form.industria.label }}
+    {{ form.industria }}
+    {{ form.industria.errors }}
+    </div>
+</div>
 </form>
 </div>
 

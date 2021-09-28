@@ -343,6 +343,7 @@ from ordenes.models import rfi_tsox
 
 @receiver(post_save, sender=rfi_tsox)
 def my_handler(sender, **kwargs):
+    #esta función estaba probando las signasl de Dajngo. Se puede borrar luego
     j = kwargs['instance']    
     if fondo_salida.objects.filter(orden_asignada=j.id).exists():
         fondo_salida.objects.filter(orden_asignada=j.id).delete()
@@ -377,15 +378,37 @@ def buscador_bonos(request):
     return render(request,'ordenes/ordenes-buscador-bonos.html',context={'formulario':f})
 
 def ordenes_updatea_bono(request):
-    if request.method == 'POST':
+    if request.method == 'POST' and request.POST.get('botón')=='Editor':
         isin = request.POST.get('isin_security_name')
         f = BuscadorEditorBonosForm(request.POST)
         if f.is_valid():
             q = rfi_bonos.objects.get(ising = isin)
             formulario_bono = EditorBonos(instance=q)
             return render(request,'ordenes/ordenes-crea-edita-bono.html',context={'form':formulario_bono})
-        else:
-            return HttpResponse('formulario no valido')
+    elif request.method == 'POST' and request.POST.get('botón')=='Agregar Bono':
+        formulario_bono = EditorBonos()
+        return render(request,'ordenes/ordenes-crea-edita-bono.html',context={'form':formulario_bono})
+
+#from django.contrib import messages
+def ordenes_graba_bono(request):
+    if request.method == 'POST':
+        print(request.POST)
+        isin = request.POST.get('ising')
+        f = EditorBonos(request.POST)
+        datos_bono_2 = request.POST.copy()
+        datos_bono_2.pop('csrfmiddlewaretoken')
+        datos_bono = datos_bono_2.dict() #los querydict dan problemas, hay que pasarlos a diccionario python
+        if f.is_valid():
+            try:
+                obj = rfi_bonos.objects.get(ising=isin)
+                for key, value in datos_bono.items():
+                    setattr(obj,key,value)
+                obj.save()
+            except rfi_bonos.DoesNotExist:
+                obj = rfi_bonos(**datos_bono)
+                obj.save()
+    return render(request,'ordenes/ordenes-agregar-exitoso.html',context={})
+
             
 
 
