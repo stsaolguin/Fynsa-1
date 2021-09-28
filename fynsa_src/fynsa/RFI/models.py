@@ -96,79 +96,37 @@ class rfi_bonos(models.Model):
         return self.short_name
         
     def save(self,*args, **kwargs):
-        categorias = {
-        'Food and Beverage':'Retail',
-        'Midstream':'O&G',
-        'Independent':'O&G',
-        'Natural Gas':'O&G',
-        'Papper' : 'Pulpa y Papel',
-        'Airlines' : 'Aerolineas',
-        'Aerospace/Defense' : 'Aerolineas',
-        'Banking':'Banco y Financieras',
-        'Brokerage Assetmanagers Exchanges':'Banco y Financieras',
-        'Other Financial':'Banco y Financieras',
-        'Finance Companies':'Banco y Financieras',
-        'Government Owned, No Guarantee':'Quasisov',
-        'Goverment Sponsored':'QuasiSov',
-        'Electric' : 'Utilities',
-        'Local Authority' : 'Utilities',
-        'Wireless' : 'Telecom',
-        'Wirelines' : 'Telecom',
-        'Media Entertainment' : 'Telecom',
-        'Cable Satellite' : 'Telecom',
-        'Railroads' : 'Transporte',
-        'Transportation Services' : 'Transporte',
-        'Metal and Mining':'Mineria y Minerales',
-        'Chemicals':'Químicos',
-        'Building Materials':'Cemento y Construcción',
-        'Other Industrial':'Real State',
-        'Retailers':'Retail',
-        'Gaming':'Retail',
-        'Consumer Products':'Retail',
-    }
-        risk_dic ={
-            'AAA':'IG',
-            'AAA-':'IG',
-            'AA':'IG',
-            'AA+':'IG',
-            'AA-':'IG',
-            'A':'IG',
-            'A+':'IG',
-            'A-':'IG',
-            'BBB':'IG',
-            'BBB+':'IG',
-            'BBB-':'HY',
-            'BB':'HY',
-            'BB+':'HY',
-            'BB-':'HY',
-            'B':'HY',
-            'B+':'HY',
-            'B-':'HY',
-            'CCC':'HY',
-            'CCC+':'HY',
-            'CCC-':'HY',
-            'CC':'HY',
-            'CC+':'HY',
-            'CC-':'HY',
-            'C':'HY',
-            'C+':'HY',
-            'C-':'HY',
-            'DDD':'HY',
-            'DDD+':'HY',
-            'DDD-':'HY',
-            'DD':'HY',
-            'DD+':'HY',
-            'DD-':'HY',
-            'D':'HY',
-            'D+':'HY',
-            'D-':'HY',
-            
-        }
-        cat = categorias[self.classification] or None
-        self.industria = cat
-        r = risk_dic[self.bb_composite] or 'NR'
-        self.dur_text = r
-        super().save(*args, **kwargs)
+        var_aux_list = self.yas_bond_yld
+        var_aux = var_aux_list[0]
+        self.yas_bond_porcentaje = float(var_aux) * 100
+
+        if self.yas_bond_porcentaje > 400.000:
+            self.yas_bond_text = 'sobre 401'
+        elif self.yas_bond_porcentaje > 300.000:
+            self.yas_bond_text = '301 a 400'
+        elif self.yas_bond_porcentaje > 200.000:
+            self.yas_bond_text = '201 a 300'
+        elif self.yas_bond_porcentaje > 100.000:
+            self.yas_bond_text = '101 a 200'
+        elif self.yas_bond_porcentaje <= 100.000:
+            self.yas_bond_text = '0 a 100'
+        
+        var_aux_list_2 = self.yas_mod_dur
+        if isinstance(var_aux_list_2,list):
+           var_aux2 = float(var_aux_list_2[0])
+        else:
+           var_aux2 = float(var_aux_list_2)
+
+        if var_aux2 > 5.00:
+            self.dur_text = 'x>5'
+        elif var_aux2 > 3.00:
+            self.dur_text = '3<x<=5'
+        elif var_aux2 <= 3.00:
+            self.dur_text = 'x<=3'
+        
+        self.tasa = 0 if self.tasa=='' else self.tasa
+        
+        super(rfi_bonos,self).save(*args, **kwargs)
 
 
 

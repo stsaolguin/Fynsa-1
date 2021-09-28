@@ -1,0 +1,77 @@
+{% include 'index.html' %}
+
+{% block contenido %}
+
+<div class="container">
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+
+<form method='POST' action={% url 'graba_bonos' %}>{% csrf_token %}
+<input type="submit" value='Guardar' class='btn btn-success'>
+
+<div class="row">
+    <div class="col-lg-4">
+        {{ form.ising.label }}
+        {{ form.ising }}
+        {{ form.ising.errors }}
+    </div>
+
+    <div class="col-lg-4">
+        {{ form.cusip.label }}
+        {{ form.cusip }}
+        {{ form.cusip.errors }}
+    </div>
+
+    <div class="col-lg-4">
+        {{ form.security_name.label }}
+        {{ form.security_name }}
+        {{ form.security_name.errors }}
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-4">
+        {{ form.bb_composite.label }}
+        {{ form.bb_composite }}
+        {{ form.bb_composite.errors }}
+    </div>
+
+    <div class="col-lg-4">
+        {{ form.payment_rank.label }}
+        {{ form.payment_rank }}
+        {{ form.payment_rank.errors }}
+    </div>
+
+    <div class="col-lg-4">
+        {{ form.cntry_of_risk.label }}
+        {{ form.cntry_of_risk }}
+        {{ form.cntry_of_risk.errors }}    
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-4">
+    {{ form.yas_mod_dur.label }}
+    {{ form.yas_mod_dur }}
+    {{ form.yas_mod_dur.errors }}
+    </div>
+    <div class="col-lg-4">
+    {{ form.yas_bond_yld.label }}
+    {{ form.yas_bond_yld }}
+    {{ form.yas_bond_yld.errors }}
+    </div>
+    <div class="col-lg-4">
+    {{ form.industria.label }}
+    {{ form.industria }}
+    {{ form.industria.errors }}
+    </div>
+</div>
+</form>
+</div>
+
+{% endblock contenido %}

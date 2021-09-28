@@ -1,5 +1,6 @@
 from django.forms import ModelForm, Textarea,Select,DateInput, ModelChoiceField
 from django.core.exceptions import ValidationError
+from django.utils import tree
 from .models import *
 from django import forms
 from RFI.models import rfi_beta
@@ -116,6 +117,11 @@ class bases_ingreso_operaciones(ModelForm):
 
 class cargador_bases_form(forms.Form):
     bases = forms.FileField(label="Archivo del blotter, UTF-8 separado por punto y coma (CSV UTF-8)",widget=forms.FileInput(attrs={'class':'form-control mx-2 my-3'}))
+
+class cargador_bases_form2(forms.Form):
+    ruta = forms.FileField(
+        label="Archivo del blotter, UTF-8 separado por punto y coma (CSV UTF-8)",
+        widget=forms.FileInput(attrs={'class':'form-control mx-2 my-3','multiple':True})) # el multiple true asegura que puedes subir muchos archivos
 
 class cargador_rfi_form(forms.Form):
     rfi = forms.FileField(label="Archivo del blotter, UTF-8 separado por punto y coma (CSV UTF-8)",widget=forms.FileInput(attrs={'class':'form-control mx-2 my-3'}))

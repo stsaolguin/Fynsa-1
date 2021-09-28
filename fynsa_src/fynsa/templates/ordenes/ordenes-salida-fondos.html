@@ -29,6 +29,7 @@
 <div class="container-fluid">
 <div class="row">
   <div class="col-lg-6">
+                        <h4> caracteristicas de la orden vs caracteristicas del Fondo</h4>
                         <table class="table" id="tabla_salida">
                           <thead>
                             <tr>
@@ -67,7 +68,7 @@
   </div>
 
               <div class="col-lg-6">
-                      <h4>Itenciones pasadas</h4>
+                      <h4>Itenciones pasadas al Isin o Security Name</h4>
                           {% if not papeles_intenciones_isin %}
                           <p> Sorry, nadie tuvo intenciones con este papel </p>
                           {% else %}
@@ -84,7 +85,7 @@
                           {% endif %}
                           <hr>
                           <hr>
-                    <h4>Holders</h4>
+                    <h4>Holders del Isin o Security Name.</h4>
                         {% if not holders_por_isin %}
                         <p> Sorry, nadie tiene este papel </p>
                         {% else %}

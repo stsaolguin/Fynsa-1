@@ -1,0 +1,48 @@
+BEGIN;
+Update "RFI_rfi_bonos" set industria='Retail' where classification = 'Food and Beverage';
+Update "RFI_rfi_bonos" set industria='O&G' where classification =  'Midstream';
+Update "RFI_rfi_bonos" set industria='O&G' where classification =  'Independent';
+Update "RFI_rfi_bonos" set industria='O&G' where classification =  'Natural Gas';
+Update "RFI_rfi_bonos" set industria= 'Pulpa y Papel' where classification =  'Paper' ;
+Update "RFI_rfi_bonos" set industria= 'Aerolineas' where classification =  'Airlines' ;
+Update "RFI_rfi_bonos" set industria= 'Aerolineas' where classification =  'Aerospace/Defense' ;
+Update "RFI_rfi_bonos" set industria='Banco y Financieras' where classification =  'Banking';
+Update "RFI_rfi_bonos" set industria='Banco y Financieras' where classification =  'Brokerage Assetmanagers Exchanges';
+Update "RFI_rfi_bonos" set industria='Banco y Financieras' where classification =  'Other Financial';
+Update "RFI_rfi_bonos" set industria='Banco y Financieras' where classification =  'Finance Companies';
+Update "RFI_rfi_bonos" set industria='Quasisov' where classification =  'Government Owned. No Guarantee';
+--Update "RFI_rfi_bonos" set industria='Quasisov' where classification =  'No Guarantee';
+Update "RFI_rfi_bonos" set industria='QuasiSov' where classification =  'Government Sponsored';
+Update "RFI_rfi_bonos" set industria= 'Utilities' where classification =  'Electric' ;
+Update "RFI_rfi_bonos" set industria= 'Utilities' where classification =  'Local Authority' ;
+Update "RFI_rfi_bonos" set industria= 'Telecom' where classification =  'Wireless' ;
+Update "RFI_rfi_bonos" set industria= 'Telecom' where classification =  'Wirelines' ;
+Update "RFI_rfi_bonos" set industria= 'Telecom' where classification =  'Media Entertainment' ;
+Update "RFI_rfi_bonos" set industria= 'Telecom' where classification =  'Cable Satellite' ;
+Update "RFI_rfi_bonos" set industria= 'Transporte' where classification =  'Railroads' ;
+Update "RFI_rfi_bonos" set industria= 'Transporte' where classification =  'Transportation Services' ;
+Update "RFI_rfi_bonos" set industria='Mineria y Minerales' where classification =  'Metals and Mining';
+Update "RFI_rfi_bonos" set industria='Químicos' where classification =  'Chemicals';
+Update "RFI_rfi_bonos" set industria='Cemento y Construcción' where classification =  'Building Materials';
+Update "RFI_rfi_bonos" set industria='Real State' where classification =  'Other Industrial';
+Update "RFI_rfi_bonos" set industria='Retail' where classification =  'Retailers';
+Update "RFI_rfi_bonos" set industria='Retail' where classification =  'Gaming';
+Update "RFI_rfi_bonos" set industria='Retail' where classification =  'Consumer Products';
+Update "RFI_rfi_bonos" set industria='Retail' where classification =  'Consumer Cyc Services';
+UPDATE "RFI_rfi_bonos" set yas_bond_text = '0 a 100' where yas_bond_porcentaje between 0 and 100.99;
+UPDATE "RFI_rfi_bonos" set yas_bond_text = '101 a 200' where yas_bond_porcentaje between 101 and 200.99;
+UPDATE "RFI_rfi_bonos" set yas_bond_text = '201 a 300' where yas_bond_porcentaje between 201 and 300.99;
+UPDATE "RFI_rfi_bonos" set yas_bond_text = '301 a 400' where yas_bond_porcentaje between 301 and 400.99;
+UPDATE "RFI_rfi_bonos" set yas_bond_text = 'sobre 401' where yas_bond_porcentaje>=401;
+update "RFI_rfi_bonos" set dur_text = 'x<=3' where yas_mod_dur<=3;
+update "RFI_rfi_bonos" set dur_text = '3<x<=5' where yas_mod_dur>3;
+update "RFI_rfi_bonos" set dur_text = 'x>5' where yas_mod_dur>5;
+update "RFI_rfi_bonos" set yas_bond_porcentaje = yas_bond_yld*100;
+update "RFI_rfi_bonos" set yas_bond_text = '0 a 100' where yas_bond_porcentaje<=100.000
+update "RFI_rfi_bonos" set yas_bond_text = '101 a 200' where yas_bond_porcentaje>100.000
+update "RFI_rfi_bonos" set yas_bond_text = '201 a 300' where yas_bond_porcentaje>200.000
+update "RFI_rfi_bonos" set yas_bond_text = '301 a 400' where yas_bond_porcentaje>300.000
+update "RFI_rfi_bonos" set yas_bond_text = 'sobre 401' where yas_bond_porcentaje>400.000
+
+--COMMIT;
+

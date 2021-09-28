@@ -144,9 +144,9 @@ order by fecha asc;''',[cliente,cliente,cliente,cliente,fecha_inicial,fecha_fina
     nombre_archivo = "{0}_entre_el_{1}_y_{2}".format(cliente,fecha_inicial,fecha_final)
     response['Content-Disposition'] = 'attachment; filename={0}.csv'.format(nombre_archivo)
     writer = csv.writer(response)
-    writer.writerow(['fecha','otc_tr','nemo','monto','tipo_de_pago','buy','seller','trader_buy','trader_seller','fee_buyer_clp','fee_seller_clp'])
+    writer.writerow(['fecha','otc_tr','nemo','monto','tipo_de_pago','buy','seller','trader_buy','trader_seller','tasa','fee_buyer_clp','fee_seller_clp'])
     for r in conciliaciones:
-        salida.append([r.fecha,r.otc_tr,r.nemo,r.monto,r.tipo_de_pago,r.buy,r.seller,r.trader_buy,r.trader_seller,r.fe_buyer_clp,r.fe_seller_clp])
+        salida.append([r.fecha,r.otc_tr,r.nemo,r.monto,r.tipo_de_pago,r.buy,r.seller,r.trader_buy,r.trader_seller,r.tasa,r.fe_buyer_clp,r.fe_seller_clp])
     writer.writerows(salida)
 
     timbre = actividad(name='BASES',accion='generacion_conciliaciones',usuario=request.user)
