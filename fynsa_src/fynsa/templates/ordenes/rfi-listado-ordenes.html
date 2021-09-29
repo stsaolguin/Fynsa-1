@@ -11,6 +11,7 @@
   <thead>
     <tr>
       <th scope="col">id</th>
+      <th scope="col">fecha ingreso</th>
       <th scope="col">trader</th>
       <th scope="col">cliente</th>
       <th scope="col">orden</th>
@@ -35,14 +36,16 @@
   {% else %}
     <tr class="alert alert-warning">
   {% endif %}
-      <th scope="row">{{ l.id }}</th>
+      <th scope="row">
+      {{ l.id }}</th>
+      <td>{{ l.fecha_ingreso }}</td>
       <td>{{ l.trader }}</td>
       <td>{{ l.cliente }}</td>
+      <td>{{ l.fecha_ingreso }}</td>
       <td>{{ l.orden_tipo }}</td>
       <td>{{ l.papel }}<br>
       {{ l.isin }}
-      
-      </td>
+            </td>
       <td>{{ l.nominales }}</td>
       <td>{{ l.precio }}</td>
       <td style = "width:300px;">
