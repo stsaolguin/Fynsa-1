@@ -87,7 +87,7 @@ def security_name_api(request,isin):
 def listado_ordenes(request):
     """ Lista las ordenes puestas en pantalla """
     datos = {}
-    datos['listado'] = rfi_tsox.objects.all().order_by('-id')
+    datos['listado'] = rfi_tsox.objects.all().order_by('-fecha_ingreso')
     return render(request,'ordenes/rfi-listado-ordenes.html',context=datos)
 
 def actualiza_status(request,orden_numero,estado):
