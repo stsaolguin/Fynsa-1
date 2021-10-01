@@ -1,5 +1,110 @@
 {% include 'index.html' %}
 
 {% block contenido %}
-<h1>BUSCADOR INTENCIONES</h1>
+<div class="container-fluid">
+    <div class="h2 mx-1">Buscador intenciones.</div>
+    <div class="row d-flex justify-content-center">
+                    <div class="col-lg-3">
+                        <form method="POST" target="_blank" class="form-inline">{% csrf_token %}
+                        <div class="form-group mx-1">
+                            <label for="BuscardorIntenciones" class="form-group mx-1">Año: </label>
+                            <select class="form-control" id="BuscardorIntenciones" name="BuscardorIntenciones">
+                                <option>2019</option>
+                                <option>2020</option>
+                                <option selected>2021</option>
+                                <option disabled>2022</option>
+                            </select>
+                        </div>
+                        <div class="form-group mx-1">
+                            <input type="submit" class="btn btn-success " value="Buscar">  
+                        </div>
+                    </div>
+                    </form>
+    </div>
+    <div class="row alert alert-warning d-flex justify-content-center mt-2">
+              <div class="col-lg-4">
+                      <input type="text" class="form-control my-2" name="filtro" id="filtro" onkeyup="FiltroTabla()" placeholder="Buscar papel o cliente...">
+              </div>
+    </div>
+
+    <div class="row justify-content-center">
+    <div id="tablaintenciones_div"></div>
+    </div>
+
+</div>{% comment %} este div es el de container fluid, no borrar {% endcomment %}
+
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load('current', {'packages':['table']});
+      google.charts.setOnLoadCallback(tablaIntenciones);
+
+      function tablaIntenciones() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Fecha Ingreso');
+        data.addColumn('string', 'trader');
+        data.addColumn('string', 'orden tipo');
+        data.addColumn('string', 'isin');
+        data.addColumn('string', 'papel');
+        data.addColumn('string', 'cliente');
+        data.addColumn('string', 'rating');
+        data.addColumn('string', 'pais');
+        data.addColumn('string', 'duración');
+        data.addColumn('string', 'nominales');
+        data.addColumn('string', 'sector');
+        data.addColumn('string', 'precio');
+        data.addColumn('string', 'payment_rank');
+        data.addColumn('string', 'ytm');
+        data.addColumn('string', 'notas');
+        data.addColumn('string', 'status');
+        data.addRows([
+          
+          {% for i in intenciones %}
+          [
+          "{{ i.fecha_ingreso | safe }}",
+          "{{ i.trader | safe }}",
+          "{{ i.orden_tipo | safe }}",
+          "{{ i.isin | safe }}",
+          "{{ i.papel | safe }}",
+          "{{ i.cliente | safe }}",
+          "{{ i.rating | safe }}",
+          "{{ i.pais | safe }}",
+          "{{ i.duracion | safe }}",
+          "{{ i.nominales | safe }}",
+          "{{ i.sector | safe }}",
+          "{{ i.precio | safe }}",
+          "{{ i.payment_rank | safe }}",
+          "{{ i.ytm | safe }}",
+          "{{ i.notas | safe }}",
+          "{{ i.status | safe }}",
+          ],
+          {% endfor %}
+          ]);
+
+        var table = new google.visualization.Table(document.getElementById('tablaintenciones_div'));
+        table.draw(data, {showRowNumber: true, width: '100%', height: '100%'});
+      }
+      function FiltroTabla() {
+                // Declare variables
+                var input, filter, table, tr, td, i, txtValue;
+                input = document.getElementById("filtro");
+                filter = input.value.toUpperCase();
+                table = document.getElementById("tablaintenciones_div");
+                tr = table.getElementsByTagName("tr");
+                
+                for (i = 0; i < tr.length; i++) {
+                    td = tr[i].getElementsByTagName("td")[5];//filtra papel
+                    td2 = tr[i].getElementsByTagName("td")[6];// filtra cliente.
+                    if (td || td2) {
+                    txtValue = td.textContent || td.innerText || td2.textContent || td2.innerText;
+                    txtValue_pais = td2.textContent || td2.innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1 || txtValue_pais.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                    }
+                }
+                };
+    </script>
+
 {% endblock %}
