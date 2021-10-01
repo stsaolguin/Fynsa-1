@@ -41,7 +41,6 @@
       <td>{{ l.fecha_ingreso }}</td>
       <td>{{ l.trader }}</td>
       <td>{{ l.cliente }}</td>
-      <td>{{ l.fecha_ingreso }}</td>
       <td>{{ l.orden_tipo }}</td>
       <td>{{ l.papel }}<br>
       {{ l.isin }}
@@ -69,7 +68,7 @@
 
       </td>
       <td>{{ l.notas }}</td>
-      <td style="width: 14%">
+      <td style="width: 9%">
        <div id="estado_orden" type="hidden" value="{{ l.status }}"></div>
             <select class="custom-select" id="{{l.id}}" onChange="capturar(this.value,this.id,this.parentNode.parentNode)">
             {% if 'Intención' in l.status %}
@@ -83,7 +82,11 @@
       </td>
       <td>
       {% comment %} <a href="{% url 'editar_ordenes'  l.id  %}">Editar</a> {% endcomment %}
-      <a href="{% url 'borrar_ordenes' l.id %}" class="text-danger">Borrar</a>
+      <div class="row">
+            <div class="col-lg-3">
+            <a href="{% url 'borrar_ordenes' l.id %}" class="text-danger">Borrar</a>
+            </div> 
+        <div class="col-lg-9">
         <form action="{% url 'buscador_papeles' %}" method="POST" target="_blank">
              {% csrf_token %}
               <input type="hidden" name="unico_orden" value="{{ l.id }}">
@@ -96,9 +99,13 @@
               <input type="hidden" name="payment_rank" value="{{ l.payment_rank }}">
               <input type="hidden" name="duracion" value="{{ l.duracion }}">
               <input type="hidden" name="rating" value="{{ l.rating }}">
-              <input type="submit" class="btn btn-primary btn-sm" name="papeles" value="papeles">
-              <input type="submit" class="btn btn-info btn-sm mt-1" name="fondos" value="fondos">
+              <div class="d-flex justify-content-center align-items-center">
+                  <input type="submit" class="btn btn-primary btn-sm mx-1" name="papeles" value="papeles">
+                  <input type="submit" class="btn btn-info btn-sm" name="fondos" value="fondos">
+              </div>
           </form>
+          </div>
+        </div>
       </td>
     </tr>
      {% endfor %}
