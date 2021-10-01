@@ -247,7 +247,7 @@ class EditorBonos(ModelForm):
    
     class Meta:
         model = rfi_bonos
-        fields = ['security_name','ising','bb_composite','payment_rank','cntry_of_risk','industria','yas_bond_yld','yas_mod_dur']
+        fields = ['security_name','ising','bb_composite','payment_rank','cntry_of_risk','industria','yas_bond_yld','yas_mod_dur','cusip']
         
         
     security_name = forms.CharField(label = "Security Name del bono (*): ",required=True)

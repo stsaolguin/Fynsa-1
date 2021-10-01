@@ -294,22 +294,18 @@ class ordenes_borra_orden(DeleteView):
             q = rfi_tsox.objects.filter(id=kwargs['pk'])
             for r in q.values():
                 s = rfi_tsox_borrado.objects.create(**r)
-                if not request.POST.get('notas') == '':
-                    notas = request.POST.get('notas')
-                    s.notas = notas
-                    s.status = 'operado Fynsa'
-                    s.save()
+                s.status = 'operado Fynsa'
+                s.save()
             return self.delete(request,*args,**kwargs)
         elif request.POST.get('accion') == 'Intención operado Away':
             q = rfi_tsox.objects.filter(id=kwargs['pk'])
             for r in q.values():
                 s = rfi_tsox_borrado.objects.create(**r)
-                if not request.POST.get('notas') == '':
-                    notas = request.POST.get('notas')
-                    s.notas = notas
-                    s.status = 'operado Away'
-                    s.save()
-        return self.delete(request,*args,**kwargs)
+                s.status = 'operado Away'
+                s.save()
+            return self.delete(request,*args,**kwargs)
+        else:
+            return self.delete(request,*args,**kwargs)
 
 class ordenes_crea_fondo(CreateView):
     model = fondo
@@ -370,6 +366,13 @@ def prueba_lectura_carpeta(request):
 
 
 def buscador_intenciones(request):
+    if request.method=='POST':
+        agno = request.POST.get('BuscardorIntenciones')
+        intenciones = rfi_tsox_borrado.objects.filter(fecha_ingreso__year=agno)
+        datos = {}
+        datos['intenciones']=intenciones
+        return render(request,'ordenes/ordenes-buscador-intenciones.html',context=datos)
+
     return render(request,'ordenes/ordenes-buscador-intenciones.html',context={})
 
 

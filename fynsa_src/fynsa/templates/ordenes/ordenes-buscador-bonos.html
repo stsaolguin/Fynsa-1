@@ -2,12 +2,12 @@
 
 {% block contenido %}
 <div class="container-fluid">
-        <h1>EDITOR BONOS</h1>
+        <div class="h2">EDITOR BONOS</div>
         <p>Si el bono no aparece, hay que agregarlo en el botón "agregar bono"</p>
-    <div class="row">
-        <div class="col-lg-6">
-        <form method="POST" action="{% url 'editor_bonos' %}">{% csrf_token %}
-            <label for="{{ formulario.isin_security_name.id_for_label }}">Isin:</label>
+    <div class="row d-flex justify-content-center">
+
+        <form method="POST" action="{% url 'editor_bonos' %}" class="form-inline">{% csrf_token %}
+            <label for="{{ formulario.isin_security_name.id_for_label }}" class="mx-1">Isin:</label>
             <input type="text" list="isin" id="id_isin" name ="isin_security_name" class = "form-control" value="{{ formulario.isin_security_name.value | default_if_none:'' }}">
             {{ formulario.isin_security_name.errors }}
                 <datalist id="isin">
@@ -16,14 +16,12 @@
                 {% endfor %}
                 </datalist>
 
-        </div>
-        <div class="col-lg-3">
-        <input type="submit" class="btn btn-primary" name="botón" value="Editor">
-        </div>
-        <div class="col-lg-3">
-        <input type="submit" class="btn btn-warning" name="botón" value="Agregar Bono">
-        </div>
-    </div>
+
+        
+        <input type="submit" class="btn btn-primary mx-1" name="botón" value="Editor">
+        <input type="submit" class="btn btn-warning mx-1" name="botón" value="Agregar Bono">
+     </div>   {% comment %} div del row {% endcomment %}
     </form>
+ </div>  {% comment %}  div del fuid {% endcomment %}
         
 {% endblock %}
