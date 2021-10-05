@@ -7,20 +7,20 @@
   <hr>
 </div>
 <div class="row  mx-5">
-<table class="table">
+<table class="table" id="tsox">
   <thead>
     <tr>
       <th scope="col">id</th>
-      <th scope="col">fecha ingreso</th>
-      <th scope="col">trader</th>
-      <th scope="col">cliente</th>
-      <th scope="col">orden</th>
-      <th scope="col">papel</th>
-      <th scope="col">nominales</th>
-      <th scope="col">precio</th>
+      <th scope="col" onclick="sortTable(0)">fecha ingreso</th>
+      <th scope="col" onclick="sortTable(1)">trader</th>
+      <th scope="col" onclick="sortTable(2)">cliente</th>
+      <th scope="col" onclick="sortTable(3)">orden</th>
+      <th scope="col" onclick="sortTable(4)">papel</th>
+      <th scope="col" onclick="sortTable(5)">nominales</th>
+      <th scope="col" onclick="sortTable(6)">precio</th>
       <th scope="col">caracteristicas</th>
-      <th scope="col">notas</th>
-      <th scope="col">status</th>
+      <th scope="col" onclick="sortTable(8)">notas</th>
+      <th scope="col" onclick="sortTable(9)">status</th>
       <th scope="col">acción</th>
     </tr>
   </thead>
@@ -116,12 +116,7 @@
 <script>
 function capturar(e,f,g){
   var clase_seminal = g.classList;
-  console.log(e,f,g);
-  console.log(clase_seminal);
-  
   if (clase_seminal[0]=='alert-warning'){
-    console.log(clase_seminal)
-    console.log('dentro del seminal')
     var estado_inicial = g.getElementsByTagName("td")[2];
     var estado_inicial_texto = estado_inicial.innerText;
     estado_inicial_texto == 'cliente vende' ? clase_inicial=['alert','alert-danger'] : clase_inicial=['alert','alert-success'];
@@ -153,5 +148,59 @@ function capturar(e,f,g){
 };//fin de capturar, no borrar
 
 
+function sortTable(n) {
+  var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+  table = document.getElementById("tsox");
+  switching = true;
+  // Set the sorting direction to ascending:
+  dir = "asc";
+  /* Make a loop that will continue until
+  no switching has been done: */
+  while (switching) {
+    // Start by saying: no switching is done:
+    switching = false;
+    rows = table.rows;
+    /* Loop through all table rows (except the
+    first, which contains table headers): */
+    for (i = 1; i < (rows.length - 1); i++) {
+      // Start by saying there should be no switching:
+      shouldSwitch = false;
+      /* Get the two elements you want to compare,
+      one from current row and one from the next: */
+      x = rows[i].getElementsByTagName("td")[n];
+      y = rows[i + 1].getElementsByTagName("td")[n];
+      /* Check if the two rows should switch place,
+      based on the direction, asc or desc: */
+      if (dir == "asc") {
+        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+          // If so, mark as a switch and break the loop:
+          shouldSwitch = true;
+          break;
+        }
+      } else if (dir == "desc") {
+        if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+          // If so, mark as a switch and break the loop:
+          shouldSwitch = true;
+          break;
+        }
+      }
+    }
+    if (shouldSwitch) {
+      /* If a switch has been marked, make the switch
+      and mark that a switch has been done: */
+      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+      switching = true;
+      // Each time a switch is done, increase this count by 1:
+      switchcount ++;
+    } else {
+      /* If no switching has been done AND the direction is "asc",
+      set the direction to "desc" and run the while loop again. */
+      if (switchcount == 0 && dir == "asc") {
+        dir = "desc";
+        switching = true;
+      }
+    }
+  }
+};
 </script>
 {% endblock %}
