@@ -1,19 +1,21 @@
-from re import template
+#from re import template
 from django import forms
-from django.db import close_old_connections
+#from django.db import close_old_connections
 from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.http.response import HttpResponse, HttpResponseRedirect
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import redirect, render
 from ordenes.formularios_ordenes import AgregaClientes,IngresoOrdenesRFIModelForm,lista_sector,listado_cntry,FondoOrdenes,BuscadorEditorBonosForm,EditorBonos
 from RFI.models import rfi_bonos,clientes_rfi
 from ordenes.models import fondo, holders_salida, rfi_tsox, rfi_tsox_borrado,fondo,fondo_salida,carteras_bbg,intenciones_pasadas_salida
 from django.core import serializers
 import ast,time
 from django.urls import reverse_lazy
-from itertools import tee
+#from itertools import tee
 from django.db.models import Q
+from ordenes.funciones_externas import paises_iso_2
+
 
 
 
@@ -368,7 +370,7 @@ def prueba_lectura_carpeta(request):
 def buscador_intenciones(request):
     if request.method=='POST':
         agno = request.POST.get('BuscardorIntenciones')
-        intenciones = rfi_tsox_borrado.objects.filter(fecha_ingreso__year=agno)
+        intenciones = rfi_tsox_borrado.objects.filter(fecha_ingreso__year=agno).order_by('-fecha_ingreso')
         datos = {}
         datos['intenciones']=intenciones
         return render(request,'ordenes/ordenes-buscador-intenciones.html',context=datos)
