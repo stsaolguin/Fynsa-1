@@ -6,6 +6,7 @@ from RFI.models import clientes_rfi,rfi_bonos
 from BASES.models import ejecutivos
 import datetime
 from django.core.exceptions import ValidationError
+from ordenes.funciones_externas import paises_iso_2
 
 #estas listas son las que se usan para buscar si están todos los ítemes dentro de las listas pais,sector,etc.
 #Si 
@@ -255,7 +256,7 @@ class EditorBonos(ModelForm):
     ising = forms.CharField(label = 'Isin (*): ')
     bb_composite = forms.ChoiceField(label = "BB composite del bono (*): ",required=True,choices=listado_ratings)
     payment_rank = forms.ChoiceField(label = "Payment Rank del bono (*): ",required=True,choices=lista_paymentRank())
-    cntry_of_risk = forms.ChoiceField(label = "Country of Risk del bono (*): ",required=True,choices=listado_cntry())
+    cntry_of_risk = forms.ChoiceField(label = "Country of Risk del bono (*): ",required=True,choices=paises_iso_2)
     industria = forms.ChoiceField(label = "Industria del bono (*): ",required=True,choices=lista_sector())
     yas_bond_yld = forms.CharField(label = "YTM del bono (*): ",required=True) #esta hay que multiplicarla por 100 -> yas_bond_porcentaje -> yas_bond_text
     yas_mod_dur = forms.CharField(label = "Duración del bono (*): ",required=True)

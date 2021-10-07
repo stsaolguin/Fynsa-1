@@ -11,16 +11,16 @@
   <thead>
     <tr>
       <th scope="col">id</th>
-      <th scope="col" onclick="sortTable(0)">fecha ingreso</th>
-      <th scope="col" onclick="sortTable(1)">trader</th>
-      <th scope="col" onclick="sortTable(2)">cliente</th>
-      <th scope="col" onclick="sortTable(3)">orden</th>
-      <th scope="col" onclick="sortTable(4)">papel</th>
-      <th scope="col" onclick="sortTable(5)">nominales</th>
-      <th scope="col" onclick="sortTable(6)">precio</th>
+      <th scope="col" onclick="sortTable(0,false)">fecha ingreso</th>
+      <th scope="col" onclick="sortTable(1,false)">trader</th>
+      <th scope="col" onclick="sortTable(2,false)">cliente</th>
+      <th scope="col" onclick="sortTable(3,false)">orden</th>
+      <th scope="col" onclick="sortTable(4,false)">papel</th>
+      <th scope="col" onclick="sortTable(5,true)">nominales</th>
+      <th scope="col" onclick="sortTable(6,false)">precio</th>
       <th scope="col">caracteristicas</th>
-      <th scope="col" onclick="sortTable(8)">notas</th>
-      <th scope="col" onclick="sortTable(9)">status</th>
+      <th scope="col" onclick="sortTable(8,false)">notas</th>
+      <th scope="col" onclick="sortTable(9,false)">status</th>
       <th scope="col">acción</th>
     </tr>
   </thead>
@@ -81,7 +81,7 @@
             </select>
       </td>
       <td>
-      {% comment %} <a href="{% url 'editar_ordenes'  l.id  %}">Editar</a> {% endcomment %}
+      <a href="{% url 'editar_ordenes'  l.id  %}">Editar</a>
       <div class="row">
             <div class="col-lg-3">
             <a href="{% url 'borrar_ordenes' l.id %}" class="text-danger">Borrar</a>
@@ -146,7 +146,15 @@ function capturar(e,f,g){
     fetch(url);
 
 };//fin de capturar, no borrar
+function verNumero(a){
+  a_ = a.innerHTML.replaceAll('.','');
+  if (!isNaN(a_)){
+    return parseInt(a_)
+  } else {
+    return a_.toLowerCase();
+  };
 
+};
 
 function sortTable(n) {
   var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
@@ -172,13 +180,13 @@ function sortTable(n) {
       /* Check if the two rows should switch place,
       based on the direction, asc or desc: */
       if (dir == "asc") {
-        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+        if (verNumero(x) > verNumero(y)) {
           // If so, mark as a switch and break the loop:
           shouldSwitch = true;
           break;
         }
       } else if (dir == "desc") {
-        if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+        if (verNumero(x) < verNumero(y)) {
           // If so, mark as a switch and break the loop:
           shouldSwitch = true;
           break;
