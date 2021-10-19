@@ -2976,7 +2976,157 @@ $$
 LANGUAGE SQL;
 
 
+Tortas móviles:
 
 
+with generaciones as (
+SELECT beta.fecha,beta.comprador,beta.vendedor,beta.ingreso_mesa,cli.categoria as categoria_comprador,cli.pais as pais_comprador,clit.categoria as categoria_vendedor,clit.pais as pais_vendedor 
+FROM "RFI_rfi_beta" beta
+LEFT OUTER JOIN "RFI_clientes_rfi" cli ON cli.fondo = beta.comprador
+LEFT OUTER JOIN "RFI_clientes_rfi" clit ON clit.fondo = beta.vendedor
+ORDER BY fecha desc
+	) select DATE_TRUNC('month',fecha) as mes,ingreso_mesa, categoria_comprador,pais_comprador,categoria_vendedor,pais_vendedor FROM generaciones
+	group by mes,ingreso_mesa,categoria_comprador,pais_comprador,categoria_vendedor,pais_vendedor
+	order by mes desc
 
+==================
+SELECT DATE_TRUNC('month',beta.fecha)::date as mes ,sum(beta.ingreso_mesa),cli.pais as pais_comprador,clit.pais as pais_vendedor 
+FROM "RFI_rfi_beta" beta
+LEFT OUTER JOIN "RFI_clientes_rfi" cli ON cli.fondo = beta.comprador
+LEFT OUTER JOIN "RFI_clientes_rfi" clit ON clit.fondo = beta.vendedor
+group by mes,pais_comprador,pais_vendedor
+ORDER BY mes desc;
+
+======
+CREATE OR REPLACE FUNCTION eq_rfi_tortas_moviles() RETURNS TABLE(mes date,generacion numeric, pais text) 
+AS
+$$
+DECLARE
+r RECORD;
+s RECORD;
+BEGIN
+	    	FOR r IN SELECT DATE_TRUNC('month',beta.fecha)::date as mes_aux ,sum(beta.ingreso_mesa) as generacion_aux,cli.pais as pais_comprador,clit.pais as pais_vendedor 
+			FROM "RFI_rfi_beta" beta
+			LEFT OUTER JOIN "RFI_clientes_rfi" cli ON cli.fondo = beta.comprador
+			LEFT OUTER JOIN "RFI_clientes_rfi" clit ON clit.fondo = beta.vendedor
+			group by mes_aux,pais_comprador,pais_vendedor
+			ORDER BY mes_aux desc
+				LOOP
+					IF r.pais_comprador IS NULL AND r.pais_vendedor IS NULL THEN
+					pais:='BKR';
+					generacion:=r.generacion_aux;
+					mes:=r.mes_aux;
+					ELSIF r.pais_comprador IS NULL THEN
+					pais:= r.pais_vendedor;
+					generacion := r.generacion_aux;
+					mes:= r.mes_aux;
+					ELSIF r.pais_vendedor IS NULL THEN
+					pais:= r.pais_comprador;
+					generacion := r.generacion_aux;
+					mes:= r.mes_aux;
+					ELSIF r.pais_vendedor IS NOT NULL AND r.pais_comprador IS NOT NULL THEN
+					pais:= r.pais_comprador;
+					mes:= r.mes_aux;
+					generacion := round(r.generacion_aux/2,2);
+					RETURN NEXT;
+					pais:= r.pais_vendedor;
+					generacion := round(r.generacion_aux/2,2);
+					mes:= r.mes_aux;
+					END IF;
+				RETURN NEXT;
+				END LOOP;
+END;
+$$ LANGUAGE 'plpgsql';
+
+SELECT 
+mes, 
+coalesce(pn,0) as pn,
+coalesce(cl,0) as chile,
+coalesce(ar,0) as argentina,
+coalesce(br,0) as brasil,
+coalesce(sz,0) as suiza,
+coalesce(uk,0) as ReinoUnido,
+coalesce(co,0) as colombia,
+coalesce(pe,0) as peru,
+coalesce(us,0) as USA,
+coalesce(ur,0) as uruguay,
+coalesce(brk,0) as brk,
+coalesce(dn,0) as dn,
+coalesce(mx,0) as mexico
+FROM crosstab(
+	'select mes::date,pais,sum(generacion) as generacion from eq_rfi_tortas_moviles() group by mes,pais order by mes desc;',
+	'select DISTINCT(pais) from eq_rfi_tortas_moviles();'
+) 
+AS
+ct(
+	mes date, 
+	PN numeric, 
+	CL numeric, 
+	AR numeric, 
+	BR numeric, 
+	SZ numeric, 
+	UK numeric, 
+	CO numeric, 
+	PE numeric,
+	US numeric, 
+	UR numeric, 
+	BRK numeric, 
+	DN numeric, 
+	MX numeric
+)
+==========================
+CREATE OR REPLACE FUNCTION eq_rfi_serie_tortas_moviles() RETURNS TABLE(
+	mes date, 
+	PN numeric, 
+	CL numeric, 
+	AR numeric, 
+	BR numeric, 
+	SZ numeric, 
+	UK numeric, 
+	CO numeric, 
+	PE numeric,
+	US numeric, 
+	UR numeric, 
+	BRK numeric, 
+	DN numeric, 
+	MX numeric) as
+$$
+SELECT 
+mes, 
+coalesce(pn,0) as pn,
+coalesce(cl,0) as chile,
+coalesce(ar,0) as argentina,
+coalesce(br,0) as brasil,
+coalesce(sz,0) as suiza,
+coalesce(uk,0) as ReinoUnido,
+coalesce(co,0) as colombia,
+coalesce(pe,0) as peru,
+coalesce(us,0) as USA,
+coalesce(ur,0) as uruguay,
+coalesce(brk,0) as brk,
+coalesce(dn,0) as dn,
+coalesce(mx,0) as mexico
+FROM crosstab(
+	'select mes::date,pais,sum(generacion) as generacion from eq_rfi_tortas_moviles() group by mes,pais order by mes desc;',
+	'select DISTINCT(pais) from eq_rfi_tortas_moviles();'
+) 
+AS
+ct(
+	mes date, 
+	PN numeric, 
+	CL numeric, 
+	AR numeric, 
+	BR numeric, 
+	SZ numeric, 
+	UK numeric, 
+	CO numeric, 
+	PE numeric,
+	US numeric, 
+	UR numeric, 
+	BRK numeric, 
+	DN numeric, 
+	MX numeric
+)
+$$ LANGUAGE SQL;
+select * from eq_rfi_serie_tortas_moviles();
 

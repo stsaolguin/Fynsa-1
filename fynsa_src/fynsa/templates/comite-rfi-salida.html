@@ -50,6 +50,9 @@
     <div class="generacion_mensual_div">
       <div id="generacion_mensual_div"></div>
     </div>
+      <div class="generacion_mensual_paises_div">
+        <div id="tortas_moviles_div"></div>
+      </div>
 
 </div>
 
@@ -67,6 +70,7 @@
         google.charts.setOnLoadCallback(Metas);
         google.charts.setOnLoadCallback(generacion_brks);
         google.charts.setOnLoadCallback(generacion_mensual_anual);
+        google.charts.setOnLoadCallback(TortasMoviles);
         
 
 function rfi_generacion() {
@@ -480,16 +484,62 @@ function rfi_generacion() {
           colors:['#A9DDB1','#A9DDB1','#A9DDB1','#A9DDB1','#A9DDB1','#A9DDB1','#595AA2','#F88383'],
           vAxis : {viewWindow : {max : 350000}},
           explorer : { actions :  ['dragToZoom', 'rightClickToReset']},
-          
-          
-          
-      };
+       };
       var gen_m = new google.visualization.ColumnChart(document.getElementById('generacion_mensual_div'));
       gen_m.draw(data,options); 
+    };
+
+    function TortasMoviles(){
+      var data = new google.visualization.DataTable();
+      data.addColumn('string','mes');
+      data.addColumn('number','PN');
+      data.addColumn('number','Chile');
+      data.addColumn('number','Argentina');
+      data.addColumn('number','Brasil');
+      data.addColumn('number','SZ');
+      data.addColumn('number','UK');
+      data.addColumn('number','Colombia');
+      data.addColumn('number','Perú');
+      data.addColumn('number','USA');
+      data.addColumn('number','Uruguay');
+      data.addColumn('number','BRK');
+      data.addColumn('number','DN');
+      data.addColumn('number','México');
+      data.addRows([
+      {% for r in tortas_moviles %}
+      ['{{r.mes | safe }}',
+      {{ r.pn | safe }}, 
+      {{ r.cl | safe }},
+      {{ r.ar | safe }},
+      {{ r.br | safe }},
+      {{ r.sz | safe }},
+      {{ r.uk | safe }},
+      {{ r.co | safe }},
+      {{ r.pe | safe }},
+      {{ r.us | safe }},
+      {{ r.ur | safe }},
+      {{ r.brk | safe }},
+      {{ r.dn | safe }},
+      {{ r.mx | safe }}
+      ],
+      {% endfor %}
       
+      ]);
+      var options ={
+          title :'Generación Mensual por países.',
+          height:600,
+          legend:{position:'bottom'},
+          chartArea:{left:'20%',top:80,height:'75%',width:'100%'},
+          explorer : { actions :  ['dragToZoom', 'rightClickToReset']},
+          pointSize:2,
+          
+       };
+      var gen_m = new google.visualization.LineChart(document.getElementById('tortas_moviles_div'));
+      gen_m.draw(data,options); 
+      
+    };
 
-
-    }
+    
 
 </script>
 

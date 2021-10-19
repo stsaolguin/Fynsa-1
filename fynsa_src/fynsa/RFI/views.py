@@ -101,13 +101,17 @@ or (b.categoria='DLR' and c.categoria='DLR')
                fila[i]=0
         tabla.append(fila)
     datos['cross'] = tabla
-    datos['metas']=rfi_beta.objects.raw(''' select 1 as linea,date_trunc('month',fecha)::date as mensual,sum(ingreso_mesa) FILTER (WHERE vendedor='FYNSA' or comprador='FYNSA') as ingreso_banca_privada,sum(ingreso_mesa) FILTER (WHERE vendedor!='FYNSA' and comprador!='FYNSA') as ingreso_resto from "RFI_rfi_beta" group by mensual order by mensual asc; ''')
+    datos['metas']=rfi_beta.objects.raw(''' select 1 as linea,date_trunc('month',fecha)::date as mensual,coalesce(sum(ingreso_mesa) FILTER (WHERE vendedor='FYNSA' or comprador='FYNSA'),0) as ingreso_banca_privada,sum(ingreso_mesa) FILTER (WHERE vendedor!='FYNSA' and comprador!='FYNSA') as ingreso_resto from "RFI_rfi_beta" group by mensual order by mensual asc; ''')
     datos['generacion_mensual'] = rfi_beta.objects.raw('''select 1 as linea,mes,"2014","2015","2016","2017","2018","2019","2020",COALESCE("2021",0) as "2021",COALESCE("2022",0) as "2022" FROM crosstab('select date_part(''month'',fecha) as mes,date_part(''YEAR'',fecha) as agno, sum(ingreso_mesa)
 from "RFI_rfi_beta"
 group by mes,agno
 order by mes,agno','select m from generate_series(2014,2022) m')
 as ct(mes numeric, "2014" numeric, "2015" numeric,"2016" numeric,"2017" numeric,"2018" numeric,"2019" numeric,
 	  "2020" numeric,"2021" numeric,"2022" numeric) ''')
+
+    #tortas móviles
+    datos['tortas_moviles'] = rfi_beta.objects.raw(''' select 1 as linea,* from eq_rfi_serie_tortas_moviles() where mes between '2020-01-01' and '2022-01-01' order by mes asc; ''')
+
     return render(request,'comite-rfi-salida.html',datos)
     
 def rfi_comite_cliente(request,cliente):
