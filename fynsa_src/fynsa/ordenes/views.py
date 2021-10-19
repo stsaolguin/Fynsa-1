@@ -14,7 +14,7 @@ import ast,time
 from django.urls import reverse_lazy
 #from itertools import tee
 from django.db.models import Q
-from ordenes.funciones_externas import paises_iso_2
+
 
 
 
