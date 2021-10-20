@@ -8,6 +8,8 @@ from django.utils.dateparse import parse_date
 from .formularios_rfi import cargador_rfi_beta_form
 from .funciones_externas import limpia_rfi
 from django.db import connection
+from RFL.models import actividad
+import csv
 import io
 
     
@@ -144,3 +146,22 @@ def rfi_cargador_datos(request):
             
     #ultimo agregado
     return render(request,'cargador-rfi.html',datos)
+
+def rfi_comite_descargar_excel_view(request):
+    fechas = request.GET.copy()
+    fecha_inicial = parse_date(fechas['fecha_inicial'])
+    fecha_final = parse_date(fechas['fecha_final'])
+    consulta = rfi_beta.objects.raw(''' SELECT 1 AS linea, * from eq_rfi_generacion(%s,%s) ''',[fecha_inicial,fecha_final])
+    salida=[]
+    response = HttpResponse(content_type='text/csv')
+    nombre_archivo = "Generacion_RFI_entre_el_{0}_y_{1}".format(fecha_inicial,fecha_final)
+    response['Content-Disposition'] = 'attachment; filename={0}.csv'.format(nombre_archivo)
+    writer = csv.writer(response)
+    writer.writerow(['pais','cat','cliente','generacion_brk','generacion_finales','generacion_bancos_brk','generacion_total'])
+    for r in consulta:
+         salida.append([r.pais,r.cat,r.cliente,r.generacion_brk,r.generacion_finales,r.generacion_bancos_brk,r.generacion_total])
+    writer.writerows(salida)
+    timbre = actividad(name='BASES',accion='generacion_conciliaciones',usuario=request.user)
+    timbre.save()
+
+    return response
