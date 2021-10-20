@@ -9,5 +9,6 @@ urlpatterns = [
     path('comite-rfi/proceso', views.rfi_comite_proceso, name='rfi_comite_proceso'),
     path('comite-rfi/proceso/<str:cliente>', views.rfi_comite_cliente),
     path('cargador-ordenes-rfi', views.rfi_cargador_datos, name='rfi_cargador_datos'),
+    path('descarga-generacion-rfi', views.rfi_comite_descargar_excel_view, name='rfi_comite_descarga_excel'),
     
     ]

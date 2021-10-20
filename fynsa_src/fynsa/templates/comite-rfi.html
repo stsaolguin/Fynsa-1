@@ -5,7 +5,7 @@
     <div class="row mb-3">
     <h3>Comité Equipo Renta Fija Internacional</h3>
     </div>
-        <div class="row">
+        <div class="row mb-3">
             <div class="d-flex justify-content-center">
             
                     <form action="{% url 'rfi_comite_proceso' %}" method="GET" target="_blank">
@@ -15,6 +15,25 @@
                             {{fechas_ingreso}}
                        
                             <input type="submit" class="btn btn-primary" value="Generar"> 
+                        </div>
+                    </form>
+        
+            
+            </div>
+        </div>
+        <div class="row">
+        <h4>Descarga de datos.</h4>
+        </div>
+        <div class="row">
+            <div class="d-flex justify-content-center">
+            
+                    <form action="{% url 'rfi_comite_descarga_excel' %}" method="GET">
+
+                        <div class="form-inline">
+                            {% csrf_token %}
+                            {{fechas_ingreso}}
+                       
+                            <input type="submit" class="btn btn-primary" value="Descargar"> 
                         </div>
                     </form>
         
