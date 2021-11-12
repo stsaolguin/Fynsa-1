@@ -145,7 +145,7 @@ def rfi_cargador_datos(request):
             messages.add_message(request,messages.INFO,'CARGA CORRECTA!')
             
     #ultimo agregado
-    return render(request,'cargador-rfi.html',datos)
+    return render(request,'rfi-cargador-rapido.html',datos)
 
 def rfi_comite_descargar_excel_view(request):
     fechas = request.GET.copy()
@@ -165,3 +165,12 @@ def rfi_comite_descargar_excel_view(request):
     timbre.save()
 
     return response
+
+from RFI.formularios_rfi import IngresoOperacionesRfiBeta
+
+def rfi_ingreso_operaciones(request):
+    datos = {}
+    formulario_rfi = IngresoOperacionesRfiBeta()
+    datos['formulario_rfi'] = formulario_rfi
+
+    return render(request,'rfi-ingreso-operaciones.html',datos)

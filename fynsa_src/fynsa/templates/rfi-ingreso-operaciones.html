@@ -1,0 +1,31 @@
+{% include 'index.html' %}
+
+{% block 'contenido' %}
+<div class="container">
+    <div class="display-4">Ingreso de Operaciones RFI</div>
+            <div class="row">
+                        <div class="d-flex justify-content-center">
+                        
+                                <form method = "POST" action = ''>
+
+                                    <div class="form-inline">
+                                        {% csrf_token %}
+                                        {{ formulario_rfi }}                                
+                                        <input type="submit" class="btn btn-primary" value="Agregar"> 
+                                    </div>
+                                </form>
+                    
+                        
+                        </div>
+            </div>
+
+        {% if messages %}
+            <ul class="alert alert-info">
+                {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+</div> {% comment %}  div de la conteiner, no borrar {% endcomment %}
+{% endblock %}

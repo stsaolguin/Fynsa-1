@@ -3130,3 +3130,59 @@ ct(
 $$ LANGUAGE SQL;
 select * from eq_rfi_serie_tortas_moviles();
 
+======================================
+tortas moviles por categoria
+DROP FUNCTION eq_rfi_tortas_moviles_categorias();
+CREATE OR REPLACE FUNCTION eq_rfi_tortas_moviles_categorias() RETURNS TABLE(fecha_salida date,cliente text,pais text,categoria text,generacion numeric ) 
+AS
+$$
+DECLARE
+r RECORD;
+s RECORD;
+BEGIN
+	    	FOR r IN SELECT beta.fecha,beta.ingreso_mesa, cli.pais as pais_comprador, beta.comprador,beta.vendedor,
+			clit.pais as pais_vendedor,cli.categoria as cat_comprador, clit.pais as cat_vendedor 
+			FROM "RFI_rfi_beta" beta
+			LEFT OUTER JOIN "RFI_clientes_rfi" cli ON cli.fondo = beta.comprador
+			LEFT OUTER JOIN "RFI_clientes_rfi" clit ON clit.fondo = beta.vendedor
+			ORDER BY fecha desc
+				LOOP
+					IF r.pais_comprador IS NULL AND r.pais_vendedor IS NULL THEN
+					pais:='BKR';
+					cliente:='entre brk';
+					generacion:=r.ingreso_mesa;
+					fecha_salida:=r.fecha;
+					categoria:='BKR o DLR';
+					ELSIF r.pais_comprador IS NULL THEN
+					pais:= r.pais_vendedor;
+					cliente:=r.vendedor;
+					generacion := r.ingreso_mesa;
+					fecha_salida:= r.fecha;
+					categoria :=r.cat_vendedor;
+					ELSIF r.pais_vendedor IS NULL THEN
+					pais:= r.pais_comprador;
+					cliente:=r.comprador;
+					generacion := r.ingreso_mesa;
+					fecha_salida:= r.fecha;
+					categoria :=r.cat_comprador;
+					ELSIF r.pais_vendedor IS NOT NULL AND r.pais_comprador IS NOT NULL THEN
+					pais:= r.pais_comprador;
+					fecha_salida:= r.fecha;
+					cliente:=r.comprador;
+					categoria:=r.cat_comprador;
+					generacion := round(r.ingreso_mesa/2,2);
+					RETURN NEXT;
+					pais:= r.pais_vendedor;
+					generacion := round(r.ingreso_mesa/2,2);
+					cliente:=r.vendedor;
+					fecha_salida:= r.fecha;
+					categoria :=r.cat_vendedor;
+					END IF;
+				RETURN NEXT;
+				END LOOP;
+END;
+$$ LANGUAGE 'plpgsql';
+
+select * from eq_rfi_tortas_moviles_categorias()
+
+
