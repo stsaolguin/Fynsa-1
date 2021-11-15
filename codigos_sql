@@ -3141,7 +3141,7 @@ r RECORD;
 s RECORD;
 BEGIN
 	    	FOR r IN SELECT beta.fecha,beta.ingreso_mesa, cli.pais as pais_comprador, beta.comprador,beta.vendedor,
-			clit.pais as pais_vendedor,cli.categoria as cat_comprador, clit.pais as cat_vendedor 
+			clit.pais as pais_vendedor,cli.categoria as cat_comprador, clit.categoria as cat_vendedor 
 			FROM "RFI_rfi_beta" beta
 			LEFT OUTER JOIN "RFI_clientes_rfi" cli ON cli.fondo = beta.comprador
 			LEFT OUTER JOIN "RFI_clientes_rfi" clit ON clit.fondo = beta.vendedor
