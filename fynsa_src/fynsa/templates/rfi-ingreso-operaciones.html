@@ -2,21 +2,94 @@
 
 {% block 'contenido' %}
 <div class="container">
-    <div class="display-4">Ingreso de Operaciones RFI</div>
-            <div class="row">
-                        <div class="d-flex justify-content-center">
-                        
+    <div class="h1">Ingreso de Operaciones RFI.</div>
                                 <form method = "POST" action = ''>
-
-                                    <div class="form-inline">
                                         {% csrf_token %}
-                                        {{ formulario_rfi }}                                
-                                        <input type="submit" class="btn btn-primary" value="Agregar"> 
-                                    </div>
-                                </form>
-                        </div>
-            </div>
+                                        <div class="row">
+                                                <div class="col-lg-6">
+                                                    <label for="{{ formulario_rfi.fecha.id_for_label }}">fecha:</label>
+                                                    {{ formulario_rfi.fecha }}
+                                                </div>
+                                                <div class="col-lg-6">
+                                                    <label for="{{ formulario_rfi.operacion.id_for_label }}">Operacion:</label>
+                                                    {{ formulario_rfi.operacion }}
+                                                </div>
+                                        </div>
+                                        <div class="row justify-content-center">
+                                                            <div class="col-lg-5">
+                                                            <label for="{{ formulario_rfi.vendedor.id_for_label }}">Vendedor:</label>
+                                                            {{ formulario_rfi.vendedor }}
+                                                            </div>
+                                                            <div class="col-lg-5">
+                                                                <label for="{{ formulario_rfi.comprador.id_for_label }}">Comprador:</label>
+                                                                {{ formulario_rfi.comprador }}
+                                                            </div>
+                                        </div>
+                                                
+                                        <div class="row border border-success rounded my-2 pb-2">
+                                            <div class="col-lg-4">
+                                                    <label for="{{ formulario_rfi.papel.id_for_label }}">Papel:</label>
+                                                    {{ formulario_rfi.papel }}
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <label for="{{ formulario_rfi.cusip.id_for_label }}">Isin:</label>
+                                                <input type="text" list="isin" id="id_isin" name ="isin" class="form-control" value="{{ formulario_rfi.cusip.value | default_if_none:'' }}">
+                                                {{ formulario_rfi.isin.errors }}
+                                                    <datalist id="isin">
+                                                    {% for r,s in formulario_rfi.isin.field.choices %}
+                                                        <option value="{{ r }}">
+                                                    {% endfor %}
+                                                    </datalist>
+                                            </div>
+                                            <div class="col-lg-2">
+                                                <label for="{{ formulario_rfi.crncy.id_for_label }}">Currency:</label>
+                                                {{ formulario_rfi.crncy }}
+                                            </div>
+                                            <div class="col-lg-2">
+                                                <label for="{{ formulario_rfi.country_of_risk.id_for_label }}">Country of risk:</label>
+                                                {{ formulario_rfi.country_of_risk }}
+                                            </div>
+                                            
+                                        </div>
 
+                                        <div class="row justify-content-center">
+                                            <div class="col-lg-4">
+                                                <label for="{{ formulario_rfi.nominales.id_for_label }}">Nominales:</label>
+                                                {{ formulario_rfi.nominales }}
+                                            </div>
+
+
+
+                                        </div>
+                                        <div class="row justify-content-center">
+
+                                            <div class="col-lg-4">
+                                                <label for="{{ formulario_rfi.mesa.id_for_label }}">Compramos a:</label>
+                                                {{ formulario_rfi.mesa }}
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <label for="{{ formulario_rfi.ejecutivo_precio.id_for_label }}">Vendemos a:</label>
+                                                {{ formulario_rfi.ejecutivo_precio }}
+                                            </div>
+                                        </div>
+                                        <div class="row justify-content-end">
+                                            <div class="col-lg-4">
+                                                    <label for="{{ formulario_rfi.ingreso_mesa.id_for_label }}">Ingreso Mesa:</label>
+                                                    {{ formulario_rfi.ingreso_mesa }}
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <label for="{{ formulario_rfi.spread_mesa.id_for_label }}">Spread mesa:</label>
+                                                {{ formulario_rfi.spread_mesa }}
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <input type="submit" class="btn btn-primary my-2" value="Agregar"> 
+                                       </div>
+                                </form>
+                        
+            
+        </div>
+        <div class="row">
         {% if messages %}
             <ul class="alert alert-info">
                 {% for message in messages %}
@@ -24,6 +97,61 @@
                 {% endfor %}
             </ul>
         {% endif %}
+        </div>
 
 </div> {% comment %}  div de la conteiner, no borrar {% endcomment %}
+
+<script>
+    function separador_miles(n){
+        var n_parts = n.toString();
+        var n_salida = n_parts.replace(/\B(?=(\d{3})+(?!\d))/g,".");
+        return n_salida
+        
+    };
+
+    function reemplazar_puntos(m){
+        return m.replace(".","")
+    }
+    
+    function calculo_ingreso_mesa(){
+        spread_mesa.value = venta.value - compra.value;
+        ingreso_mesa.value = spread_mesa.value * reemplazar_puntos(nominales_2.value)/100;
+        
+    }
+    var nominales = document.getElementById('id_nominales');
+    var nominales_2 = document.getElementById('id_nominales');
+    var compra = document.getElementById('id_mesa');
+    var venta = document.getElementById('id_ejecutivo_precio');
+    var ingreso_mesa = document.getElementById('id_ingreso_mesa');
+    var spread_mesa = document.getElementById('id_spread_mesa');
+    function calculo_ingreso_mesa(){
+        spread_mesa.value = venta.value - compra.value;
+        ingreso_mesa.value = spread_mesa.value * reemplazar_puntos(nominales_2.value)/100;
+        
+    }
+
+    nominales.addEventListener('change',d =>{
+     nominales.value = separador_miles(nominales.value);
+     calculo_ingreso_mesa();
+   
+     });
+    compra.addEventListener('change',d =>{
+    compra.value = separador_miles(compra.value);
+    calculo_ingreso_mesa();
+
+    }); 
+    venta.addEventListener('change',d =>{
+    venta.value = separador_miles(venta.value);
+    calculo_ingreso_mesa();
+
+    });     
+
+
+</script>
+
+
+
+
 {% endblock %}
+
+

@@ -1,3 +1,4 @@
 {
-    "python.pythonPath": "/home/gvera/Fynsa/fynsa_env/bin/python3"
+    "python.pythonPath": "/home/gvera/Fynsa/fynsa_env/bin/python3",
+    "emmet.triggerExpansionOnTab": true
 }
