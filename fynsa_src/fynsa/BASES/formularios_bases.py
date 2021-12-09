@@ -1,5 +1,6 @@
 from django.forms import ModelForm, Textarea,Select,DateInput, ModelChoiceField
 from django.core.exceptions import ValidationError
+from django.forms.widgets import CheckboxInput
 from django.utils import tree
 from .models import *
 from django import forms
@@ -64,6 +65,7 @@ class f_conciliaciones(forms.Form):
     cliente = forms.ModelChoiceField(queryset=clientes_conciliaciones(),to_field_name='nombre')
     fecha_inicial = forms.DateField(widget=forms.DateInput(attrs={'class':'form-control mx-2','type':'date'}),label='fecha inicial', required=True, initial='2019-08-09')
     fecha_final = forms.DateField(widget=forms.DateInput(attrs={'class':'form-control mx-2','type':'date'}),label='fecha final', required=True)
+    en_dolares = forms.BooleanField(widget=forms.CheckboxInput(attrs={'class':'form-control mx-2','type':'checkbox'}),required = False)
     cliente.widget.attrs.update({'class':'form-control mx-2'})
 
 

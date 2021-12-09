@@ -135,7 +135,7 @@ def rfi_cargador_datos(request):
                     fila = rfi_beta(**r)
                     fila.save()
             except:
-                return HttpResponse(' Un error ha ocurrido, revisa el csv')
+                return HttpResponse(' Un error ha ocurrido, revisa el csv, linea :{}'.format(fila))
             clientes_nuevos = rfi_beta.objects.raw('''select 1 as linea,comprador from "RFI_rfi_beta" where comprador not in (select fondo from "RFI_clientes_rfi") UNION select 1 as linea,vendedor from "RFI_rfi_beta" where vendedor not in (select fondo from "RFI_clientes_rfi")''')
             for r in clientes_nuevos:
                 if r.comprador != '<Cell 9, 0>':
@@ -145,7 +145,7 @@ def rfi_cargador_datos(request):
             messages.add_message(request,messages.INFO,'CARGA CORRECTA!')
             
     #ultimo agregado
-    return render(request,'cargador-rfi.html',datos)
+    return render(request,'rfi-cargador-rapido.html',datos)
 
 def rfi_comite_descargar_excel_view(request):
     fechas = request.GET.copy()
@@ -165,3 +165,12 @@ def rfi_comite_descargar_excel_view(request):
     timbre.save()
 
     return response
+
+from RFI.formularios_rfi import IngresoOperacionesRfiBeta
+
+def rfi_ingreso_operaciones(request):
+    datos = {}
+    formulario_rfi_beta = IngresoOperacionesRfiBeta()
+    datos['formulario_rfi'] = formulario_rfi_beta
+
+    return render(request,'rfi-ingreso-operaciones.html',datos)

@@ -115,39 +115,66 @@ def detalles_cobranzas(request,cliente):
 
 
 def conciliaciones_views(request):
+    print("dentro de concilianciones_views, print request.GET", request.GET)
     cliente=request.GET.get('cliente')
     cliente = cliente + '%'
     fecha_inicial=request.GET.get('fecha_inicial')
     fecha_final=request.GET.get('fecha_final')
+    if request.GET.get("en_dolares")=='on':
+        conciliaciones = bases.objects.raw(''' select 1 as linea,fecha,otc_tr,nemo,monto,tipo_de_pago,buy,seller,trader_buy,trader_seller,tasa,
+    sum(
+        CASE WHEN buy ilike %s THEN
+        fee_buyer
+        ELSE
+        0
+        END
+        )as fe_buyer, 
+    sum(
+        CASE WHEN seller ilike %s THEN
+        fee_seller
+        ELSE
+        0
+        END)as fe_seller
+    from "BASES_bases"
+    where (buy ilike %s or seller ilike %s) AND (fee_seller_clp<>0 or fee_buyer_clp<>0) and fecha between %s and %s
+    group by fecha,otc_tr,nemo,monto,tipo_de_pago,buy,seller,trader_buy,trader_seller,tasa
+    order by fecha asc;''',[cliente,cliente,cliente,cliente,fecha_inicial,fecha_final])
+    else:
+        conciliaciones = bases.objects.raw(''' select 1 as linea,fecha,otc_tr,nemo,monto,tipo_de_pago,buy,seller,trader_buy,trader_seller,tasa,
+    sum(
+        CASE WHEN buy ilike %s THEN
+        fee_buyer_clp
+        ELSE
+        0
+        END
+        )as fe_buyer_clp, 
+    sum(
+        CASE WHEN seller ilike %s THEN
+        fee_seller_clp
+        ELSE
+        0
+        END)as fe_seller_clp
+    from "BASES_bases"
+    where (buy ilike %s or seller ilike %s) AND (fee_seller_clp<>0 or fee_buyer_clp<>0) and fecha between %s and %s
+    group by fecha,otc_tr,nemo,monto,tipo_de_pago,buy,seller,trader_buy,trader_seller,tasa
+    order by fecha asc;''',[cliente,cliente,cliente,cliente,fecha_inicial,fecha_final])
 
-    conciliaciones = bases.objects.raw(''' select 1 as linea,fecha,otc_tr,nemo,monto,tipo_de_pago,buy,seller,trader_buy,trader_seller,tasa,
-sum(
-	CASE WHEN buy ilike %s THEN
-	fee_buyer_clp
-	ELSE
-	0
-	END
-	)as fe_buyer_clp, 
-sum(
-	CASE WHEN seller ilike %s THEN
-	fee_seller_clp
-	ELSE
-	0
-	END)as fe_seller_clp
-from "BASES_bases"
-where (buy ilike %s or seller ilike %s) AND (fee_seller_clp<>0 or fee_buyer_clp<>0) and fecha between %s and %s
-group by fecha,otc_tr,nemo,monto,tipo_de_pago,buy,seller,trader_buy,trader_seller,tasa
-order by fecha asc;''',[cliente,cliente,cliente,cliente,fecha_inicial,fecha_final])
-    
+
     salida=[]
     response = HttpResponse(content_type='text/csv')
     nombre_archivo = "{0}_entre_el_{1}_y_{2}".format(cliente,fecha_inicial,fecha_final)
     response['Content-Disposition'] = 'attachment; filename={0}.csv'.format(nombre_archivo)
     writer = csv.writer(response)
-    writer.writerow(['fecha','otc_tr','nemo','monto','tipo_de_pago','buy','seller','trader_buy','trader_seller','tasa','fee_buyer_clp','fee_seller_clp'])
-    for r in conciliaciones:
-        salida.append([r.fecha,r.otc_tr,r.nemo,r.monto,r.tipo_de_pago,r.buy,r.seller,r.trader_buy,r.trader_seller,r.tasa,r.fe_buyer_clp,r.fe_seller_clp])
-    writer.writerows(salida)
+    writer.writerow(['fecha','otc_tr','nemo','monto','tipo_de_pago','buy','seller','trader_buy','trader_seller','tasa','fee_buyer','fee_seller'])
+    if request.GET.get("en_dolares")=='on':
+        for r in conciliaciones:
+            salida.append([r.fecha,r.otc_tr,r.nemo,r.monto,r.tipo_de_pago,r.buy,r.seller,r.trader_buy,r.trader_seller,r.tasa,r.fe_buyer,r.fe_seller])
+        writer.writerows(salida)
+    else:
+        for r in conciliaciones:
+            salida.append([r.fecha,r.otc_tr,r.nemo,r.monto,r.tipo_de_pago,r.buy,r.seller,r.trader_buy,r.trader_seller,r.tasa,r.fe_buyer_clp,r.fe_seller_clp])
+        writer.writerows(salida)
+
 
     timbre = actividad(name='BASES',accion='generacion_conciliaciones',usuario=request.user)
     timbre.save()

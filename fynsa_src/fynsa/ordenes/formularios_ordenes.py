@@ -279,3 +279,4 @@ class BuscadorEditorBonosForm(forms.Form):
     isin_security_name = forms.CharField()
     isin_security_name.widget.attrs = {'class':'form-control'}
     
+
