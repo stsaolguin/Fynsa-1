@@ -7,6 +7,7 @@ from BASES.formularios_bases import f_fechas_comite_rfi
 from django.utils.dateparse import parse_date
 from .formularios_rfi import cargador_rfi_beta_form
 from .funciones_externas import limpia_rfi
+from RFI.formularios_rfi import IngresoOperacionesRfiBetaIntermediacion,IngresoOperacionesRfiBetaCruceInterno,IngresoOperacionesRfiBetaCompraVentaEjecutivos
 from django.db import connection
 from RFL.models import actividad
 import csv
@@ -166,11 +167,79 @@ def rfi_comite_descargar_excel_view(request):
 
     return response
 
-from RFI.formularios_rfi import IngresoOperacionesRfiBeta
+
 
 def rfi_ingreso_operaciones(request):
     datos = {}
-    formulario_rfi_beta = IngresoOperacionesRfiBeta()
-    datos['formulario_rfi'] = formulario_rfi_beta
+    print(request.POST)
+
+    if request.method=='POST' and request.POST['formulario']=='intermediacion':
+        f = IngresoOperacionesRfiBetaIntermediacion(request.POST)
+        if f.is_valid():
+            #Se guarda la instancia, no el formulario. Por eso se pone commit false
+            r = f.save(commit= False)
+            r.cliente_precio = f.cleaned_data['ejecutivo_precio']
+            r.ingreso_ejecutivo = 0
+            r.cliente = "P85891011"
+            r.ejecutivo = "200"
+            r.contraparte = "-"
+            r.operacion = ''
+            r.save()
+        else:
+            
+            datos['formulario_intermediacion_rfi'] = f
+            datos['formulario_cruce_rfi'] = IngresoOperacionesRfiBetaCruceInterno()
+            datos['formulario_compraventa_rfi'] = IngresoOperacionesRfiBetaCompraVentaEjecutivos()
+            return render(request,'rfi-ingreso-operaciones.html',datos)
+
+    if request.method=='POST' and request.POST['formulario']=='CruceInterno':
+        f = IngresoOperacionesRfiBetaCruceInterno(request.POST)
+        if f.is_valid():
+            #Se guarda la instancia, no el formulario. Por eso se pone commit false
+            r = f.save(commit= False)
+            r.cliente_precio = f.cleaned_data['ejecutivo_precio']
+            r.ingreso_ejecutivo = 0
+            r.cliente = "P85891011"
+            r.ejecutivo = "200"
+            r.contraparte = "-"
+            r.operacion = ''
+            #r.save()
+        else:
+            
+            datos['formulario_intermediacion_rfi'] = f
+            datos['formulario_cruce_rfi'] = IngresoOperacionesRfiBetaCruceInterno()
+            datos['formulario_compraventa_rfi'] = IngresoOperacionesRfiBetaCompraVentaEjecutivos()
+
+            return render(request,'rfi-ingreso-operaciones.html',datos)
+    
+    datos['formulario_intermediacion_rfi'] = IngresoOperacionesRfiBetaIntermediacion()
+    datos['formulario_cruce_rfi'] = IngresoOperacionesRfiBetaCruceInterno()
+    datos['formulario_compraventa_rfi'] = IngresoOperacionesRfiBetaCompraVentaEjecutivos()
+    
+
 
     return render(request,'rfi-ingreso-operaciones.html',datos)
+
+def rfi_datos_fena(request):
+    """ Esta vista obtiene un excel con los datos de la feña """
+    datos = rfi_beta.objects.raw(''' select 1 as linea,* from eq_rfi_tortas_moviles_categorias() order by fecha_salida desc''')
+    salida=[]
+    response = HttpResponse(content_type='text/csv')
+    nombre_archivo = "Generacion Mensual diaria"
+    response['Content-Disposition'] = 'attachment; filename={0}.csv'.format(nombre_archivo)
+    writer = csv.writer(response)
+    writer.writerow(['fecha_salida','cliente','pais','categoria','generacion'])
+    for r in datos:
+        salida.append([r.fecha_salida,r.cliente,r.pais,r.categoria,r.generacion])
+    writer.writerows(salida)
+    timbre = actividad(name='RFI',accion='datos_fena',usuario=request.user)
+    timbre.save()
+    return response
+
+
+
+def RutinasDeValidacion(request):
+    """ Esta vista ejecuta las rutinas de validación despues de la carga de los datos de bases """
+    datos = {}
+    datos['rutina_de_validacion'] = bases.objects.raw(''' SELECT 1 as linea, * from eq_der_rutinas(); ''' )
+    return render(request,'bases-rutina-validacion-salida.html',context=datos)

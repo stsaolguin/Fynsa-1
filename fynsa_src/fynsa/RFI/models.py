@@ -26,11 +26,9 @@ class rfi_beta(models.Model):
     duration = models.DecimalField(max_digits=5, decimal_places=3, default=00.000, null=True, blank=True)
     tipo_de_cambio = models.DecimalField(max_digits=6,decimal_places=2,null=True)
     fecha_subido = models.DateTimeField(auto_now=True, null=True)
+    factor = models.DecimalField(max_digits=22, decimal_places=20, default=1.00000000000000000000,null=True,blank=True)
+    ejecutivo_bp_nombre = models.TextField(blank = True,null=True)
     
-
-#    def __str__(self):
-#        return str(self.fecha)
-
 class clientes_rfi(models.Model):
     fondo = models.TextField(null=True,blank=True)
     nombre_cliente = models.TextField(unique=True,null=True,blank=True)
@@ -133,3 +131,6 @@ class rfi_bonos(models.Model):
 class PruebaArrayModel(models.Model):
     riesgo = ArrayField(models.CharField(max_length=100, blank=True))
     
+class ejecutivos_externos_bp(models.Model):
+    nombre_completo = models.TextField(blank=True,null=True)
+    codigo = models.CharField(max_length=3,null=True,blank=True)

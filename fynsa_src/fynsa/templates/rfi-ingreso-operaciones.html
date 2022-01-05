@@ -2,90 +2,316 @@
 
 {% block 'contenido' %}
 <div class="container">
-    <div class="h1">Ingreso de Operaciones RFI.</div>
-                                <form method = "POST" action = ''>
-                                        {% csrf_token %}
+    <div class="h3">Ingreso de Operaciones RFI.</div>
+    <ul class="nav nav-tabs">
+        <li class="nav-item" role="presentation">
+            <a class="nav-link active" id="home-tab" data-toggle="tab" href="#intermediacion" role="tab" aria-controls="intermediacion" aria-selected="true">Intermediación</a>
+          </li>
+          <li class="nav-item" role="presentation">
+            <a class="nav-link" id="profile-tab" data-toggle="tab" href="#CruceInterno" role="tab" aria-controls="CruceInterno" aria-selected="false">Cruce Interno</a>
+          </li>
+          <li class="nav-item" role="presentation">
+            <a class="nav-link" id="contact-tab" data-toggle="tab" href="#CompraVentaEjecutivos" role="tab" aria-controls="CompraVentaEjecutivos" aria-selected="false">Compraventa Ejecutivos</a>
+          </li>
+
+
+
+    </ul>
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="intermediacion" role="tabpanel" aria-labelledby="home-tab">
+                        {% if formulario_intermediacion_rfi.subject.errors %}
+                            <ol>
+                            {% for error in formulario_intermediacion_rfi.subject.errors %}
+                                <li><strong>{{ error|escape }}</strong></li>
+                            {% endfor %}
+                            </ol>
+                        {% endif %}
+                                <form method = "POST"> {% csrf_token %}
+                                       <input type="hidden" name="formulario" value="intermediacion">
                                         <div class="row">
                                                 <div class="col-lg-6">
-                                                    <label for="{{ formulario_rfi.fecha.id_for_label }}">fecha:</label>
-                                                    {{ formulario_rfi.fecha }}
-                                                </div>
-                                                <div class="col-lg-6">
-                                                    <label for="{{ formulario_rfi.operacion.id_for_label }}">Operacion:</label>
-                                                    {{ formulario_rfi.operacion }}
+                                                    {{ formulario_intermediacion_rfi.fecha.errors }}
+                                                    <label for="{{ formulario_intermediacion_rfi.fecha.id_for_label }}">Fecha:</label>
+                                                    {{ formulario_intermediacion_rfi.fecha }}
                                                 </div>
                                         </div>
                                         <div class="row justify-content-center">
                                                             <div class="col-lg-5">
-                                                            <label for="{{ formulario_rfi.vendedor.id_for_label }}">Vendedor:</label>
-                                                            {{ formulario_rfi.vendedor }}
+                                                                {{ formulario_intermediacion_rfi.vendedor.errors }}
+                                                            <label for="{{ formulario_intermediacion_rfi.vendedor.id_for_label }}">Vendedor:</label>
+                                                            {{ formulario_intermediacion_rfi.vendedor }}
                                                             </div>
                                                             <div class="col-lg-5">
-                                                                <label for="{{ formulario_rfi.comprador.id_for_label }}">Comprador:</label>
-                                                                {{ formulario_rfi.comprador }}
+                                                                {{ formulario_intermediacion_rfi.comprador.errors }}
+                                                                <label for="{{ formulario_intermediacion_rfi.comprador.id_for_label }}">Comprador:</label>
+                                                                {{ formulario_intermediacion_rfi.comprador }}
                                                             </div>
                                         </div>
                                                 
                                         <div class="row border border-success rounded my-2 pb-2">
                                             <div class="col-lg-4">
-                                                    <label for="{{ formulario_rfi.papel.id_for_label }}">Papel:</label>
-                                                    {{ formulario_rfi.papel }}
+                                                   <label for="{{ formulario_intermediacion_rfi.papel.id_for_label }}">Papel:</label>
+                                                    {{ formulario_intermediacion_rfi.papel }}
                                             </div>
-                                            <div class="col-lg-4">
-                                                <label for="{{ formulario_rfi.cusip.id_for_label }}">Isin:</label>
-                                                <input type="text" list="isin" id="id_isin" name ="isin" class="form-control" value="{{ formulario_rfi.cusip.value | default_if_none:'' }}">
-                                                {{ formulario_rfi.isin.errors }}
+                                            <div class="col-lg-3">
+                                                <label for="{{ formulario_intermediacion_rfi.cusip.id_for_label }}">Isin:</label>
+                                                <input type="text" list="isin" id="id_isin" name ="cusip" class="form-control" value="{{ formulario_intermediacion_rfi.cusip.value | default_if_none:'' }}">
+                                                {{ formulario_intermediacion_rfi.isin.errors }}
                                                     <datalist id="isin">
-                                                    {% for r,s in formulario_rfi.isin.field.choices %}
+                                                    {% for r,s in formulario_intermediacion_rfi.cusip.field.choices %}
                                                         <option value="{{ r }}">
                                                     {% endfor %}
                                                     </datalist>
                                             </div>
                                             <div class="col-lg-2">
-                                                <label for="{{ formulario_rfi.crncy.id_for_label }}">Currency:</label>
-                                                {{ formulario_rfi.crncy }}
+                                                <label for="{{ formulario_intermediacion_rfi.crncy.id_for_label }}">Currency:</label>
+                                                {{ formulario_intermediacion_rfi.crncy }}
                                             </div>
                                             <div class="col-lg-2">
-                                                <label for="{{ formulario_rfi.country_of_risk.id_for_label }}">Country of risk:</label>
-                                                {{ formulario_rfi.country_of_risk }}
+                                                <label for="{{ formulario_intermediacion_rfi.country_of_risk.id_for_label }}">Country of risk:</label>
+                                                {{ formulario_intermediacion_rfi.country_of_risk }}
+                                            </div>
+                                            <div class="col-lg-1">
+                                                <label for="{{ formulario_intermediacion_rfi.country_of_risk.id_for_label }}">Factor:</label>
+                                                <input type = "text" name = "factor" class = "form-control" value = 1 id="id_factor">
                                             </div>
                                             
                                         </div>
 
                                         <div class="row justify-content-center">
                                             <div class="col-lg-4">
-                                                <label for="{{ formulario_rfi.nominales.id_for_label }}">Nominales:</label>
-                                                {{ formulario_rfi.nominales }}
+                                                {{ formulario_intermediacion_rfi.nominales.errors }}
+                                                <label for="{{ formulario_intermediacion_rfi.nominales.id_for_label }}">Nominales:</label>
+                                                {{ formulario_intermediacion_rfi.nominales }}
                                             </div>
-
-
-
                                         </div>
                                         <div class="row justify-content-center">
 
                                             <div class="col-lg-4">
-                                                <label for="{{ formulario_rfi.mesa.id_for_label }}">Compramos a:</label>
-                                                {{ formulario_rfi.mesa }}
+                                                {{ formulario_intermediacion_rfi.mesa.errors }}
+                                                <label for="{{ formulario_intermediacion_rfi.mesa.id_for_label }}">Compramos a:</label>
+                                                {{ formulario_intermediacion_rfi.mesa }}
                                             </div>
                                             <div class="col-lg-4">
-                                                <label for="{{ formulario_rfi.ejecutivo_precio.id_for_label }}">Vendemos a:</label>
-                                                {{ formulario_rfi.ejecutivo_precio }}
+                                                {{ formulario_intermediacion_rfi.ejecutivo_precio.errors }}
+                                                <label for="{{ formulario_intermediacion_rfi.ejecutivo_precio.id_for_label }}">Vendemos a:</label>
+                                                {{ formulario_intermediacion_rfi.ejecutivo_precio }}
                                             </div>
                                         </div>
                                         <div class="row justify-content-end">
                                             <div class="col-lg-4">
-                                                    <label for="{{ formulario_rfi.ingreso_mesa.id_for_label }}">Ingreso Mesa:</label>
-                                                    {{ formulario_rfi.ingreso_mesa }}
+                                                {{ formulario_intermediacion_rfi.ingreso_mesa.errors }}
+                                                    <label for="{{ formulario_intermediacion_rfi.ingreso_mesa.id_for_label }}">Ingreso Mesa:</label>
+                                                    {{ formulario_intermediacion_rfi.ingreso_mesa }}
                                             </div>
                                             <div class="col-lg-4">
-                                                <label for="{{ formulario_rfi.spread_mesa.id_for_label }}">Spread mesa:</label>
-                                                {{ formulario_rfi.spread_mesa }}
+                                                {{ formulario_intermediacion_rfi.spread_mesa.errors }}
+                                                <label for="{{ formulario_intermediacion_rfi.spread_mesa.id_for_label }}">Spread mesa:</label>
+                                                {{ formulario_intermediacion_rfi.spread_mesa }}
                                             </div>
                                         </div>
                                         <div class="row">
                                             <input type="submit" class="btn btn-primary my-2" value="Agregar"> 
                                        </div>
                                 </form>
+                </div>
+                <div class="tab-pane fade show" id="CruceInterno" role="tabpanel" aria-labelledby="home-tab">
+                    
+                    <form method="POST">{% csrf_token %}
+                        <input type="hidden" name="formulario" value="CruceInterno">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <label for="{{ formulario_cruce_rfi.fecha.id_for_label }}">Fecha:</label>
+                                {{ formulario_cruce_rfi.fecha }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <label for="{{ formulario_cruce_rfi.nominales.id_for_label }}">Nominales:</label>
+                                {{ formulario_cruce_rfi.nominales }}
+                            </div>
+
+
+                        </div>
+                        <div class="row">
+
+                            <div class="col-lg-3">
+                                <label for="{{ formulario_cruce_rfi.cusip.id_for_label }}">Isin:</label>
+                                <input type="text" list="isin" id="id_isin_cruce_interno" name ="cusip" class="form-control" value="{{ formulario_cruce_rfi.cusip.value | default_if_none:'' }}">
+                                {{ formulario_cruce_rfi.cusip.errors }}
+                                    <datalist id="isin">
+                                    {% for r,s in formulario_cruce_rfi.cusip.field.choices %}
+                                        <option value="{{ r }}">
+                                    {% endfor %}
+                                    </datalist>
+                            </div>
+                        <div class="col-lg-4">
+                            <label for="{{ formulario_cruce_rfi.papel.id_for_label }}">Papel:</label>
+                            {{ formulario_cruce_rfi.papel }}
+                        </div>
+
+                        </div>
+
+                        <div class="row">
+                            <div class="col-lg-3">
+                                <label for="{{ formulario_cruce_rfi.ejecutivo.id_for_label }}">Ejecutivo Vendedor:</label>
+                                <input type="text" list="ejecutivo_" id="id_ejecutivo_cruce_interno_vendedor" name ="ejecutivo_cuenta_vendedor" class="form-control" value="{{ formulario_cruce_rfi.ejecutivo.value | default_if_none:'' }}">
+                                {{ formulario_cruce_rfi.ejecutivo.errors }}
+                                    <datalist id="ejecutivo_">
+                                    {% for r,s in formulario_cruce_rfi.ejecutivo.field.choices %}
+                                        <option value="{{ r }}">
+                                    {% endfor %}
+                                    </datalist>
+                            </div>
+                            <div class="col-lg-2">
+                                <label for="{{ formulario_cruce_rfi.cliente.id_for_label }}">Cuenta Vendedora:</label>
+                                <input type="text" list="cliente_" id="id_cliente_cruce_interno_vendedor" name ="cliente_cuenta_vendedor" class="form-control" value="{{ formulario_cruce_rfi.cliente.value | default_if_none:'' }}">
+                                {{ formulario_cruce_rfi.cliente.errors }}
+                                    <datalist id="cliente_">
+                                    {% for r,s in formulario_cruce_rfi.cliente.field.choices %}
+                                        <option value="{{ r }}">
+                                    {% endfor %}
+                                    </datalist>
+                            </div>
+
+                                <div class="col-lg-2">
+                                    <label for="{{ formulario_cruce_rfi.mesa.id_for_label }}">Precio Mesa:</label>
+                                    {{ formulario_cruce_rfi.mesa }}
+                                </div>
+                                <div class="col-lg-2">
+                                    <label for="{{ formulario_cruce_rfi.ejecutivo_precio.id_for_label }}">Precio Ejecutivo:</label>
+                                    {{ formulario_cruce_rfi.ejecutivo_precio }}
+                                </div>
+                                <div class="col-lg-2">
+                                    <label for="{{ formulario_cruce_rfi.cliente_precio.id_for_label }}">Precio Cliente:</label>
+                                    {{ formulario_cruce_rfi.cliente_precio }}
+                                </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-3">
+                                <label for="{{ formulario_cruce_rfi.comprador.id_for_label }}">Ejecutivo Comprador:</label>
+                                <input type="text" list="ejecutivo_" id="id_ejecutivo_cruce_interno_comprador" name ="ejecutivo_cuenta_comprador" class="form-control" value="{{ formulario_cruce_rfi.ejecutivo.value | default_if_none:'' }}">
+                                {{ formulario_cruce_rfi.ejecutivo.errors }}
+                                    <datalist id="ejecutivo_">
+                                    {% for r,s in formulario_cruce_rfi.ejecutivo.field.choices %}
+                                        <option value="{{ r }}">
+                                    {% endfor %}
+                                    </datalist>
+                                </div>
+                                <div class="col-lg-2">
+                                    <label for="{{ formulario_cruce_rfi.cliente.id_for_label }}">Cuenta Compradora:</label>
+                                    <input type="text" list="cliente_" id="id_cliente_cruce_interno_comprador" name ="cliente_cuenta_comprador" class="form-control" value="{{ formulario_cruce_rfi.cliente.value | default_if_none:'' }}">
+                                    {{ formulario_cruce_rfi.cliente.errors }}
+                                        <datalist id="cliente_">
+                                        {% for r,s in formulario_cruce_rfi.cliente.field.choices %}
+                                            <option value="{{ r }}">
+                                        {% endfor %}
+                                        </datalist>
+                                </div>
+                                <div class="col-lg-2">
+                                    <label for="{{ formulario_cruce_rfi.mesa.id_for_label }}">Precio Mesa:</label>
+                                    {{ formulario_cruce_rfi.mesa }}
+                                </div>
+                                <div class="col-lg-2">
+                                    <label for="{{ formulario_cruce_rfi.ejecutivo_precio.id_for_label }}">Precio Ejecutivo:</label>
+                                    {{ formulario_cruce_rfi.ejecutivo_precio }}
+                                </div>
+                                <div class="col-lg-2">
+                                    <label for="{{ formulario_cruce_rfi.cliente_precio.id_for_label }}">Precio Cliente:</label>
+                                    {{ formulario_cruce_rfi.cliente_precio }}
+                                </div>
+                        </div>
+                        <div class="row">
+                            <input type="submit" class="btn btn-primary my-2" value="Agregar"> 
+                       </div>
+                    </form>
+                </div>
+                <div class="tab-pane fade show" id="CompraVentaEjecutivos" role="tabpanel" aria-labelledby="home-tab">
+                    <form method="POST">{% csrf_token %}
+                        <input type="hidden" name="formulario" value="CompraVentaEjecutivos">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <label for="{{ formulario_compraventa_rfi.fecha.id_for_label }}">Fecha:</label>
+                                {{ formulario_compraventa_rfi.fecha }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <label for="{{ formulario_compraventa_rfi.nominales.id_for_label }}">Nominales:</label>
+                                {{ formulario_compraventa_rfi.nominales }}
+                            </div>
+                            <div class="col-lg-4">
+                                <label for="tipo_operacion_compraventa">Operación </label>
+                                <select id="tipo_operacion_compraventa" class="form-control">
+                                  <option selected>Escoja ...</option>
+                                  <option>Ejecutivo Compra</option>
+                                  <option>Ejecutivo Vende</option>
+                                </select>
+                              </div>
+
+                        </div>
+                        <div class="row">
+
+                        <div class="col-lg-3">
+                            <label for="{{ formulario_compraventa_rfi.cusip.id_for_label }}">Isin:</label>
+                            <input type="text" list="isin" id="id_isin_compraventa" name ="cusip" class="form-control" value="{{ formulario_compraventa_rfi.cusip.value | default_if_none:'' }}">
+                            {{ formulario_compraventa_rfi.cusip.errors }}
+                                <datalist id="isin">
+                                {% for r,s in formulario_compraventa_rfi.cusip.field.choices %}
+                                    <option value="{{ r }}">
+                                {% endfor %}
+                                </datalist>
+                        </div>
+                        <div class="col-lg-4">
+                            <label for="{{ formulario_compraventa_rfi.papel.id_for_label }}">Papel:</label>
+                            {{ formulario_compraventa_rfi.papel }}
+                        </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-3">
+                                <label for=""  id="CompraVenta_salida" >Vendedor:</label>
+                                {{ formulario_compraventa_rfi.vendedor }}
+                            </div>
+
+
+                        </div>
+
+                        <div class="row">
+                            <div class="col-lg-3">
+                                <label for="{{ formulario_compraventa_rfi.vendedor.id_for_label }}">Ejecutivo Vendedor</label>
+                                {{ formulario_compraventa_rfi.ejecutivo }}
+                            </div>
+                            <div class="col-lg-2">
+                                <label for="{{ formulario_compraventa_rfi.cliente.id_for_label }}">Cuenta Vendedora:</label>
+                                <input type="text" list="cliente_" id="id_cliente_cruce_interno_vendedor" name ="cliente_cuenta_vendedor" class="form-control" value="{{ formulario_compraventa_rfi.cliente.value | default_if_none:'' }}">
+                                {{ formulario_compraventa_rfi.cliente.errors }}
+                                    <datalist id="cliente_">
+                                    {% for r,s in formulario_compraventa_rfi.cliente.field.choices %}
+                                        <option value="{{ r }}">
+                                    {% endfor %}
+                                    </datalist>
+                            </div>
+
+                                <div class="col-lg-2">
+                                    <label for="{{ formulario_compraventa_rfi.mesa.id_for_label }}">Precio Mesa:</label>
+                                    {{ formulario_compraventa_rfi.mesa }}
+                                </div>
+                                <div class="col-lg-2">
+                                    <label for="{{ formulario_compraventa_rfi.ejecutivo_precio.id_for_label }}">Precio Ejecutivo:</label>
+                                    {{ formulario_compraventa_rfi.ejecutivo_precio }}
+                                </div>
+                                <div class="col-lg-2">
+                                    <label for="{{ formulario_compraventa_rfi.cliente_precio.id_for_label }}">Precio Cliente:</label>
+                                    {{ formulario_compraventa_rfi.cliente_precio }}
+                                </div>
+                        </div>
+                        <div class="row">
+                            <input type="submit" class="btn btn-warning my-2" value="Agregar"> 
+                       </div>
+                    </form>
+                </div>
+            </div>
                         
             
         </div>
@@ -110,25 +336,38 @@
     };
 
     function reemplazar_puntos(m){
-        return m.replace(".","")
+        return m.replaceAll(".","")
     }
-    
-    function calculo_ingreso_mesa(){
-        spread_mesa.value = venta.value - compra.value;
-        ingreso_mesa.value = spread_mesa.value * reemplazar_puntos(nominales_2.value)/100;
-        
-    }
+    var compraventaejecutivos_operacion = document.getElementById("tipo_operacion_compraventa")
+    var compraventaejecutivos_fila_compradora = document.getElementById('row_compradora');
+    var compraventaejecutivos_fila_vendedora = document.getElementById('row_vendedora');
+    var compraventaejecutivos_nombre_cliente = document.getElementById('CompraVenta_salida');
     var nominales = document.getElementById('id_nominales');
     var nominales_2 = document.getElementById('id_nominales');
     var compra = document.getElementById('id_mesa');
     var venta = document.getElementById('id_ejecutivo_precio');
     var ingreso_mesa = document.getElementById('id_ingreso_mesa');
     var spread_mesa = document.getElementById('id_spread_mesa');
+    var factor = document.getElementById("id_factor");
     function calculo_ingreso_mesa(){
         spread_mesa.value = venta.value - compra.value;
-        ingreso_mesa.value = spread_mesa.value * reemplazar_puntos(nominales_2.value)/100;
+        ingreso_mesa.value = spread_mesa.value * reemplazar_puntos(nominales_2.value)*factor.value/100;
         
-    }
+    };
+
+    compraventaejecutivos_operacion.addEventListener('change',e =>{
+        
+        if (compraventaejecutivos_operacion.value == 'Ejecutivo Vende'){
+            compraventaejecutivos_nombre_cliente.innerHTML = 'Comprador : ';
+            compraventaejecutivos_fila_vendedora.style.visibility = "visible";
+            compraventaejecutivos_fila_compradora.style.visibility = "hidden";
+        } else if (compraventaejecutivos_operacion.value == 'Ejecutivo Compra')  {
+            compraventaejecutivos_nombre_cliente.innerHTML = 'Vendedor : ';
+            compraventaejecutivos_fila_compradora.style.visibility = "visible";
+            compraventaejecutivos_fila_vendedora.style.visibility = "hidden";
+
+        }
+    });
 
     nominales.addEventListener('change',d =>{
      nominales.value = separador_miles(nominales.value);
@@ -144,7 +383,56 @@
     venta.value = separador_miles(venta.value);
     calculo_ingreso_mesa();
 
-    });     
+
+    });
+    factor.addEventListener('change',d =>{
+        factor.value = separador_miles(factor.value);
+        calculo_ingreso_mesa();
+    });
+    var isin = document.getElementById("id_isin");
+    var isin_cruce = document.getElementById("id_isin_cruce_interno");
+    var isin_compraventa = document.getElementById("id_isin_compraventa");
+    var papel = document.getElementById("id_papel");
+    var papel_cruce = document.getElementById("id_cruce-papel");
+    var papel_compraventa = document.getElementById("id_compraventa-papel");
+    var papel_hidden = document.getElementById("id_papel_hidden")
+    
+    //var cur = document.getElementById("id_crncy");
+    var country = document.getElementById("id_country_of_risk");
+    isin.addEventListener('change', d => {
+        var nemo = isin.value;
+        var direccion_api = '/logeado/rfl/ordenes/api/v1/' + nemo;
+        fetch(direccion_api)
+        .then(res => res.json())
+        .then(data =>{
+            console.log(data);
+            papel.value = data['0'].fields['security_name'];
+            country.value = data['0'].fields['cntry_of_risk'];
+
+        })
+    });
+    isin_cruce.addEventListener('change', d => {
+        var nemo = isin_cruce.value;
+        var direccion_api = '/logeado/rfl/ordenes/api/v1/' + nemo;
+        fetch(direccion_api)
+        .then(res => res.json())
+        .then(data =>{
+            papel_cruce.value = data['0'].fields['security_name'];
+            
+        })
+    })
+
+    isin_compraventa.addEventListener('change', d => {
+        var nemo = isin_compraventa.value;
+        var direccion_api = '/logeado/rfl/ordenes/api/v1/' + nemo;
+        fetch(direccion_api)
+        .then(res => res.json())
+        .then(data =>{
+            papel_compraventa.value = data['0'].fields['security_name'];
+            
+        })
+    })
+
 
 
 </script>

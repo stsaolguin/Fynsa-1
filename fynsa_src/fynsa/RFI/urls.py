@@ -10,6 +10,7 @@ urlpatterns = [
     path('comite-rfi/proceso/<str:cliente>', views.rfi_comite_cliente),
     path('cargador-ordenes-rfi', views.rfi_cargador_datos, name='rfi_cargador_datos'),
     path('descarga-generacion-rfi', views.rfi_comite_descargar_excel_view, name='rfi_comite_descarga_excel'),
-    path('ingreso-operacioens-rfi', views.rfi_ingreso_operaciones, name='rfi_ingreso_operaciones'),
+    path('ingreso-operaciones-rfi', views.rfi_ingreso_operaciones, name='rfi_ingreso_operaciones'),
+    path('datos-fena', views.rfi_datos_fena, name='rfi_datos_fena'),
     
     ]
